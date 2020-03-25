@@ -1,6 +1,5 @@
 public class Main {
   public static void main(String[] args) {
-    final int foo = 12;
     if (Ask.forBoolean("Run test")) test();
     else {
       exercises();
