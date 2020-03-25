@@ -117,16 +117,21 @@ public class Exercises {
     }
     System.out.println("Average was " + (double) total / inputs);
   }
+  private static int mid (int a, int b, int c) {
+    final int min = $.min(a, b, c);
+    final int max = $.max(a, b, c);
+    return $.between(min, max, a) ? a : $.between(min, max, b) ? b : c;
+  }
   public static boolean exercise13 (int a, int b, int c) {
-    int min = $.min(a, b, c);
-    int max = $.max(a, b, c);
-    int mid = $.mid(a, b, c);
+    final int min = $.min(a, b, c);
+    final int max = $.max(a, b, c);
+    final int mid = mid(a, b, c);
     return min + 1 == mid && min + 2 == max;
   }
   public static boolean exercise14 (int a, int b, int c) {
-    int min = $.min(a, b, c);
-    int max = $.max(a, b, c);
-    return $.mid(a, b, c) == (double) (min + max) / 2;
+    final int min = $.min(a, b, c);
+    final int max = $.max(a, b, c);
+    return mid(a, b, c) == (double) (min + max) / 2;
   }
   public static boolean exercise15 (int a, int b, int c) {
     return a + b < c || a + c < b || b + c < a;

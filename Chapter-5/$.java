@@ -30,11 +30,6 @@ public class $ {
   public static boolean between (int min, int max, int c) {
     return min < c && c < max;
   }
-  public static int mid (int a, int b, int c) {
-    int min = $.min(a, b, c);
-    int max = $.max(a, b, c);
-    return between(min, max, a) ? a : between(min, max, b) ? b : c;
-  }
   public static double logBase (int base, int val) {
     return Math.log(val) / Math.log(base);
   }
