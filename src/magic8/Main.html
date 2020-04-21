@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <style>
+        body {
+            background-color: #8800ff;
+            display: flex;
+            flex-direction: column;
+            place-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        body * {
+            height: 20px;
+            text-align: center;
+        }
+        #question {
+            width: 200px;
+        }
+        #submit {
+            width: 80px;
+        }
+    </style>
+    <script defer>
+        console.log(document.getElementById("question"));
+        const responses = [
+          "It is certain",
+          "It is decidedly so",
+          "Without a doubt",
+          "Yes, definitely",
+          "You may rely on it",
+          "As I see it, yes",
+          "Most likely",
+          "Outlook good",
+          "Yes",
+          "Signs point to yes",
+          "Reply hazy, try again",
+          "Ask again later",
+          "Better not tell you now",
+          "Cannot predict now",
+          "Concentrate and ask again",
+          "Don't count on it",
+          "My reply is no",
+          "My sources say no",
+          "Outlook not so good",
+          "Very doubtful"
+        ];
+        window.onload = () => {
+            const question = document.getElementById("question");
+            const answerDiv = document.getElementById("answer");
+            question.addEventListener("keydown", event => {
+                if (event.keyCode === 13) answer();
+            });
+            document.getElementById("submit").addEventListener("click", answer);
+            function answer () {
+              question.value = "";
+              question.blur();
+              answerDiv.innerHTML = responses[Math.floor(Math.random() * 20)];
+            }
+        }
+    </script>
+</head>
+<body>
+    <input id="question" placeholder="Question">
+    <input id="submit" type="button" value="Submit">
+    <div id="answer"></div>
+</body>
+</html>
