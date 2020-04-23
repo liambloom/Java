@@ -5,10 +5,11 @@ import java.util.Arrays;
 public class Test {
     public static void main (String[] args) {
         //sortTest();
-        System.out.println(Arrays.toString(Arrays.copyOf(new int[]{1, 2}, 2)));
+        //System.out.println(Arrays.toString(Arrays.copyOf(new int[]{1, 2}, 2)));
         /*int[] ints = {1, 2};
         incrementAll(ints);
         System.out.println(Arrays.toString(ints));*/
+        while (true) System.out.println();
     }
     public static void incrementAll (int[] ints) {
         for (int i : ints) i++;
