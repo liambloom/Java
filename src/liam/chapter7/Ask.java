@@ -16,34 +16,16 @@ public class Ask extends liam.chapter4.Ask {
         int currentDepth = 0;
         boolean isValid = false;
         while (!isValid) {
-            final String line = console.nextLine();
-            arrayString += line;
-
             try {
-                parse1dArray(arrayString);
+                parse1dArray(arrayString += console.nextLine());
                 isValid = true;
             }
             catch (Exception e) {
                 if (e != ARRAY_UNCLOSED_EXCEPTION) {
-                    System.out.println("error");
                     System.out.println(e.toString());
                     return getArrayString(prompt);
                 }
             }
-
-            /*for (int i = 0; i < line.length(); i++) {
-                final char c = line.charAt(i);
-                if (c == '[') currentDepth++;
-                else if (c == ']') currentDepth--;
-                if (currentDepth < 0) {
-                    System.out.println("Invalid array");
-                    return getArrayString(prompt, depth);
-                }
-                if (currentDepth > depth) {
-                    System.out.printf("Please enter a valid %d-dimensional array. %n", depth);
-                    return getArrayString(prompt, depth);
-                }
-            }*/
         }
         return arrayString;
     }
@@ -87,8 +69,8 @@ public class Ask extends liam.chapter4.Ask {
             if (depth == 0 && i != str.length() - 1) throw new IllegalArgumentException("The argument str must be a valid array");
         }
         if (depth > 0) throw ARRAY_UNCLOSED_EXCEPTION;
-        commaIndexes[comma] = str.length();
-        commaIndexes = Arrays.copyOfRange(commaIndexes, 0, comma + 1);
+        commaIndexes[comma++] = str.length();
+        commaIndexes = Arrays.copyOfRange(commaIndexes, 0, comma);
         String[] elements = new String[comma];
         for (int i = 0; i < commaIndexes.length - 1; i++) elements[i] = removeLeadingTrailingWhitespace(str.substring(commaIndexes[i] + 1, commaIndexes[i + 1]));
         elements[0] = elements[0].replaceFirst("^\\[", "");
