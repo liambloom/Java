@@ -120,7 +120,7 @@ public class Ask {
   public static void prompt (String prompt) {
     System.out.print(prompt + seperator + ' ');
   }
-  private static String defaultPrompt (String fallback) {
+  protected static String defaultPrompt (String fallback) {
     return defaultPrompt == null ? fallback : defaultPrompt;
   }
 }
