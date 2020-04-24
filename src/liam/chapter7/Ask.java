@@ -9,11 +9,11 @@ public class Ask extends liam.chapter4.Ask {
     protected static final Pattern STRING_REGEX = Pattern.compile("^\".*?(?<!\\\\)\"$");
     protected static final Pattern INT_REGEX = Pattern.compile("^-?\\d+$");
     protected static final Pattern DOUBLE_REGEX = Pattern.compile("^-?(?:\\d*\\.\\d+|\\d+\\.)$");
+    protected static final Pattern EMPTY_ARRAY_REGEX = Pattern.compile("^\\[\\s*\\]$");
 
     protected static String getArrayString(String prompt) {
         prompt(prompt);
         String arrayString = "";
-        int currentDepth = 0;
         boolean isValid = false;
         while (!isValid) {
             try {
@@ -36,7 +36,7 @@ public class Ask extends liam.chapter4.Ask {
 
     protected static String[] parse1dArray (String str) {
         str = removeLeadingTrailingWhitespace(str);
-        if (str.isBlank()) return new String[0];
+        if (EMPTY_ARRAY_REGEX.matcher(str).matches()) return new String[0];
         int[] commaIndexes = new int[str.split(",").length + 1];
         commaIndexes[0] = -1;
         int depth = 0;
@@ -65,12 +65,16 @@ public class Ask extends liam.chapter4.Ask {
                     break;
                 case '\\':
                     escaped = inString;
+                    break;
+                case '\n':
+                    if (inString) throw new IllegalArgumentException("Unclosed string or character");
+                    break;
             }
             if (depth == 0 && i != str.length() - 1) throw new IllegalArgumentException("The argument str must be a valid array");
         }
         if (depth > 0) throw ARRAY_UNCLOSED_EXCEPTION;
-        commaIndexes[comma++] = str.length();
-        commaIndexes = Arrays.copyOfRange(commaIndexes, 0, comma);
+        commaIndexes[comma] = str.length();
+        commaIndexes = Arrays.copyOfRange(commaIndexes, 0, comma + 1);
         String[] elements = new String[comma];
         for (int i = 0; i < commaIndexes.length - 1; i++) elements[i] = removeLeadingTrailingWhitespace(str.substring(commaIndexes[i] + 1, commaIndexes[i + 1]));
         elements[0] = elements[0].replaceFirst("^\\[", "");
@@ -123,19 +127,48 @@ public class Ask extends liam.chapter4.Ask {
         char[] chars = new char[strs.length];
         for (int i = 0; i < strs.length; i++) {
             String str = strs[i];
-            if (str.startsWith("'") && str.endsWith("'") && str.length() == (str.charAt(1) == '\\' ? 4 : 3)) chars[i] = str.charAt(str.length() - 2);
-            else throw new IllegalArgumentException("Error: " + str + " is not a valid character.");
+            final IllegalArgumentException illegalCharacter = new IllegalArgumentException("Error: " + str + " is not a valid character.");
+            final boolean esc = str.charAt(1) == '\\';
+            if (str.startsWith("'") && str.endsWith("'") && str.length() == (esc ? 4 : 3)) {
+                final char c = str.charAt(str.length() - 2);
+                chars[i] = esc ? escapeCode(c) : c;
+            }
+            else throw illegalCharacter;
         }
         return chars;
     }
-    protected static String[] parseStringArray (String[] original) {
-        String[] strs = new String[original.length];
+    protected static String[] parseStringArray (String[] strs) {
         for (int i = 0; i < strs.length; i++) {
-            final String str = original[i];
+            String str = strs[i];
             if (STRING_REGEX.matcher(str).matches()) strs[i] = str.substring(1, str.length() - 1);
             else throw new IllegalArgumentException("Error: " + str + " is not a valid string.");
         }
         return strs;
+    }
+
+    protected static int[][] parse2dIntArray(String[][] strings) {
+        int[][] ints = new int[strings.length][];
+        for (int i = 0; i < strings.length; i++) ints[i] = parseIntArray(strings[i]);
+        return ints;
+    }
+    protected static double[][] parse2dDoubleArray(String[][] strings) {
+        double[][] dbls = new double[strings.length][];
+        for (int i = 0; i < strings.length; i++) dbls[i] = parseDoubleArray(strings[i]);
+        return dbls;
+    }
+    protected static boolean[][] parse2dBooleanArray(String[][] strings) {
+        boolean[][] bools = new boolean[strings.length][];
+        for (int i = 0; i < strings.length; i++) bools[i] = parseBooleanArray(strings[i]);
+        return bools;
+    }
+    protected static char[][] parse2dCharArray(String[][] strings) {
+        char[][] chars = new char[strings.length][];
+        for (int i = 0; i < strings.length; i++) chars[i] = parseCharArray(strings[i]);
+        return chars;
+    }
+    protected static String[][] parse2dStringArray(String[][] strings) {
+        for (int i = 0; i < strings.length; i++) strings[i] = parseStringArray(strings[i]);
+        return strings;
     }
 
     public static String[] forStringArray (String prompt) {
@@ -150,6 +183,18 @@ public class Ask extends liam.chapter4.Ask {
     public static String[] forStringArray () {
         return forStringArray(defaultPrompt("Array"));
     }
+    public static String[][] forStringMatrix (String prompt) {
+        try {
+            return parse2dStringArray(parse2dArray(getArrayString(prompt)));
+        }
+        catch (Exception e) {
+            System.out.println(e.getMessage());
+            return forStringMatrix(prompt);
+        }
+    }
+    public static String[][] forStringMatrix () {
+        return forStringMatrix("Matrix of strings");
+    }
 
     public static int[] forIntArray (String prompt) {
         try {
@@ -162,6 +207,18 @@ public class Ask extends liam.chapter4.Ask {
     }
     public static int[] forIntArray () {
         return forIntArray(defaultPrompt("Array of integers"));
+    }
+    public static int[][] forIntMatrix (String prompt) {
+        try {
+            return parse2dIntArray(parse2dArray(getArrayString(prompt)));
+        }
+        catch (Exception e) {
+            System.out.println(e.getMessage());
+            return forIntMatrix(prompt);
+        }
+    }
+    public static int[][] forIntMatrix () {
+        return forIntMatrix(defaultPrompt("Matrix of integers"));
     }
 
     public static double[] forDoubleArray (String prompt) {
@@ -176,6 +233,18 @@ public class Ask extends liam.chapter4.Ask {
     public static double[] forDoubleArray () {
         return forDoubleArray(defaultPrompt("Array of numbers"));
     }
+    public static double[][] forDoubleMatrix (String prompt) {
+        try {
+            return parse2dDoubleArray(parse2dArray(getArrayString(prompt)));
+        }
+        catch (Exception e) {
+            System.out.println(e.getMessage());
+            return forDoubleMatrix(prompt);
+        }
+    }
+    public static double[][] forDoubleMatrix () {
+        return forDoubleMatrix(defaultPrompt("Matrix of numbers"));
+    }
 
     public static boolean[] forBooleanArray (String prompt) {
         try {
@@ -189,6 +258,18 @@ public class Ask extends liam.chapter4.Ask {
     public static boolean[] forBooleanArray () {
         return forBooleanArray(defaultPrompt("Array of boolean values"));
     }
+    public static boolean[][] forBooleanMatrix (String prompt) {
+        try {
+            return parse2dBooleanArray(parse2dArray(getArrayString(prompt)));
+        }
+        catch (Exception e) {
+            System.out.println(e.getMessage());
+            return forBooleanMatrix(prompt);
+        }
+    }
+    public static boolean[][] forBooleanMatrix () {
+        return forBooleanMatrix(defaultPrompt("Matrix of boolean values"));
+    }
 
     public static char[] forCharArray (String prompt) {
         try {
@@ -201,5 +282,17 @@ public class Ask extends liam.chapter4.Ask {
     }
     public static char[] forCharArray () {
         return forCharArray(defaultPrompt("Array of characters"));
+    }
+    public static char[][] forCharMatrix (String prompt) {
+        try {
+            return parse2dCharArray(parse2dArray(getArrayString(prompt)));
+        }
+        catch (Exception e) {
+            System.out.println(e.getMessage());
+            return forCharMatrix(prompt);
+        }
+    }
+    public static char[][] forCharMatrix () {
+        return forCharMatrix(defaultPrompt("Matrix of characters"));
     }
 }
