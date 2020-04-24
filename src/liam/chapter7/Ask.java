@@ -33,6 +33,11 @@ public class Ask extends liam.chapter4.Ask {
     protected static String removeLeadingTrailingWhitespace (String str) {
         return str.replaceAll("^\\s*|\\s*$", "");
     }
+    protected static char escapeCode (char c) {
+        int index = "tbnrf'\"\\".indexOf(c);
+        if (index == -1) throw new IllegalArgumentException("\"\\" + c + "\" is not a valid escape sequence");
+        return "\t\b\n\r\f'\"\\".charAt(index); // I used strings instead of arrays because they have an indexOf method
+    }
 
     protected static String[] parse1dArray (String str) {
         str = removeLeadingTrailingWhitespace(str);
@@ -44,11 +49,13 @@ public class Ask extends liam.chapter4.Ask {
         boolean inString = false; // True when in a string or char
         boolean escaped = false;
         for (int i = 0; i < str.length(); i++) {
+            char c = str.charAt(i);
+            //System.out.printf("c=%c inString=%b escaped=%b %n", c, inString, escaped);
             if (escaped) {
+                if ("tbnrf'\"\\".indexOf(c) == -1) throw new IllegalArgumentException(c + " is not a legal escape character");
                 escaped = false;
                 continue;
             }
-            char c = str.charAt(i);
             switch (c) {
                 case '[':
                     if (!inString) depth++;
@@ -142,6 +149,12 @@ public class Ask extends liam.chapter4.Ask {
             String str = strs[i];
             if (STRING_REGEX.matcher(str).matches()) strs[i] = str.substring(1, str.length() - 1);
             else throw new IllegalArgumentException("Error: " + str + " is not a valid string.");
+            int index = 0;
+            while (index != -1) {
+                str = strs[i];
+                index = str.indexOf('\\', index);
+                if (index != -1) strs[i] = str.substring(0, index) + escapeCode(str.charAt(index + 1)) + str.substring(index + 2);
+            }
         }
         return strs;
     }
