@@ -1,29 +1,33 @@
 package liam.chapter7;
 
+import liam.chapter4.Exercises;
+
 import java.util.Arrays;
 import java.util.regex.Pattern;
+import java.util.function.Function;
 
 public class Ask extends liam.chapter4.Ask {
+    public static void main (String[] args) {
+        while (true) System.out.println(Arrays.toString(forPrimitiveIntArray()));
+    }
+
     protected static final IllegalArgumentException ARRAY_UNCLOSED_EXCEPTION = new IllegalArgumentException("The array was never closed");
 
-    protected static final Pattern STRING_REGEX = Pattern.compile("^\".*?(?<!\\\\)\"$");
-    protected static final Pattern INT_REGEX = Pattern.compile("^-?\\d+$");
-    protected static final Pattern DOUBLE_REGEX = Pattern.compile("^-?(?:\\d*\\.\\d+|\\d+\\.)$");
     protected static final Pattern EMPTY_ARRAY_REGEX = Pattern.compile("^\\[\\s*\\]$");
 
-    protected static String getArrayString(String prompt) {
+    protected static String getArrayString(String prompt, int depth) {
         prompt(prompt);
         String arrayString = "";
         boolean isValid = false;
         while (!isValid) {
             try {
-                parse1dArray(arrayString += console.nextLine());
+                parseArray(arrayString += console.nextLine() + '\n', depth);
                 isValid = true;
             }
             catch (Exception e) {
                 if (e != ARRAY_UNCLOSED_EXCEPTION) {
                     System.out.println(e.toString());
-                    return getArrayString(prompt);
+                    return getArrayString(prompt, depth);
                 }
             }
         }
@@ -39,12 +43,13 @@ public class Ask extends liam.chapter4.Ask {
         return "\t\b\n\r\f'\"\\".charAt(index); // I used strings instead of arrays because they have an indexOf method
     }
 
-    protected static String[] parse1dArray (String str) {
+    protected static Object[] parseArray (String str, int depth) {
+        if (depth < 1) throw new IllegalArgumentException("An array cannot have a depth of " + depth);
         str = removeLeadingTrailingWhitespace(str);
         if (EMPTY_ARRAY_REGEX.matcher(str).matches()) return new String[0];
         int[] commaIndexes = new int[str.split(",").length + 1];
         commaIndexes[0] = -1;
-        int depth = 0;
+        int currentDepth = 0;
         int comma = 1;
         boolean inString = false; // True when in a string or char
         boolean escaped = false;
@@ -58,13 +63,13 @@ public class Ask extends liam.chapter4.Ask {
             }
             switch (c) {
                 case '[':
-                    if (!inString) depth++;
+                    if (!inString) currentDepth++;
                     break;
                 case ']':
-                    if (!inString) depth--;
+                    if (!inString) currentDepth--;
                     break;
                 case ',':
-                    if (depth == 1 && !inString) commaIndexes[comma++] = i;
+                    if (currentDepth == 1 && !inString) commaIndexes[comma++] = i;
                     break;
                 case '"':
                 case '\'':
@@ -77,235 +82,214 @@ public class Ask extends liam.chapter4.Ask {
                     if (inString) throw new IllegalArgumentException("Unclosed string or character");
                     break;
             }
-            if (depth == 0 && i != str.length() - 1) throw new IllegalArgumentException("The argument str must be a valid array");
+            if (currentDepth > depth) throw new IllegalArgumentException("The argument str must be a " + depth + "-dimensional array.");
+            if (currentDepth == 0 && i != str.length() - 1) throw new IllegalArgumentException("The argument str must be a valid array");
         }
-        if (depth > 0) throw ARRAY_UNCLOSED_EXCEPTION;
+        if (currentDepth > 0) throw ARRAY_UNCLOSED_EXCEPTION;
         commaIndexes[comma] = str.length();
         commaIndexes = Arrays.copyOfRange(commaIndexes, 0, comma + 1);
         String[] elements = new String[comma];
         for (int i = 0; i < commaIndexes.length - 1; i++) elements[i] = removeLeadingTrailingWhitespace(str.substring(commaIndexes[i] + 1, commaIndexes[i + 1]));
         elements[0] = elements[0].replaceFirst("^\\[", "");
         elements[elements.length - 1] = elements[elements.length - 1].replaceFirst("\\]$", "");
+        if (depth > 1) {
+            Object[] deep = new Object[elements.length];
+            for (int i = 0; i < elements.length; i++) {
+                try {
+                    deep[i] = parseArray(elements[i], depth - 1);
+                }
+                catch (Exception e) {
+                    throw new IllegalArgumentException("The argument str must be a " + depth + "-dimensional array.");
+                }
+            }
+            return deep;
+        }
         return elements;
-    }
-    protected static String[][] parse2dArray (String str) {
-        String[] array1d = parse1dArray(str);
-        String[][] array2d = new String[array1d.length][];
-        for (int i = 0; i < array1d.length; i++) array2d[i] = parse1dArray(array1d[i]);
-        return array2d;
-    }
-    protected static String[][][] parse3dArray (String str) {
-        String[] array1d = parse1dArray(str);
-        String[][][] array3d = new String[array1d.length][][];
-        for (int i = 0; i < array1d.length; i++) array3d[i] = parse2dArray(array1d[i]);
-        return array3d;
     }
     // There is no plausible reason for me to need more than a 3d array; Even 3d isn't likely
 
-    protected static int[] parseIntArray (String[] strs) {
-        int[] ints = new int[strs.length];
-        for (int i = 0; i < strs.length; i++) {
-            final String str = strs[i];
-            if (INT_REGEX.matcher(str).matches()) ints[i] = Integer.parseInt(str);
-            else throw new NumberFormatException("Error: " + str + " is not a valid integer");
+    protected static Object[] parseArrayToType (Object[] strs, Class type) {
+        Object[] arr = new Object[strs.length];
+
+        Function<String, Object> parser = null;
+        if (type == Integer.class) parser = Integer::parseInt;
+        else if (type == Double.class) parser = Double::parseDouble;
+        else if (type == Boolean.class) {
+            parser = str -> {
+                if (str.equals("true")) return true;
+                else if (str.equals("false")) return false;
+                else throw new IllegalArgumentException("Error: " + str + " is not a valid boolean value.");
+            };
         }
-        return ints;
-    }
-    protected static double[] parseDoubleArray (String[] strs) {
-        double[] dbls = new double[strs.length];
-        for (int i = 0; i < strs.length; i++) {
-            final String str = strs[i];
-            if (DOUBLE_REGEX.matcher(str).matches()) dbls[i] = Double.parseDouble(str);
-            else throw new NumberFormatException("Error: " + str + " is not a valid number");
+        else if (type == Character.class) {
+            parser = str -> {
+                if (str.length() < 2) throw new IllegalArgumentException("Error: " + str + " is not a valid character.");
+                final boolean esc = str.charAt(1) == '\\';
+                if (str.startsWith("'") && str.endsWith("'") && str.length() == (esc ? 4 : 3)) {
+                    final char c = str.charAt(str.length() - 2);
+                    return esc ? escapeCode(c) : c;
+                }
+                else throw new IllegalArgumentException("Error: " + str + " is not a valid character.");
+            };
         }
-        return dbls;
-    }
-    protected static boolean[] parseBooleanArray (String[] strs) {
-        boolean[] bools = new boolean[strs.length];
-        for (int i = 0; i < strs.length; i++) {
-            final String str = strs[i];
-            if (str.equals("true")) bools[i] = true;
-            else if (str.equals("false")) bools[i] = false;
-            else throw new IllegalArgumentException("Error: " + str + " is not a valid boolean value.");
+        else if (type == String.class) {
+            parser = str -> {
+                final IllegalArgumentException invalidString = new IllegalArgumentException("Error: " + str + " is not a valid string.");
+                if (!str.startsWith("\"") || !str.endsWith("\"")) throw invalidString;
+                str = str.substring(1, str.length() - 1) + ' ';
+                boolean escaped = false;
+                for (int i = 0; i < str.length(); i++) {
+                    if (escaped) {
+                        str = str.substring(0, i - 1) + escapeCode(str.charAt(i)) + str.substring(i + 1);
+                        escaped = false;
+                        i--;
+                        continue;
+                    }
+                    switch (str.charAt(i)) {
+                        case '"':
+                        case '\n':
+                            throw invalidString;
+                        case '\\':
+                            escaped = true;
+                    }
+                }
+                return str.substring(0, str.length() - 1);
+            };
         }
-        return bools;
-    }
-    protected static char[] parseCharArray (String[] strs) {
-        char[] chars = new char[strs.length];
+        assert parser != null;
+
         for (int i = 0; i < strs.length; i++) {
-            String str = strs[i];
-            final IllegalArgumentException illegalCharacter = new IllegalArgumentException("Error: " + str + " is not a valid character.");
-            final boolean esc = str.charAt(1) == '\\';
-            if (str.startsWith("'") && str.endsWith("'") && str.length() == (esc ? 4 : 3)) {
-                final char c = str.charAt(str.length() - 2);
-                chars[i] = esc ? escapeCode(c) : c;
+            if (strs[i].getClass().isArray()) arr[i] = parseArrayToType((Object[]) strs[i], type);
+            else if (strs[i] instanceof String) arr[i] = parser.apply((String) strs[i]);
+            else throw new IllegalArgumentException("This error should never be thrown");
+        }
+
+        return arr;
+    }
+
+    public static Object[] forArray (String prompt, Class type, int depth) {
+        if (depth < 1) throw new IllegalArgumentException("An array cannot have a depth of less than 1");
+
+        final IllegalArgumentException typeError = new IllegalArgumentException("Recieved type " + type.getName() + ", expected one of int, double, char, boolean, Integer, Double, Character, Boolean, String");
+        boolean isPrimitive = type.isPrimitive();
+        if (isPrimitive) {
+            if (depth == 1) throw new IllegalArgumentException("For a 1-dimentional primitive array, use one of the primitive array methods");
+            else {
+                if (type == int.class) type = Integer.class;
+                else if (type == double.class) type = Double.class;
+                else if (type == char.class) type = Character.class;
+                else if (type == boolean.class) type = Boolean.class;
+                else throw typeError;
             }
-            else throw illegalCharacter;
         }
-        return chars;
-    }
-    protected static String[] parseStringArray (String[] strs) {
-        for (int i = 0; i < strs.length; i++) {
-            String str = strs[i];
-            if (STRING_REGEX.matcher(str).matches()) strs[i] = str.substring(1, str.length() - 1);
-            else throw new IllegalArgumentException("Error: " + str + " is not a valid string.");
-            int index = 0;
-            while (index != -1) {
-                str = strs[i];
-                index = str.indexOf('\\', index);
-                if (index != -1) strs[i] = str.substring(0, index) + escapeCode(str.charAt(index + 1)) + str.substring(index + 2);
+
+        if (type != Integer.class && type != Double.class && type != Character.class && type != Boolean.class && type != String.class) throw typeError;
+
+        try {
+            Object[] arr = parseArrayToType(parseArray(getArrayString(prompt, depth), depth), type);
+            if (hasDepth(arr, depth)) {
+                System.out.println(Arrays.deepToString(arr));
+                if (isPrimitive) arr = toPrimitive(arr);
+                return arr;
+            }
+            else {
+                System.out.println("Please enter a valid " + getArrayTypeString(type, depth));
+                return forArray(prompt, type, depth);
             }
         }
-        return strs;
+        catch (Exception e) {
+            System.out.println(e.toString() + " " + Arrays.toString(e.getStackTrace()));
+            return forArray(prompt, type, depth);
+        }
+    }
+    public static Object[] forArray (Class type, int depth) {
+        return forArray(defaultPrompt(getArrayTypeString(type, depth)), type, depth);
+    }
+    public static Object[] forArray (String prompt, Class type) {
+        return forArray(prompt, type, 1);
+    }
+    public static Object[] forArray (Class type) {
+        return forArray(defaultPrompt(getArrayTypeString(type, 1)), type, 1);
     }
 
-    protected static int[][] parse2dIntArray(String[][] strings) {
-        int[][] ints = new int[strings.length][];
-        for (int i = 0; i < strings.length; i++) ints[i] = parseIntArray(strings[i]);
-        return ints;
+    public static int[] forPrimitiveIntArray (String prompt) {
+        Object[] arr = forArray(prompt, Integer.class, 1);
+        System.out.println(Arrays.toString(arr));
+        System.out.println(arr[1].getClass().getName());
+        return toPrimitive((Integer[]) arr);
     }
-    protected static double[][] parse2dDoubleArray(String[][] strings) {
-        double[][] dbls = new double[strings.length][];
-        for (int i = 0; i < strings.length; i++) dbls[i] = parseDoubleArray(strings[i]);
-        return dbls;
+    public static int[] forPrimitiveIntArray () {
+        return forPrimitiveIntArray(defaultPrompt("int[]"));
     }
-    protected static boolean[][] parse2dBooleanArray(String[][] strings) {
-        boolean[][] bools = new boolean[strings.length][];
-        for (int i = 0; i < strings.length; i++) bools[i] = parseBooleanArray(strings[i]);
-        return bools;
+    public static double[] forPrimitiveDoubleArray (String prompt) {
+        return toPrimitive((Double[]) forArray(prompt, Double.class, 1));
     }
-    protected static char[][] parse2dCharArray(String[][] strings) {
-        char[][] chars = new char[strings.length][];
-        for (int i = 0; i < strings.length; i++) chars[i] = parseCharArray(strings[i]);
-        return chars;
+    public static double[] forPrimitiveDoubleArray () {
+        return forPrimitiveDoubleArray(defaultPrompt("double[]"));
     }
-    protected static String[][] parse2dStringArray(String[][] strings) {
-        for (int i = 0; i < strings.length; i++) strings[i] = parseStringArray(strings[i]);
-        return strings;
+    public static char[] forPrimitiveCharArray (String prompt) {
+        return toPrimitive((Character[]) forArray(prompt, Character.class, 1));
     }
-
-    public static String[] forStringArray (String prompt) {
-        try {
-            return parseStringArray(parse1dArray(getArrayString(prompt)));
-        }
-        catch (Exception e) {
-            System.out.println(e.getMessage());
-            return forStringArray(prompt);
-        }
+    public static char[] forPrimitiveCharArray () {
+        return forPrimitiveCharArray(defaultPrompt("char[]"));
     }
-    public static String[] forStringArray () {
-        return forStringArray(defaultPrompt("Array"));
+    public static boolean[] forPrimitiveBoolArray (String prompt) {
+        return toPrimitive((Boolean[]) forArray(prompt, Boolean.class, 1));
     }
-    public static String[][] forStringMatrix (String prompt) {
-        try {
-            return parse2dStringArray(parse2dArray(getArrayString(prompt)));
-        }
-        catch (Exception e) {
-            System.out.println(e.getMessage());
-            return forStringMatrix(prompt);
-        }
-    }
-    public static String[][] forStringMatrix () {
-        return forStringMatrix("Matrix of strings");
+    public static boolean[] forPrimitiveBoolArray () {
+        return forPrimitiveBoolArray(defaultPrompt("boolean[]"));
     }
 
-    public static int[] forIntArray (String prompt) {
-        try {
-            return parseIntArray(parse1dArray(getArrayString(prompt)));
-        }
-        catch (Exception e) {
-            System.out.println(e.getMessage());
-            return forIntArray(prompt);
-        }
+    protected static int[] toPrimitive (Integer[] arr) {
+        int[] primitiveArr = new int[arr.length];
+        for (int i = 0; i < arr.length; i++) primitiveArr[i] = arr[i];
+        return primitiveArr;
     }
-    public static int[] forIntArray () {
-        return forIntArray(defaultPrompt("Array of integers"));
+    protected static double[] toPrimitive (Double[] arr) {
+        double[] primitiveArr = new double[arr.length];
+        for (int i = 0; i < arr.length; i++) primitiveArr[i] = arr[i];
+        return primitiveArr;
     }
-    public static int[][] forIntMatrix (String prompt) {
-        try {
-            return parse2dIntArray(parse2dArray(getArrayString(prompt)));
-        }
-        catch (Exception e) {
-            System.out.println(e.getMessage());
-            return forIntMatrix(prompt);
-        }
+    protected static char[] toPrimitive (Character[] arr) {
+        char[] primitiveArr = new char[arr.length];
+        for (int i = 0; i < arr.length; i++) primitiveArr[i] = arr[i];
+        return primitiveArr;
     }
-    public static int[][] forIntMatrix () {
-        return forIntMatrix(defaultPrompt("Matrix of integers"));
+    protected static boolean[] toPrimitive (Boolean[] arr) {
+        boolean[] primitiveArr = new boolean[arr.length];
+        for (int i = 0; i < arr.length; i++) primitiveArr[i] = arr[i];
+        return primitiveArr;
     }
-
-    public static double[] forDoubleArray (String prompt) {
-        try {
-            return parseDoubleArray(parse1dArray(getArrayString(prompt)));
+    protected static Object[] toPrimitive (Object[] arr) {
+        Object[] primitiveMatrix = new Object[arr.length];
+        for (int i = 0; i < arr.length; i++) {
+            Class c = arr[i].getClass();
+            if (c == Integer.class.arrayType()) primitiveMatrix[i] = toPrimitive((Integer[]) arr[i]);
+            else if (c == Double.class.arrayType()) primitiveMatrix[i] = toPrimitive((Double[]) arr[i]);
+            else if (c == Character.class.arrayType()) primitiveMatrix[i] = toPrimitive((Character[]) arr[i]);
+            else if (c == Boolean.class.arrayType()) primitiveMatrix[i] = toPrimitive((Boolean[]) arr[i]);
+            else {
+                System.out.println(arr[i].getClass().getName());
+                primitiveMatrix[i] = toPrimitive((Object[]) arr[i]);
+            }
         }
-        catch (Exception e) {
-            System.out.println(e.getMessage());
-            return forDoubleArray(prompt);
-        }
-    }
-    public static double[] forDoubleArray () {
-        return forDoubleArray(defaultPrompt("Array of numbers"));
-    }
-    public static double[][] forDoubleMatrix (String prompt) {
-        try {
-            return parse2dDoubleArray(parse2dArray(getArrayString(prompt)));
-        }
-        catch (Exception e) {
-            System.out.println(e.getMessage());
-            return forDoubleMatrix(prompt);
-        }
-    }
-    public static double[][] forDoubleMatrix () {
-        return forDoubleMatrix(defaultPrompt("Matrix of numbers"));
+        return primitiveMatrix;
     }
 
-    public static boolean[] forBooleanArray (String prompt) {
-        try {
-            return parseBooleanArray(parse1dArray(getArrayString(prompt)));
-        }
-        catch (Exception e) {
-            System.out.println(e.getMessage());
-            return forBooleanArray(prompt);
-        }
+    protected static boolean hasDepth (Object[] arr, int target) {
+        int depth = getDepth(arr);
+        return depth == -Exercises.Infinity || depth == target; // Why is Exercises liam.chapter4.Exercises if i'm in liam.chapter7?
     }
-    public static boolean[] forBooleanArray () {
-        return forBooleanArray(defaultPrompt("Array of boolean values"));
-    }
-    public static boolean[][] forBooleanMatrix (String prompt) {
-        try {
-            return parse2dBooleanArray(parse2dArray(getArrayString(prompt)));
+    private static int getDepth (Object[] arr) {
+        if (arr.length == 0) return -Exercises.Infinity;
+        int[] depths = new int[arr.length];
+        for (int i = 0; i < arr.length; i++) {
+            if (arr[i].getClass().isArray()) depths[i] = getDepth((Object[]) arr[i]);
         }
-        catch (Exception e) {
-            System.out.println(e.getMessage());
-            return forBooleanMatrix(prompt);
-        }
-    }
-    public static boolean[][] forBooleanMatrix () {
-        return forBooleanMatrix(defaultPrompt("Matrix of boolean values"));
+        return $.max(depths) + 1;
     }
 
-    public static char[] forCharArray (String prompt) {
-        try {
-            return parseCharArray(parse1dArray(getArrayString(prompt)));
-        }
-        catch (Exception e) {
-            System.out.println(e.getMessage());
-            return forCharArray(prompt);
-        }
-    }
-    public static char[] forCharArray () {
-        return forCharArray(defaultPrompt("Array of characters"));
-    }
-    public static char[][] forCharMatrix (String prompt) {
-        try {
-            return parse2dCharArray(parse2dArray(getArrayString(prompt)));
-        }
-        catch (Exception e) {
-            System.out.println(e.getMessage());
-            return forCharMatrix(prompt);
-        }
-    }
-    public static char[][] forCharMatrix () {
-        return forCharMatrix(defaultPrompt("Matrix of characters"));
+    private static String getArrayTypeString (Class type, int depth) {
+        return type.getName() + liam.chapter4.Exercises.exercise2("[]", depth);
     }
 }

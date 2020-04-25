@@ -4,7 +4,8 @@ import java.util.Arrays;
 
 public class Exercises {
     public static void main (String[] args) {
-        while (true) System.out.println(exercise9(Ask.forIntArray()));
+        //int[] x = (int[]) Ask.forArray(int.class);
+        //while (true) System.out.println(exercise9());
     }
     public static int exercise1 (int[] arr, int val) { // last index of
         int index = -1;
