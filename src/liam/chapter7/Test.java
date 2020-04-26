@@ -1,11 +1,34 @@
 package liam.chapter7;
 
 import java.util.Arrays;
+import java.util.regex.Pattern;
 
 public class Test {
+    public static Object def = new Object() {
+      public final int foo = 2;
+    };
     public static void main (String[] args) {
-        new Object[]{2, new Object[]{3, 4}, "hi"};
-        System.out.println(new Integer[][]{{2}}[0].getClass() == Integer.class.arrayType());
+        //ArrayCaster.cast(new Object[]{}, Integer.valueOf(2));
+        //System.out.println(int[][][].class.getComponentType().getSimpleName());
+        System.out.println(Arrays.deepToString(ArrayCaster.cast(new Object[][][]{{{1, 2}, {3, 4}}}, Integer[][].class)));
+        /*Object[][] o = new Object[][]{{1, 2}, {3, 4}};
+        Integer[][] n = new Integer[o.length][];
+        for (int i = 0; i < o.length; i++) n[i] = Arrays.copyOf(o[i], o[i].length, Integer[].class);
+        System.out.println(Arrays.deepToString(n));*/
+        /*int bar = (int) Integer.valueOf(1);
+        int foo = ArrayCaster.cast(Integer.valueOf(2), int.class);
+        //int[] f = Arrays.copyOf(new Object[]{2, 3}, 2, int[].class);
+        /*int depth = 0;
+        final String name = int[][].class.getName();
+        for (depth = 0; depth < name.length(); depth++) {
+            if (name.charAt(depth) != '[') break;
+        }
+        System.out.println(depth);*/
+        /*Integer[] x = ArrayCaster.cast(new Object[]{}, int[].class);
+        System.out.println(1);
+        ArrayCaster.cast(new Object[]{}, Integer.class);
+        System.out.println(2);
+        //System.out.println(Integer[].class.);
         //int.class;
         //System.out.println(Ask.STRING_REGEX.matcher("\"foo\\\\\"").matches());
         //System.out.println(boolean.class.isPrimitive());
@@ -17,7 +40,7 @@ public class Test {
         //while (true) System.out.println();
     }
     public static <T> void classTest (Class<T> c) {
-        new Integer(2).getClass();
+        Integer.valueOf(2).getClass();
         //System.out.println(T.)
     }
     public static void incrementAll (int[] ints) {
