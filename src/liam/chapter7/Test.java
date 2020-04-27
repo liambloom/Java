@@ -10,7 +10,7 @@ public class Test {
     public static void main (String[] args) {
         //ArrayCaster.cast(new Object[]{}, Integer.valueOf(2));
         //System.out.println(int[][][].class.getComponentType().getSimpleName());
-        System.out.println(Arrays.deepToString(ArrayCaster.cast(new Object[][][]{{{1, 2}, {3, 4}}}, Integer[][].class)));
+        //System.out.println(Arrays.deepToString(ArrayCaster.cast(new Object[][][]{{{1, 2}, {3, 4}}}, Integer[][].class)));
         /*Object[][] o = new Object[][]{{1, 2}, {3, 4}};
         Integer[][] n = new Integer[o.length][];
         for (int i = 0; i < o.length; i++) n[i] = Arrays.copyOf(o[i], o[i].length, Integer[].class);
