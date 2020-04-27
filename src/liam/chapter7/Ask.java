@@ -6,7 +6,7 @@ import java.util.regex.Pattern;
 public class Ask extends liam.chapter4.Ask {
     public static void main (String[] args) {
         while (true) {
-            Object[] x = forFixedDepthArray(Integer[].class);
+            Object[] x = forArray(Integer.class, 1);
             for (Object e : x) System.out.println(e.getClass().getSimpleName());
             Integer y = (Integer) x[0];
             System.out.println(y);
@@ -68,51 +68,59 @@ public class Ask extends liam.chapter4.Ask {
     public static Object[] forArray () {
         return forArray(defaults.prompt("Array"), defaults.type);
     }
-    public static <T> T[] forFixedDepthArray(final String prompt, final Class<T[]> type) {
-        int depth;
-        String typeName = type.getName();
-        for (depth = 0; depth < typeName.length(); depth++) {
-            if (typeName.charAt(depth) == '[') break;
-        }
+    public static Object[] forArray (final String prompt, final Class type, final int depth) {
         if (depth < 1) throw new IllegalArgumentException("An array cannot have a depth of less than 1");
         if (depth == 1 && type.isPrimitive()) throw new IllegalArgumentException("For a 1-dimensional primitive array, use one of the primitive array methods");
+        final Class wrapper;
+        if (type.isPrimitive()) {
+            if (depth == 1) throw new IllegalArgumentException("One-dimensional primitive arrays must be parsed by their type specific methods");
+            if (type == int.class) wrapper = Integer.class;
+            else if (type == double.class) wrapper = Double.class;
+            else if (type == char.class) wrapper = Character.class;
+            else if (type == boolean.class) wrapper = Boolean.class;
+            else throw new IllegalArgumentException("Received type " + type.getSimpleName() + ", expected one of int, double, char, boolean, Integer, Double, Character, Boolean, String");
+        }
+        else wrapper = type;
 
-        T[] arr = Parser.parseToType(forArray(prompt, type), type);
+        Object[] arr = forArray(prompt, wrapper);
         if (type.isPrimitive()) Parser.toPrimitive(arr);
         if (Parser.hasDepth(arr, depth)) return arr;
         else {
             System.out.println("Please enter a valid " + getArrayTypeString(type, depth));
-            return forFixedDepthArray(prompt, type);
+            return forArray(prompt, type, depth);
         }
 
     }
-    public static <T> T[] forFixedDepthArray(final Class<T[]> type) {
-        return forFixedDepthArray(defaults.prompt(type.getSimpleName()), type);
+    public static Object[] forArray (final Class type, final int depth) {
+        return forArray(defaults.prompt(getArrayTypeString(type, depth)), type, depth);
     }
-    public static <T> T[] forFixedDepthArray(final String prompt) {
-        return forFixedDepthArray(prompt, (Class<T[]>) defaults.type); // this probably won't work
+    public static Object[] forArray (final String prompt, final int depth) {
+        return forArray(prompt, defaults.type, depth);
+    }
+    public static Object[] forArray (final int depth) {
+        return forArray(defaults.type, depth);
     }
 
     public static int[] forPrimitiveIntArray (String prompt) {
-        return Parser.toPrimitive((Integer[]) forFixedDepthArray(prompt, Integer[].class));
+        return Parser.toPrimitive((Integer[]) forArray(prompt, Integer.class, 1));
     }
     public static int[] forPrimitiveIntArray () {
         return forPrimitiveIntArray(defaults.prompt("int[]"));
     }
     public static double[] forPrimitiveDoubleArray (String prompt) {
-        return Parser.toPrimitive((Double[]) forFixedDepthArray(prompt, Double[].class));
+        return Parser.toPrimitive((Double[]) forArray(prompt, Double.class, 1));
     }
     public static double[] forPrimitiveDoubleArray () {
         return forPrimitiveDoubleArray(defaults.prompt("double[]"));
     }
     public static char[] forPrimitiveCharArray (String prompt) {
-        return Parser.toPrimitive((Character[]) forFixedDepthArray(prompt, Character[].class));
+        return Parser.toPrimitive((Character[]) forArray(prompt, Character.class, 1));
     }
     public static char[] forPrimitiveCharArray () {
         return forPrimitiveCharArray(defaults.prompt("char[]"));
     }
     public static boolean[] forPrimitiveBoolArray (String prompt) {
-        return Parser.toPrimitive((Boolean[]) forFixedDepthArray(prompt, Boolean[].class));
+        return Parser.toPrimitive((Boolean[]) forArray(prompt, Boolean.class, 1));
     }
     public static boolean[] forPrimitiveBoolArray () {
         return forPrimitiveBoolArray(defaults.prompt("boolean[]"));
@@ -316,14 +324,6 @@ class Parser {
         int index = "tbnrf'\"\\".indexOf(c);
         if (index == -1) throw new IllegalArgumentException("\"\\" + c + "\" is not a valid escape sequence");
         return "\t\b\n\r\f'\"\\".charAt(index); // I used strings instead of arrays because they have an indexOf method
-    }
-
-    public static <T> T[] parseToType (Object[] o, Class<T[]> type) {
-        return Arrays.copyOf(o, o.length, type);
-    }
-    public static <T> T[][] parseToDeepType (Object[][] o, Class<T[][]> type) {
-        T[][] n = (T[][]) new Object[o.length][];
-        for (int i = 0; i < o.length; i++) o[i] = 
     }
 
     protected static String removeLeadingTrailingWhitespace (String str) {
