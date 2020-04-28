@@ -3,19 +3,8 @@ package liam.chapter7;
 import java.util.Arrays;
 import java.lang.reflect.Array;
 
-//@SuppressWarnings("unchecked")
+@SuppressWarnings("unchecked")
 public class Exercises {
-    public static void main (String[] args) {
-        //Integer[][] x = none(new Integer[][]{{2, 3}});
-        /*Integer[][] foo = *///System.out.println(exercise19(new Integer[][]{{1, 2, 3}}, new Integer[][]{{4, 5, 6}}).getClass().getSimpleName());
-        /*System.out.println(foo.getClass().getSimpleName());
-        System.out.println(foo[0][0].getClass().getSimpleName());
-        System.out.println(Arrays.deepToString(foo));*/
-        //[[2, 7, 6], [9, 5, 1], [4, 3, 8]]
-        //System.out.println(exercise20(new Integer[][]{{2, 7, 6}, {9, 5, 1}, {4, 3, 8}}));
-        System.out.println(exercise19(new Integer[][]{{1, 0}, {5, 2}}, new Double[][]{{4.2, 8.1}, {3.3, 7.4}}).getClass().getName()); // Why tf doesn't this throw an error
-        // And why does it return an Integer[][]. If it returned an Number[][] I would understand, but where tf did Integer[][] come from?
-    }
     public static <T> int exercise1 (T[] arr, T val) { // last index of
         int index = -1;
         for (int i = 0; i < arr.length; i++) if (arr[i].equals(val)) index = i;
@@ -96,12 +85,12 @@ public class Exercises {
         }
         return false;
     }
-    /*public static <T extends Number> T[] exercise15 (final T[] arr) { // returns array with sum of each consecutive pair
+    public static <T extends Number> T[] exercise15 (final T[] arr) { // returns array with sum of each consecutive pair
         final T[] collapsed = Arrays.copyOfRange(arr, 0, (int) Math.ceil(arr.length / 2.0));
         collapsed[collapsed.length - 1] = arr[arr.length - 1];
-        for (int i = 0; i < arr.length / 2; i++) collapsed[i] = getClass((T) Integer.valueOf(0)).cast(arr[2 * i].doubleValue() + arr[2 * i + 1].doubleValue());
+        for (int i = 0; i < arr.length / 2; i++) collapsed[i] = $.castNumber(arr[2 * i].doubleValue() + arr[2 * i + 1].doubleValue(), arr);
         return collapsed;
-    }*/
+    }
     public static <T> T[] exercise16 (final T[] arr1, final T[] arr2) { // concatenates arr1 and arr2
         T[] merged = Arrays.copyOf(arr1, arr1.length + arr2.length);
         for (int i = 0; i < arr2.length; i++) merged[i + arr1.length] = arr2[i];
@@ -133,31 +122,16 @@ public class Exercises {
     }
     // You said to skip chapter 6, and exercise 18 requires it
     public static <T extends Number> T[][] exercise19 (T[][] m1, T[][] m2) { // adds matrices
+        if (!m1.getClass().equals(m2.getClass())) throw new IllegalArgumentException("Cannot add matrices of different types");
         if (m1.length == 0) return m1;
         else {
             for (T[] arr : m1) {
                 if (arr.length == 0) return m1;
             }
         }
-        T[][] ms = (T[][]) Array.newInstance(m1[0][0].getClass(), m1.length, m1[0].length);//new Number[m1.length][m1[0].length]; Arrays.copyOf(new Number[m1.length][m1[0].length], m1.length, T[][].class);
+        T[][] ms = (T[][]) Array.newInstance(m1[0][0].getClass(), m1.length, m1[0].length); // Here lies the only warning in the Exercises
         for (int i = 0; i < ms.length; i++) {
             for (int j = 0; j < ms[0].length; j++) {
-                /**
-                 * T sum = $.castNumber(m1[i][j].doubleValue() + m2[i][j].doubleValue(), m1[i][j].getClass());
-                 *
-                 * This line shows my biggest problem with java's types
-                 *
-                 * If you uncomment it, you will see that it throws a compilation error
-                 * Error:(144, 37) java: incompatible types: inference variable T has incompatible bounds
-                    equality constraints: capture#1 of ? extends java.lang.Number
-                    lower bounds: T,java.lang.Number
-                 *
-                 * However, if you look at the definitions or m1 and $.castNumber(double d, Class<T> t), you will see that it is valid
-                 * NVM, look in main. I thought I finally understood java's types. I don't. :(
-                 *
-                 * The method below throws as (suppressed) warning instead, but should not be necessary, as it is an extra method call, which is bad for performance
-                 * And performance improvements are what java's type system seeks to create, but here it is preventing instead of creating
-                 */
                 T sum = $.castNumber(m1[i][j].doubleValue() + m2[i][j].doubleValue(), m1[i][j]);
                 ms[i][j] = sum;
             }

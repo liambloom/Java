@@ -41,7 +41,7 @@ class $ { // random utility functions that don't fit in anywhere
     public static <T extends Number> T sum (T[] arr) {
         double[] prim = new double[arr.length];
         for (int i = 0; i < arr.length; i++) prim[i] += arr[i].doubleValue();
-        return (T) (Double) sum(prim);
+        return castNumber(sum(prim), arr);
     }
     public static double sum (double[] arr) {
         double sum = 0;
