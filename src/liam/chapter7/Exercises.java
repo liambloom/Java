@@ -1,49 +1,210 @@
 package liam.chapter7;
 
 import java.util.Arrays;
+import java.lang.reflect.Array;
 
+//@SuppressWarnings("unchecked")
 public class Exercises {
     public static void main (String[] args) {
-        //int[] x = (int[]) Ask.forArray(int.class);
-        //while (true) System.out.println(exercise9());
+        //Integer[][] x = none(new Integer[][]{{2, 3}});
+        /*Integer[][] foo = *///System.out.println(exercise19(new Integer[][]{{1, 2, 3}}, new Integer[][]{{4, 5, 6}}).getClass().getSimpleName());
+        /*System.out.println(foo.getClass().getSimpleName());
+        System.out.println(foo[0][0].getClass().getSimpleName());
+        System.out.println(Arrays.deepToString(foo));*/
+        //[[2, 7, 6], [9, 5, 1], [4, 3, 8]]
+        //System.out.println(exercise20(new Integer[][]{{2, 7, 6}, {9, 5, 1}, {4, 3, 8}}));
+        System.out.println(exercise19(new Integer[][]{{1, 0}, {5, 2}}, new Double[][]{{4.2, 8.1}, {3.3, 7.4}}).getClass().getName()); // Why tf doesn't this throw an error
+        // And why does it return an Integer[][]. If it returned an Number[][] I would understand, but where tf did Integer[][] come from?
     }
-    public static int exercise1 (int[] arr, int val) { // last index of
+    public static <T> int exercise1 (T[] arr, T val) { // last index of
         int index = -1;
-        for (int i = 0; i < arr.length; i++) if (arr[i] == val) index = i;
+        for (int i = 0; i < arr.length; i++) if (arr[i].equals(val)) index = i;
         return index;
     }
-    public static int exercise2 (int[] arr) { // range
-        return $.max(arr) - $.min(arr) + 1;
+    public static <T extends Number & Comparable<T>> T exercise2 (T[] arr) { // range
+        return $.castNumber($.max(arr).doubleValue() - $.min(arr).doubleValue() + 1, arr);
     }
-    public static int exercise3 (int[] arr, int min, int max) { // # of elements between min and max (inclusive)
+    public static <T extends Number> int exercise3 (T[] arr, T min, T max) { // # of elements between min and max (inclusive)
         int inRange = 0;
-        for (int e : arr) if (e >= min && e <= max) inRange++;
+        for (T e : arr) if (e.doubleValue() >= min.doubleValue() && e.doubleValue() <= max.doubleValue()) inRange++;
         return inRange;
     }
-    public static boolean exercise4 (double[] arr) { // is sorted?
+    public static <T> boolean exercise4 (T[] arr) { // is sorted?
         return Arrays.equals(arr, $.sortedCopy(arr));
     }
-    public static int exercise5 (int[] arr) { // mode (min if tie)
-        int[] counter = new int[101];
+    public static Integer exercise5 (Integer[] arr) { // mode (min if tie)
+        Integer[] counter = new Integer[101];
         for (int i : arr) counter[i]++;
         return $.maxIndex(counter);
     }
-    public static double exercise6 (int[] ints) { // standard deviation (√(∑((a[i] - avg(a))^2)|i=0 to i=a.length-1)(a[i] - avg(a)^2) / (a.length - 1))
+    public static <T extends Number> double exercise6 (T[] ints) { // standard deviation (√(∑((a[i] - avg(a))^2)|i=0 to i=a.length-1)(a[i] - avg(a)^2) / (a.length - 1))
         final double avg = $.avg(ints);
         double numerator = 0;
-        for (int i : ints) numerator += Math.pow(i - avg, 2); // The formula in the book is wrong, the book says a[i] - avg^2, correct is (a[i] - avg)^2
+        for (T i : ints) numerator += Math.pow(i.doubleValue() - avg, 2); // The formula in the book is wrong, the book says a[i] - avg^2, correct is (a[i] - avg)^2
         return Math.sqrt(numerator / (ints.length - 1));
     }
-    public static int exercise7 (int n, int[] arr) { // returns the nth highest value in the array
+    public static <T extends Number> T exercise7 (int n, T[] arr) { // returns the nth highest value in the array
         return $.sortedCopy(arr)[arr.length - 1 - n];
     }
-    public static int exercise8 (int[] arr) {
+    public static <T extends Number> T exercise8 (T[] arr) { // median
         return $.sortedCopy(arr)[arr.length / 2];
     }
-    public static int exercise9 (int[] arr) {
-        if (arr.length < 2) return 0;
-        int minGap = liam.chapter4.Exercises.Infinity;
-        for (int i = 0; i < arr.length - 1; i++) minGap = Math.min(minGap, arr[i + 1] - arr[i]);
+    public static <T extends Number> T exercise9 (T[] arr) { // smallest gap between consecutive elements
+        if (arr.length < 2) return $.castNumber(0, arr);
+        T minGap = $.castNumber(liam.chapter4.Exercises.Infinity, arr);
+        for (int i = 0; i < arr.length - 1; i++) minGap = $.castNumber(Math.min(minGap.doubleValue(), arr[i + 1].doubleValue() - arr[i].doubleValue()), arr);
         return minGap;
+    }
+    public static <T extends Number> double exercise10 (T[] a) { // % of elements that are even
+        int even = 0;
+        for (T i : a) {
+            if (i.doubleValue() % 2 == 0) even++;
+        }
+        return (double) even / a.length * 100;
+    }
+    public static <T extends Number> boolean exercise11 (final T[] arr) { // is every element unique
+        final T[] sorted = $.sortedCopy(arr);
+        for (int i = 0; i < sorted.length - 1; i++) {
+            if (sorted[i].equals(sorted[i + 1])) return false;
+        }
+        return true;
+    }
+    public static <T extends Number & Comparable<T>> T exercise12 (T[] a, T p) { // largest element in a that isn't higher than p (rules like price is right or blackjack)
+        T g = $.castNumber(-1, p);
+        for (T i : a) {
+            if (i.compareTo(p) <= 0) g = $.castNumber(Math.max(g.doubleValue(), i.doubleValue()), p);
+        }
+        return g;
+    }
+    public static <T extends Number & Comparable<T>> int exercise13 (T[] a) { // longest consecutive sequence of non-descending numbers
+        int longest = 0;
+        int current = 0;
+        for (int i = 0; i < a.length - 1; i++) {
+            if (a[i].compareTo(a[i + 1]) <= 0) current++;
+            else current = 1;
+            longest = Math.max(longest, current);
+        }
+        return longest;
+    }
+    public static <T> boolean exercise14 (T[] container, T[] containee) { // checks if the sequence containee is in container
+        outer: for (int i = 0; i < container.length - containee.length; i++) { // This is the first time I have actually found a use for labels
+            if (!container[i].equals(containee[i])) continue;
+            for (int j = 0; j < containee.length; j++) {
+                if (!container[i + j].equals(containee[j])) continue outer;
+            }
+            return true;
+        }
+        return false;
+    }
+    /*public static <T extends Number> T[] exercise15 (final T[] arr) { // returns array with sum of each consecutive pair
+        final T[] collapsed = Arrays.copyOfRange(arr, 0, (int) Math.ceil(arr.length / 2.0));
+        collapsed[collapsed.length - 1] = arr[arr.length - 1];
+        for (int i = 0; i < arr.length / 2; i++) collapsed[i] = getClass((T) Integer.valueOf(0)).cast(arr[2 * i].doubleValue() + arr[2 * i + 1].doubleValue());
+        return collapsed;
+    }*/
+    public static <T> T[] exercise16 (final T[] arr1, final T[] arr2) { // concatenates arr1 and arr2
+        T[] merged = Arrays.copyOf(arr1, arr1.length + arr2.length);
+        for (int i = 0; i < arr2.length; i++) merged[i + arr1.length] = arr2[i];
+        return merged;
+    }
+    public static int[] exercise17 (String s) { // returns array [a, e, i, o, u] with count of each vowel
+        int[] counts = new int[5];
+        s = s.toLowerCase();
+        for (int i = 0; i < s.length(); i++) {
+            switch (s.charAt(i)) {
+                case 'a':
+                    counts[0]++;
+                    break;
+                case 'e':
+                    counts[1]++;
+                    break;
+                case 'i':
+                    counts[2]++;
+                    break;
+                case 'o':
+                    counts[3]++;
+                    break;
+                case 'u':
+                    counts[4]++;
+                    break;
+            }
+        }
+        return counts;
+    }
+    // You said to skip chapter 6, and exercise 18 requires it
+    public static <T extends Number> T[][] exercise19 (T[][] m1, T[][] m2) { // adds matrices
+        if (m1.length == 0) return m1;
+        else {
+            for (T[] arr : m1) {
+                if (arr.length == 0) return m1;
+            }
+        }
+        T[][] ms = (T[][]) Array.newInstance(m1[0][0].getClass(), m1.length, m1[0].length);//new Number[m1.length][m1[0].length]; Arrays.copyOf(new Number[m1.length][m1[0].length], m1.length, T[][].class);
+        for (int i = 0; i < ms.length; i++) {
+            for (int j = 0; j < ms[0].length; j++) {
+                /**
+                 * T sum = $.castNumber(m1[i][j].doubleValue() + m2[i][j].doubleValue(), m1[i][j].getClass());
+                 *
+                 * This line shows my biggest problem with java's types
+                 *
+                 * If you uncomment it, you will see that it throws a compilation error
+                 * Error:(144, 37) java: incompatible types: inference variable T has incompatible bounds
+                    equality constraints: capture#1 of ? extends java.lang.Number
+                    lower bounds: T,java.lang.Number
+                 *
+                 * However, if you look at the definitions or m1 and $.castNumber(double d, Class<T> t), you will see that it is valid
+                 * NVM, look in main. I thought I finally understood java's types. I don't. :(
+                 *
+                 * The method below throws as (suppressed) warning instead, but should not be necessary, as it is an extra method call, which is bad for performance
+                 * And performance improvements are what java's type system seeks to create, but here it is preventing instead of creating
+                 */
+                T sum = $.castNumber(m1[i][j].doubleValue() + m2[i][j].doubleValue(), m1[i][j]);
+                ms[i][j] = sum;
+            }
+        }
+        return ms;
+    }
+    public static <T extends Number> boolean exercise20 (T[][] m) { // checks if something is a magic square
+        // Check for valid square
+        final int height = m.length;
+        if (height == 0) throw new IllegalArgumentException("A magic square cannot have a height of 0");
+        final int width = m[0].length;
+        if (height != width) throw new IllegalArgumentException("A magic square must be a square (duh).");
+
+        // Convert T[][] to Double[][] because generics are hard
+        Double[][] dblMatrix = new Double[height][];
+        for (int i = 0; i < dblMatrix.length; i++) {
+            final int rowWidth = m[i].length;
+            if (width != rowWidth) throw new IllegalArgumentException("A magic square cannot be jagged");
+            dblMatrix[i] = new Double[rowWidth];
+            for (int j = 0; j < dblMatrix[i].length; j++) dblMatrix[i][j] = m[i][j].doubleValue();
+        }
+        double sum = $.sum(dblMatrix[0]);
+
+        // Check rows
+        for (int i = 0; i < width; i++) {
+            if ($.sum(dblMatrix[i]) != sum) return false;
+        }
+
+        // Check columns
+        for (int i = 0; i < height; i++) {
+            double colSum = 0;
+            for (Double[] row : dblMatrix) colSum += row[i];
+            if (colSum != sum) return false;
+        }
+
+        // Check top-left to bottom-right
+        {
+            double diagonalSum = 0;
+            for (int i = 0; i < width; i++) diagonalSum += dblMatrix[i][i];
+            if (diagonalSum != sum) return false;
+        }
+
+        // Check for top-right to bottom-left
+        {
+            double diagonalSum = 0;
+            for (int i = 0; i < width; i++) diagonalSum += dblMatrix[i][width - 1 - i];
+            return diagonalSum == sum;
+        }
     }
 }

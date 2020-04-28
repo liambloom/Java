@@ -8,51 +8,67 @@ public class Main {
     }
 }
 
+@SuppressWarnings("unchecked")
 class $ { // random utility functions that don't fit in anywhere
-    public static int min (int[] arr) {
+    public static <T extends Number & Comparable<T>> T min (T[] arr) {
         return arr[minIndex(arr)];
     }
-    public static int max (int[] arr) {
+    public static <T extends Number & Comparable<T>> T max (T[] arr) {
         return arr[maxIndex(arr)];
     }
-    public static int minIndex (int[] arr) {
-        int min = arr[0];
+    public static <T extends Number & Comparable<T>> int minIndex (T[] arr) {
+        T min = arr[0];
         int minIndex = 0;
         for (int i = 0; i < arr.length; i++) {
-            if (min > arr[i]) {
+            if (min.compareTo(arr[i]) > 0) {
                 min = arr[i];
                 minIndex = i;
             }
         }
         return minIndex;
     }
-    public static int maxIndex (int[] arr) {
-        int max = arr[0];
+    public static <T extends Number & Comparable<T>> int maxIndex (T[] arr) {
+        T max = arr[0];
         int maxIndex = 0;
         for (int i = 0; i < arr.length; i++) {
-            if (max < arr[i]) {
+            if (max.compareTo(arr[i]) < 0) {
                 max = arr[i];
                 maxIndex = i;
             }
         }
         return maxIndex;
     }
-    public static int sum (int[] arr) {
-        int sum = 0;
-        for (int i : arr) sum += i;
+    public static <T extends Number> T sum (T[] arr) {
+        double[] prim = new double[arr.length];
+        for (int i = 0; i < arr.length; i++) prim[i] += arr[i].doubleValue();
+        return (T) (Double) sum(prim);
+    }
+    public static double sum (double[] arr) {
+        double sum = 0;
+        for (double i : arr) sum += i;
         return sum;
     }
-    public static double avg (int[] arr) {
-        return sum(arr) / arr.length;
+    public static <T extends Number> double avg (T[] arr) {
+        return sum(arr).doubleValue() / arr.length;
     }
-    public static int[] sortedCopy (int[] arr) {
-        final int[] copy = Arrays.copyOf(arr, arr.length);
+    public static <T> T[] sortedCopy (T[] arr) {
+        final T[] copy = Arrays.copyOf(arr, arr.length);
         Arrays.sort(copy);
         return copy;
     }
-    public static double[] sortedCopy (double[] arr) {
-        final double[] copy = Arrays.copyOf(arr, arr.length);
-        Arrays.sort(copy);
-        return copy;
+    public static <T extends Number> T castNumber (double d, Class<T> t) {
+        if (t.equals(Byte.class)) return (T) (Byte) (byte) Math.round(d);
+        else if (t.equals(Short.class)) return (T) (Short) (short) Math.round(d);
+        else if (t.equals(Integer.class)) return (T) (Integer) (int) Math.round(d);
+        else if (t.equals(Long.class)) return (T) (Long) Math.round(d);
+        else if (t.equals(Float.class)) return (T) (Float) (float) d;
+        else if (t.equals(Double.class)) return (T) (Double) d;
+        else throw new IllegalArgumentException("T must be one of Byte, Short, Integer, Long, Float, Double");
+    }
+    public static <T extends Number> T castNumber (double d, T[] a) {
+        return castNumber(d, (Class<T>) a.getClass().getComponentType());
+    }
+    public static <T extends Number> T castNumber (double d, T v) {
+        return castNumber(d, (Class<T>) v.getClass());
     }
 }
