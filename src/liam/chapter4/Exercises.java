@@ -1,7 +1,9 @@
 package liam.chapter4;
 
+import liam.Globals;
+
 public class Exercises {
-  public static int Infinity = (int) (1.0 / 0.0);
+  public static int Infinity = (int) Globals.Math.Infinity;
   public static void main (String[] args) {
     exercise21(500);
   }

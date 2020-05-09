@@ -1,6 +1,8 @@
 package liam.chapter5;
 
 import java.util.regex.Pattern;
+
+import liam.Globals;
 import liam.chapter4.Ask;
 
 public class Exercises {
@@ -121,14 +123,14 @@ public class Exercises {
     System.out.println("Average was " + (double) total / inputs);
   }
   public static boolean exercise13 (int a, int b, int c) {
-    int min = $.min(a, b, c);
-    int max = $.max(a, b, c);
+    int min = Globals.Math.min(a, b, c);
+    int max = Globals.Math.max(a, b, c);
     int mid = $.mid(a, b, c);
     return min + 1 == mid && min + 2 == max;
   }
   public static boolean exercise14 (int a, int b, int c) {
-    int min = $.min(a, b, c);
-    int max = $.max(a, b, c);
+    int min = Globals.Math.min(a, b, c);
+    int max = Globals.Math.max(a, b, c);
     return $.mid(a, b, c) == (double) (min + max) / 2;
   }
   public static boolean exercise15 (int a, int b, int c) {

@@ -5,6 +5,9 @@ import java.lang.reflect.Array;
 
 @SuppressWarnings("unchecked")
 public class Exercises {
+	public static void main (String[] args) {
+		System.out.println("foo");
+	}
     public static <T> int exercise1 (T[] arr, T val) { // last index of
         int index = -1;
         for (int i = 0; i < arr.length; i++) if (arr[i].equals(val)) index = i;
