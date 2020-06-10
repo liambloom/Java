@@ -1,7 +1,6 @@
 package liam.chapter8;
 
 import liam.Globals;
-
 import java.util.function.BiFunction;
 
 public class Rectangle { // Exercise 18
