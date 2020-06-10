@@ -32,4 +32,7 @@ public final class Globals {
             return max;
         }
     }
+    public static String repeat (String str, int repititions) {
+        return liam.chapter4.Exercises.exercise2(str, repititions);
+    }
 }
