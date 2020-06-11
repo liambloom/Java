@@ -17,4 +17,8 @@ public class Cash implements Asset {
     public void setAmount(double amount) {
         this.amount = amount;
     }
+
+    public boolean equals (Cash o) {
+        return this.getMarketValue() == o.getMarketValue();
+    }
 }

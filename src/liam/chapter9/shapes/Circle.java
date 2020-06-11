@@ -1,7 +1,7 @@
 package liam.chapter9.shapes;
 
 public class Circle implements Shape {
-    private double radius;
+    public final double radius;
     public Circle(double radius) {
         this.radius = radius;
     }
@@ -10,5 +10,9 @@ public class Circle implements Shape {
     }
     public double getPerimeter() {
         return 2.0 * Math.PI * radius;
+    }
+
+    public boolean equals (Circle other) {
+        return this.radius == other.radius;
     }
 }
