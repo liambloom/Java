@@ -29,8 +29,8 @@ public class $ {
         });
         */
     }
-    public static <T> void iteratePredicate (ListIterator<T> iterator, Consumer<Predicate<T>> function, BiFunction<T, Integer, Boolean> callback) {
-        iterateFunction(iterator, t -> function.accept(t::apply), callback);
+    public static <T> void iterate (ListIterator<T> iterator, Consumer<Predicate<T>> function, BiPredicate<T, Integer> callback) {
+        iterate(iterator, (Consumer<Function<T, Boolean>>) t -> function.accept(t::apply), callback::test);
         /*
         This one liner is confusing, so here is a longer version that explains itself
         iterateFunction(list, t -> { // The second argument must consume a Function<T, R>. t is a Function<T, R>
