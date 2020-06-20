@@ -1,19 +1,20 @@
 package liam.chapter10;
 
+import javax.lang.model.type.NullType;
 import java.util.ArrayList;
 import java.util.ListIterator;
 import java.util.function.*;
 
 public class $ {
-    public static <T, R> void iterateFunction (ListIterator<T> iterator, Consumer<Function<T, R>> function, BiFunction<T, Integer, R> callback) {
+    public static <T, R> void iterate (ListIterator<T> iterator, Consumer<Function<T, R>> function, BiFunction<T, Integer, R> callback) {
         function.accept(t -> {
             final R r = callback.apply(t, iterator.nextIndex());
             iterator.next();
             return r;
         });
     }
-    public static <T> void iterateConsumer (ListIterator<T> iterator, Consumer<Consumer<T>> consumer, BiConsumer<T, Integer> callback) {
-        iterateFunction(iterator, t -> consumer.accept(t::apply), (t, i) -> {
+    public static <T> void iterate (ListIterator<T> iterator, Consumer<Consumer<T>> consumer, BiConsumer<T, Integer> callback) {
+        iterate(iterator, (Consumer<Function<T, NullType>>) t -> consumer.accept(t::apply), (t, i) -> {
             callback.accept(t, i);
             return null;
         });

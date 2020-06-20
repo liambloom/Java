@@ -53,7 +53,7 @@ public class Exercises {
         a.add(0, min);
     }
     public static <T> void exercise7 (ArrayList<T> a) { // Remove duplicates (assumes that a is sorted)
-        $.iteratePredicate(a.listIterator(), a::removeIf, (e, i) -> i != a.indexOf(e));
+        $.iterate(a.listIterator(), a::removeIf, (e, i) -> i != a.indexOf(e));
     }
 
 }
