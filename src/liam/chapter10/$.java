@@ -1,6 +1,5 @@
 package liam.chapter10;
 
-import javax.lang.model.type.NullType;
 import java.util.ArrayList;
 import java.util.ListIterator;
 import java.util.function.*;
@@ -14,7 +13,7 @@ public class $ {
         });
     }
     public static <T> void iterate (ListIterator<T> iterator, Consumer<Consumer<T>> consumer, BiConsumer<T, Integer> callback) {
-        iterate(iterator, (Consumer<Function<T, NullType>>) t -> consumer.accept(t::apply), (t, i) -> {
+        iterate(iterator, (Consumer<Function<T, Void>>) t -> consumer.accept(t::apply), (t, i) -> {
             callback.accept(t, i);
             return null;
         });
