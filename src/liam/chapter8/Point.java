@@ -11,7 +11,6 @@ public class Point {
     public int y;
 
     public Point (int x, int y) {
-        super();
         setLocation(x, y);
     }
     public Point () {
@@ -19,7 +18,6 @@ public class Point {
         y = 0;
     }
     public Point (Point p) { // Self Check 21
-        super();
         setLocation(p);
     }
 
