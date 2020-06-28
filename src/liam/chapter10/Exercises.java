@@ -118,7 +118,7 @@ public class Exercises {
     }
     public static class Exercise20 extends CalendarDate { // Add a year to CalendarDate
         private int year;
-        
+
         public Exercise20 (int year, int month, int day) {
             super(month, day);
             this.year = year;

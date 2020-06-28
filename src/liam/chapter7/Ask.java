@@ -3,7 +3,7 @@ package liam.chapter7;
 import java.util.Arrays;
 import java.util.regex.Pattern;
 
-public class Ask extends liam.chapter4.Ask {
+public class Ask extends liam.chapter6.Ask {
     public static void main (String[] args) {
         while (true) {
             Object[] x = forArray(Integer.class, 1);
