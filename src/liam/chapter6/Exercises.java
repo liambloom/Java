@@ -294,7 +294,7 @@ public class Exercises {
                 System.out.println();
                 continue;
             }
-            ArrayList<NameCounter> a = new ArrayList<>();
+            ArrayList<NameCounter> a = new ArrayList<>(); // The best way to do this would probably be to use a Map, but I didn't know those existed when I was doing it
             word: while (l.hasNext()) {
                 final String word = l.next();
                 for (NameCounter counter : a) {

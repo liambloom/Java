@@ -5,9 +5,6 @@ import java.lang.reflect.Array;
 
 @SuppressWarnings("unchecked")
 public class Exercises {
-	public static void main (String[] args) {
-		System.out.println("foo");
-	}
     public static <T> int exercise1 (T[] arr, T val) { // last index of
         int index = -1;
         for (int i = 0; i < arr.length; i++) if (arr[i].equals(val)) index = i;
@@ -123,7 +120,8 @@ public class Exercises {
         }
         return counts;
     }
-    // You said to skip chapter 6, and exercise 18 requires it
+    // I originally didn't do exercise 18 because I hadn't done chapter 6 yet
+    // Now I'm not doing it because I have no clue what it's asking me to do
     public static <T extends Number> T[][] exercise19 (T[][] m1, T[][] m2) { // adds matrices
         if (!m1.getClass().equals(m2.getClass())) throw new IllegalArgumentException("Cannot add matrices of different types");
         if (m1.length == 0) return m1;
