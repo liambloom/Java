@@ -152,12 +152,8 @@ public class Exercises {
         }
     }
     public static <T> void exercise20(T[] list) {
-        new Exercise20<T>().printer(list);
+        new Exercise20<>().printer(list);
     }
-    /*public static <T> T[][] exercise20_helper(T e, T[] list) {
-        if (list.length == 0) System.out.println("[" + e + "]");
-
-    }*/
 }
 
 class Exercise20<T> {
@@ -166,40 +162,30 @@ class Exercise20<T> {
             System.out.println(Arrays.toString(e));
         }
     }
+
     @SuppressWarnings("unchecked")
     public RecursiveWMemory<T[], T[][]> main = new RecursiveWMemory<>((self, a) -> {
         T[][] combinations = (T[][]) new Object[(int) Math.pow(2, a.length)][];
-        for (int i = 0; i < a.length; i++) {
-            T e = a[i];
-            T[][] following = self.apply(Arrays.copyOfRange(a, i + 1, a.length));
-            final int combinationIndex = (int) (-combinations.length * (Math.pow(0.5, i) - 1));
-            for (int j = 0; j < following.length; j++) {
-                T[] c = (T[]) new Object[following[j].length + 1];
-                c[0] = e;
-                System.arraycopy(following[j], 0, c, 1, following[j].length);
-                combinations[combinationIndex + j] = c;
-            }
-        }
+        iLoop(0, self, a, combinations);
         combinations[combinations.length - 1] = (T[]) new Object[0];
         assert !Arrays.asList(combinations).contains(null);
         return combinations;
     });
-    /*@SuppressWarnings("unchecked")
-    public T[][] main(T[] a) {
-        T[][] combinations = (T[][]) new Object[(int) Math.pow(2, a.length)][];
-        for (int i = 0; i < a.length; i++) {
-            T e = a[i];
-            T[][] following = main(Arrays.copyOfRange(a, i + 1, a.length));
-            final int combinationIndex = (int) (-combinations.length * (Math.pow(0.5, i) - 1));
-            for (int j = 0; j < following.length; j++) {
-                T[] c = (T[]) new Object[following[j].length + 1];
-                c[0] = e;
-                System.arraycopy(following[j], 0, c, 1, following[j].length);
-                combinations[combinationIndex + j] = c;
-            }
-        }
-        combinations[combinations.length - 1] = (T[]) new Object[0];
-        assert !Arrays.asList(combinations).contains(null);
-        return combinations;
-    }*/
+
+    // Is using incrementing methods kind of cheating? Yes. But seriously, how were we supposed to do this w/out loops? Even the book was using loops this late in the chapter.
+    public void iLoop(int i, RecursiveWMemory<T[], T[][]> self, T[] a, T[][] combinations) {
+        if (i >= a.length) return;
+        jLoop(0, combinations, a[i], self.apply(Arrays.copyOfRange(a, i + 1, a.length)), (int) (-combinations.length * (Math.pow(0.5, i) - 1)));
+        iLoop(i + 1, self, a, combinations);
+    }
+
+    @SuppressWarnings("unchecked")
+    public void jLoop(int j, T[][] combinations, T e, T[][] following, int combinationIndex) {
+        if (j >= following.length) return;
+        T[] c = (T[]) new Object[following[j].length + 1];
+        c[0] = e;
+        System.arraycopy(following[j], 0, c, 1, following[j].length);
+        combinations[combinationIndex + j] = c;
+        jLoop(j + 1, combinations, e, following, combinationIndex);
+    }
 }
