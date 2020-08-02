@@ -162,43 +162,44 @@ public class Exercises {
 
 class Exercise20<T> {
     public void printer(T[] a) {
-        for (T[] e : main(a)) {
+        for (T[] e : main.apply(a)) {
             System.out.println(Arrays.toString(e));
         }
     }
     @SuppressWarnings("unchecked")
-    public T[][] main(T[] a) {
-        //System.out.println("a = " + Arrays.toString(a));
-        //System.out.println(a.length + " @170");
-        //@SuppressWarnings("unchecked")
-        //System.out.println("-------------------------------------------------------------------------");
+    public RecursiveWMemory<T[], T[][]> main = new RecursiveWMemory<>((self, a) -> {
         T[][] combinations = (T[][]) new Object[(int) Math.pow(2, a.length)][];
         for (int i = 0; i < a.length; i++) {
-            //System.out.println("i = " + i);
-            //System.out.println(Arrays.deepToString(combinations));
             T e = a[i];
-            //System.out.println(Arrays.toString(a) + " @174");
-            //System.out.println(Arrays.toString(Arrays.copyOfRange(a, i + 1, a.length)) + " @175");
-            T[][] following = main(Arrays.copyOfRange(a, i + 1, a.length));
-            //System.out.println(following.length + " @178");
+            T[][] following = self.apply(Arrays.copyOfRange(a, i + 1, a.length));
             final int combinationIndex = (int) (-combinations.length * (Math.pow(0.5, i) - 1));
-            //if (combinations.length == 4) System.out.println("combinationIndex = " + combinationIndex);
             for (int j = 0; j < following.length; j++) {
-                //System.out.println("  j = " + j);
-                //System.out.println(Arrays.toString(following[j]) + " @182");
-                //@SuppressWarnings("unchecked")
                 T[] c = (T[]) new Object[following[j].length + 1];
                 c[0] = e;
                 System.arraycopy(following[j], 0, c, 1, following[j].length);
-                //if (c == null) System.out.println("C IS NULL!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-                //if (combinations.length == 4) System.out.println("index = " + (combinationIndex + j));
                 combinations[combinationIndex + j] = c;
             }
         }
-        //@SuppressWarnings("unchecked")
         combinations[combinations.length - 1] = (T[]) new Object[0];
-        //System.out.println(Arrays.deepToString(combinations) + " @192");
         assert !Arrays.asList(combinations).contains(null);
         return combinations;
-    }
+    });
+    /*@SuppressWarnings("unchecked")
+    public T[][] main(T[] a) {
+        T[][] combinations = (T[][]) new Object[(int) Math.pow(2, a.length)][];
+        for (int i = 0; i < a.length; i++) {
+            T e = a[i];
+            T[][] following = main(Arrays.copyOfRange(a, i + 1, a.length));
+            final int combinationIndex = (int) (-combinations.length * (Math.pow(0.5, i) - 1));
+            for (int j = 0; j < following.length; j++) {
+                T[] c = (T[]) new Object[following[j].length + 1];
+                c[0] = e;
+                System.arraycopy(following[j], 0, c, 1, following[j].length);
+                combinations[combinationIndex + j] = c;
+            }
+        }
+        combinations[combinations.length - 1] = (T[]) new Object[0];
+        assert !Arrays.asList(combinations).contains(null);
+        return combinations;
+    }*/
 }
