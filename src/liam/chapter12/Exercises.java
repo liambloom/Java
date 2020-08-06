@@ -169,6 +169,7 @@ public class Exercises {
         return exercise21_maxUnder(exercise21_findSums(new Exercise20<Integer>().main(arr)), sum);
     }
     public static Integer exercise21_findSum(Integer[] arr) {
+        // This is the same as liam.chapter7.$.sum, so if I'm allowed to use external functions with loops, I could maybe use that instead
         if (arr.length == 0) return 0;
         else {
             return arr[0] + exercise21_findSum(Arrays.copyOfRange(arr, 1, arr.length));
