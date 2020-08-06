@@ -1,19 +1,9 @@
 package liam.chapter12;
 
 import java.lang.reflect.Array;
-import java.time.Year;
 import java.util.Arrays;
-//import liam.chapter4.Ask;
 
 public class Exercises {
-    public static void main(String[] args) {
-        System.out.println(exercise21(new Integer[]{7, 30, 8, 22, 6, 1, 14}, 19)); // 16
-        System.out.println(exercise21(new Integer[]{5, 30, 15, 13, 8}, 42)); // 41
-        System.out.println(exercise21(new Integer[]{30, 15, 20}, 40)); // 35
-        System.out.println(exercise21(new Integer[]{10, 20, 30}, 7)); // 0
-        System.out.println(exercise21(new Integer[]{10, 20, 30}, 20)); // 20
-        System.out.println(exercise21(new Integer[]{}, 10)); // 0
-    }
     public static void exercise1(int n) { // Print n^2
         if (n < 0) throw new IllegalArgumentException("Cannot print <1 stars");
         else if (n == 0) System.out.print('*');
@@ -186,6 +176,28 @@ public class Exercises {
     public static Integer exercise21_maxUnder(Integer[] arr, Integer max) {
         if (arr.length == 0) return 0;
         else return Math.max(arr[0] > max ? 0 : arr[0], exercise21_maxUnder(Arrays.copyOfRange(arr, 1, arr.length), max));
+    }
+    public static void exercise22(int n) { // Prints every combination of unique perfect squares that add up to n
+        for (String s : exercise22_helper(n, 1)) {
+            System.out.println(s);
+        }
+    }
+    public static String[] exercise22_helper(int n, int start) {
+        if (n < Math.pow(start, 2)) return new String[0];
+        String[] r = Math.sqrt(n) % 1 == 0 ? new String[]{(int) Math.sqrt(n) + "^2"} : new String[0];
+        for (int i = start; i <= Math.sqrt(n); i++) {
+            if (i == 2) System.out.println(Math.sqrt(n));
+            final String[] subSquares = exercise22_helper(n - (int) Math.pow(i, 2), i + 1);
+            if (n == 200 && i == 1) System.out.println(subSquares.length);
+            for (int j = 0; j < subSquares.length; j++) {
+                subSquares[j] = i + "^2 " + subSquares[j];
+            }
+            String[] newR = new String[r.length + subSquares.length];
+            System.arraycopy(r, 0, newR, 0, r.length);
+            System.arraycopy(subSquares, 0, newR, r.length, subSquares.length);
+            r = newR;
+        }
+        return r;
     }
 }
 
