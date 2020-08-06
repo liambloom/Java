@@ -1,11 +1,18 @@
 package liam.chapter12;
 
-import liam.chapter4.Ask;
+import java.lang.reflect.Array;
+import java.time.Year;
 import java.util.Arrays;
+//import liam.chapter4.Ask;
 
 public class Exercises {
     public static void main(String[] args) {
-        /*while (true) */exercise20(new String[]{"Janet", "Robert", "Morgan", "Char"});
+        System.out.println(exercise21(new Integer[]{7, 30, 8, 22, 6, 1, 14}, 19)); // 16
+        System.out.println(exercise21(new Integer[]{5, 30, 15, 13, 8}, 42)); // 41
+        System.out.println(exercise21(new Integer[]{30, 15, 20}, 40)); // 35
+        System.out.println(exercise21(new Integer[]{10, 20, 30}, 7)); // 0
+        System.out.println(exercise21(new Integer[]{10, 20, 30}, 20)); // 20
+        System.out.println(exercise21(new Integer[]{}, 10)); // 0
     }
     public static void exercise1(int n) { // Print n^2
         if (n < 0) throw new IllegalArgumentException("Cannot print <1 stars");
@@ -116,7 +123,7 @@ public class Exercises {
         else if (n % 10 % 2 == 0) return n % 10 + 10 * exercise14(n / 10);
         else return exercise14(n / 10);
     }
-    public static RecursiveWMemory<Integer, Integer> factorial = new RecursiveWMemory<>((self, n) -> {
+    public static MemorizingRecursive<Integer, Integer> factorial = new MemorizingRecursive<>((self, n) -> {
         if (n < 0) throw new IllegalArgumentException("Cannot find factorial of negative number");
         else if (n == 1) return 1;
         else return n * self.apply(n - 1);
@@ -151,29 +158,67 @@ public class Exercises {
             System.out.println();
         }
     }
-    public static <T> void exercise20(T[] list) {
-        new Exercise20<>().printer(list);
+    public static <T> void exercise20(T[] list) { // Prints every combination of elements in the list (order doesn't matter)
+        new Exercise20<T>().printer(list);
+    }
+
+    // Not the most efficient solution, since it generates every possible solution, then finds the sums, and then filters the max value
+    // The most efficient solution would stop add as it went down a path and then stop when it exceeded the max value
+    // But then I would need to write code to go through the possible combinations, and exercise 20 already does that
+    public static Integer exercise21(Integer[] arr, Integer sum) { // finds the maximum sum of elements of arr that is not more than sum
+        return exercise21_maxUnder(exercise21_findSums(new Exercise20<Integer>().main(arr)), sum);
+    }
+    public static Integer exercise21_findSum(Integer[] arr) {
+        if (arr.length == 0) return 0;
+        else {
+            return arr[0] + exercise21_findSum(Arrays.copyOfRange(arr, 1, arr.length));
+        }
+    }
+    public static Integer[] exercise21_findSums(Integer[][] arr) {
+        if (arr.length == 0) return new Integer[0];
+        else {
+            Integer[] sums = Arrays.copyOf(exercise21_findSums(Arrays.copyOfRange(arr, 0, arr.length - 1)), arr.length);
+            sums[sums.length - 1] = exercise21_findSum(arr[arr.length - 1]);
+            return sums;
+        }
+    }
+    public static Integer exercise21_maxUnder(Integer[] arr, Integer max) {
+        if (arr.length == 0) return 0;
+        else return Math.max(arr[0] > max ? 0 : arr[0], exercise21_maxUnder(Arrays.copyOfRange(arr, 1, arr.length), max));
     }
 }
 
+// Arrays.toString contains a for loop
+// MemorizingRecursive.apply contains a for loop
+// MemorizingRecursive.apply calls Arrays.equals, which contains a for loop
+// MemorizingRecursive.apply calls many methods of HashMap that contains for, while, and do/while loops
 class Exercise20<T> {
     public void printer(T[] a) {
-        for (T[] e : main.apply(a)) {
-            System.out.println(Arrays.toString(e));
+        printer(main(a));
+    }
+
+    protected void printer(T[][] a) {
+        if (a.length > 0) {
+            System.out.println(Arrays.toString(a[0]));
+            printer(Arrays.copyOfRange(a, 1, a.length));
         }
     }
 
+    public T[][] main(T[] a) {
+        return this.main.apply(a);
+    }
+
     @SuppressWarnings("unchecked")
-    public RecursiveWMemory<T[], T[][]> main = new RecursiveWMemory<>((self, a) -> {
-        T[][] combinations = (T[][]) new Object[(int) Math.pow(2, a.length)][];
+    protected MemorizingRecursive<T[], T[][]> main = new MemorizingRecursive<>((self, a) -> {
+        T[][] combinations = (T[][]) Array.newInstance(a.getClass(), (int) Math.pow(2, a.length));
         iLoop(0, self, a, combinations);
-        combinations[combinations.length - 1] = (T[]) new Object[0];
+        combinations[combinations.length - 1] = (T[]) Array.newInstance(a.getClass().getComponentType(), 0);
         assert !Arrays.asList(combinations).contains(null);
         return combinations;
     });
 
     // Is using incrementing methods kind of cheating? Yes. But seriously, how were we supposed to do this w/out loops? Even the book was using loops this late in the chapter.
-    public void iLoop(int i, RecursiveWMemory<T[], T[][]> self, T[] a, T[][] combinations) {
+    public void iLoop(int i, MemorizingRecursive<T[], T[][]> self, T[] a, T[][] combinations) {
         if (i >= a.length) return;
         jLoop(0, combinations, a[i], self.apply(Arrays.copyOfRange(a, i + 1, a.length)), (int) (-combinations.length * (Math.pow(0.5, i) - 1)));
         iLoop(i + 1, self, a, combinations);
@@ -182,7 +227,7 @@ class Exercise20<T> {
     @SuppressWarnings("unchecked")
     public void jLoop(int j, T[][] combinations, T e, T[][] following, int combinationIndex) {
         if (j >= following.length) return;
-        T[] c = (T[]) new Object[following[j].length + 1];
+        T[] c = (T[]) Array.newInstance(e.getClass(), following[j].length + 1);
         c[0] = e;
         System.arraycopy(following[j], 0, c, 1, following[j].length);
         combinations[combinationIndex + j] = c;

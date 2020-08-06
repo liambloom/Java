@@ -7,16 +7,16 @@ import java.util.Set;
 import java.util.Arrays;
 
 // At some point I would like to add support for some form of ArrayMap, to allow exercise20 to use this
-public class RecursiveWMemory<K, V> implements Function<K, V> {
-    private final HashMap<K, V> memory; 
-    private final BiFunction<RecursiveWMemory<K, V>, K, V> f;
+public class MemorizingRecursive<K, V> implements Function<K, V> {
+    private final HashMap<K, V> memory;
+    private final BiFunction<MemorizingRecursive<K, V>, K, V> f;
 
-    public RecursiveWMemory(BiFunction<RecursiveWMemory<K, V>, K, V> f) {
+    public MemorizingRecursive(BiFunction<MemorizingRecursive<K, V>, K, V> f) {
         this.f = f;
         this.memory = new HashMap<>();
     }
     
-    public RecursiveWMemory(BiFunction<RecursiveWMemory<K, V>, K, V> f, HashMap<K, V> initial) {
+    public MemorizingRecursive(BiFunction<MemorizingRecursive<K, V>, K, V> f, HashMap<K, V> initial) {
         this.f = f;
         this.memory = initial;
     }

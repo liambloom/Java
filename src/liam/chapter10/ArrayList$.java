@@ -73,6 +73,7 @@ public class ArrayList$ <E> { // This does not extend ArrayList because it needs
     public String toString () {
         return a.toString();
     }
+
     public ArrayList$<E> clone () {
         return new ArrayList$<>((ArrayList<E>) a.clone());
     }
