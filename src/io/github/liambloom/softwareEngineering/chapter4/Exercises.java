@@ -1,6 +1,6 @@
 package io.github.liambloom.softwareEngineering.chapter4;
 
-import liam.Globals;
+import io.github.liambloom.softwareEngineering.Globals;
 
 public class Exercises {
   public static int Infinity = (int) Globals.Math.Infinity;

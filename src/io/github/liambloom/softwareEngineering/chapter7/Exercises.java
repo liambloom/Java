@@ -40,7 +40,7 @@ public class Exercises {
     }
     public static <T extends Number> T exercise9 (T[] arr) { // smallest gap between consecutive elements
         if (arr.length < 2) return $.castNumber(0, arr);
-        T minGap = $.castNumber(liam.chapter4.Exercises.Infinity, arr);
+        T minGap = $.castNumber(io.github.liambloom.softwareEngineering.chapter4.Exercises.Infinity, arr);
         for (int i = 0; i < arr.length - 1; i++) minGap = $.castNumber(Math.min(minGap.doubleValue(), arr[i + 1].doubleValue() - arr[i].doubleValue()), arr);
         return minGap;
     }

@@ -1,6 +1,6 @@
 package io.github.liambloom.softwareEngineering.chapter9.market;
 
-import liam.chapter9.lawFirm.Employee;
+import io.github.liambloom.softwareEngineering.chapter9.lawFirm.Employee;
 
 public class DiscountBill extends GroceryBill {
     private final boolean preferred;

@@ -1,8 +1,8 @@
 package io.github.liambloom.softwareEngineering.chapter10;
 
 import java.util.*;
-import liam.chapter8.Point;
-import liam.chapter8.TimeSpan;
+import io.github.liambloom.softwareEngineering.chapter8.Point;
+import io.github.liambloom.softwareEngineering.chapter8.TimeSpan;
 
 public class Exercises {
     public static void main (String[] args) {
@@ -20,7 +20,7 @@ public class Exercises {
             }
             vowels.add(v);
         }
-        return liam.chapter7.$.avg(vowels.toArray(new Integer[0]));
+        return io.github.liambloom.softwareEngineering.chapter7.$.avg(vowels.toArray(new Integer[0]));
     }
     public static <T> void exercise2 (ArrayList<T> a) { // Switch each pair of elements
         new ArrayList$<>(a).reverseSetsOf(2);

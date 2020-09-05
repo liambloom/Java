@@ -2,8 +2,8 @@ package io.github.liambloom.softwareEngineering.chapter5;
 
 import java.util.regex.Pattern;
 
-import liam.Globals;
-import liam.chapter4.Ask;
+import io.github.liambloom.softwareEngineering.Globals;
+import io.github.liambloom.softwareEngineering.chapter4.Ask;
 
 public class Exercises {
   public static void exercise1 (int n) {

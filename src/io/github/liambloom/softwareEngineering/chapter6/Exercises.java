@@ -103,7 +103,7 @@ public class Exercises {
     public static void exercise7 (Scanner s) { // Prints file alternating lines
         ArrayList<String> lines = new ArrayList<>();
         while (s.hasNextLine()) lines.add(s.nextLine());
-        liam.chapter10.Exercises.exercise2(lines);
+        io.github.liambloom.softwareEngineering.chapter10.Exercises.exercise2(lines);
         for (String line : lines) {
             System.out.println(s);
         }

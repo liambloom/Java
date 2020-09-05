@@ -1,7 +1,7 @@
 package io.github.liambloom.softwareEngineering.chapter8.Stonks;
 
-import liam.Globals;
-import liam.chapter7.Ask;
+import io.github.liambloom.softwareEngineering.Globals;
+import io.github.liambloom.softwareEngineering.chapter7.Ask;
 
 public class IO {
     public static void main (String[] args) {

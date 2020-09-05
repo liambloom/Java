@@ -1,6 +1,6 @@
 package io.github.liambloom.softwareEngineering.chapter9.lawFirm;
 
-import liam.Globals;
+import io.github.liambloom.softwareEngineering.Globals;
 
 public class HarvardLawyer extends Lawyer {
     public double getSalary () {

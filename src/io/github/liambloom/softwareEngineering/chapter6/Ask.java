@@ -5,7 +5,7 @@ import java.io.FileNotFoundException;
 import java.io.PrintStream;
 import java.util.Scanner;
 
-public class Ask extends liam.chapter4.Ask {
+public class Ask extends io.github.liambloom.softwareEngineering.chapter4.Ask {
     public static File forFile (String prompt, boolean preexisting) {
         File file = new File(Ask.forToken(prompt));
         if (!file.canRead() && preexisting) {

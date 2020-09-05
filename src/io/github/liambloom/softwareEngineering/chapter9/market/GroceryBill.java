@@ -1,7 +1,7 @@
 package io.github.liambloom.softwareEngineering.chapter9.market;
 
 // Not the same purpose, but still employees, so close enough
-import liam.chapter9.lawFirm.Employee;
+import io.github.liambloom.softwareEngineering.chapter9.lawFirm.Employee;
 import java.util.ArrayList;
 import java.util.List;
 

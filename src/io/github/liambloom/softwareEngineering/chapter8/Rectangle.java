@@ -1,6 +1,6 @@
 package io.github.liambloom.softwareEngineering.chapter8;
 
-import liam.Globals;
+import io.github.liambloom.softwareEngineering.Globals;
 import java.util.function.BiFunction;
 
 public class Rectangle { // Exercise 18
@@ -52,7 +52,7 @@ public class Rectangle { // Exercise 18
         // Library on Github: https://github.com/liambloom/command-line-draw
         // Library on npm (node package manager): https://www.npmjs.com/package/command-line-draw
 
-        BiFunction<String, Integer, String> repeat = liam.chapter4.Exercises::exercise2;
+        BiFunction<String, Integer, String> repeat = io.github.liambloom.softwareEngineering.chapter4.Exercises::exercise2;
 
         for (int i = 0; i < y; i++) System.out.println();
 

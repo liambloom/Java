@@ -3,7 +3,7 @@ package io.github.liambloom.softwareEngineering.chapter7;
 import java.util.Arrays;
 import java.util.regex.Pattern;
 
-public class Ask extends liam.chapter6.Ask {
+public class Ask extends io.github.liambloom.softwareEngineering.chapter6.Ask {
     public static void main (String[] args) {
         while (true) {
             Object[] x = forArray(Integer.class, 1);
@@ -127,7 +127,7 @@ public class Ask extends liam.chapter6.Ask {
     }
 
     private static String getArrayTypeString (Class type, int depth) {
-        return type.getSimpleName() + liam.chapter4.Exercises.exercise2("[]", depth);
+        return type.getSimpleName() + io.github.liambloom.softwareEngineering.chapter4.Exercises.exercise2("[]", depth);
     }
 }
 

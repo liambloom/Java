@@ -1,6 +1,6 @@
 package io.github.liambloom.softwareEngineering.chapter5;
 
-import liam.chapter4.Ask;
+import io.github.liambloom.softwareEngineering.chapter4.Ask;
 
 public class Main {
   public static void main(String[] args) {
