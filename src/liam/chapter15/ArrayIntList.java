@@ -2,8 +2,6 @@ package liam.chapter15;
 
 // Page 924
 
-// A change
-
 public class ArrayIntList {
 
     /**
