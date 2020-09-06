@@ -1,22 +1,18 @@
 package io.github.liambloom.softwareEngineering.chapter15;
 
-import io.github.liambloom.softwareEngineering.chapter7.Parser;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Arrays;
+import java.util.Iterator;
 
 /**
- * This is a clone of {@code java.util.ArrayList<E>}. It currently only works with ints, but by
- * the end of chapter 15 it will use generics
- * 
- * This implementation isn't exactly like what we did in the chapter. The most notable difference
- * is that the implementation in the chapter throws an error if you try to exceed the list's
- * capacity, while my implementation will simply increase the capacity as needed (see {@link #grow(int)}).
+ * This is a clone of {@code java.util.ArrayList<E>}.
  * 
  * @author Liam Bloom 
- * @version 1.1.0 09/05/2020
  */
 
-public class ArrayIntList {
+@SuppressWarnings("unchecked")
+public class ArrayList<E> implements Iterable<E> {
 
     /**
      * Used for testing purposes only
@@ -24,7 +20,7 @@ public class ArrayIntList {
      * @param args args
      */
     public static void main(String[] args) {
-        ArrayIntList x = new ArrayIntList();
+        ArrayList<Integer> x = new ArrayList<>();
         x.add(1);
         x.add(2);
         x.add(3);
@@ -34,14 +30,39 @@ public class ArrayIntList {
     }
 
     /**
-     * The default capacity of an {@code ArrayIntList}
+     * The iterator type for {@code ArrayList<E>};
+     */
+    private final class ArrayListIterator implements Iterator<E> {
+        private int position = 0;
+        private boolean removeOk = false;
+
+        // The iterator docs already explain what each of these do
+        public E next() {
+            if (!hasNext()) throw new NoSuchElementException();
+            removeOk = true;
+            return elementData[position++];
+        }
+
+        public boolean hasNext() {
+            return position < size;
+        }
+
+        public void remove() {
+            if (!removeOk) throw new IllegalStateException();
+            ArrayList.this.remove(--position);
+            removeOk = false;
+        }
+    }
+
+    /**
+     * The default capacity of an {@code ArrayList}
      */
     public static final int DEFAULT_CAPACITY = 100;
 
     /**
      * Stores the elements
      */
-    private int[] elementData;
+    private E[] elementData;
 
     /**
      * Stores the current size of the list
@@ -49,59 +70,55 @@ public class ArrayIntList {
     private int size = 0;
 
     /**
-     * Creates a new {@code ArrayIntList} with the capacity {@value ArrayIntList#DEFAULT_CAPACITY}
+     * Creates a new {@code ArrayList} with the capacity {@value ArrayList#DEFAULT_CAPACITY}
      */
-    public ArrayIntList() {
+    public ArrayList() {
         this(DEFAULT_CAPACITY);
     }
 
     /**
-     * Creates a new {@code ArrayIntList} with the given capacity
+     * Creates a new {@code ArrayList} with the given capacity
      * 
      * @param capacity The capacity of the new list. Must be &gt;= 0.
      * @throws IllegalArgumentException if capacity is less than 0.
      */
-    public ArrayIntList(int capacity) {
+    public ArrayList(int capacity) {
         if (capacity < 0) throw new IllegalArgumentException("Capacity must be greater than 0, received " + capacity);
-        elementData = new int[capacity];
+        /* I could avoid the unchecked cast, by not initializing elementData until
+            the first value was added to it, and then generating the array using
+            java.lang.reflect.Array and <value>.class.arrayType(), but this would
+            be difficult and unnecessary, since elementData is never exposed to the
+            client anyway*/
+        elementData = (E[]) new Object[capacity];
     }
     
     /**
-     * Creates a new {@code ArrayIntList} from an already exiting one
+     * Creates a new {@code ArrayList} from an already exiting one
      * 
-     * @param list A pre-existing {@code ArrayIntList}
+     * @param list A pre-existing {@code ArrayList}
      */
-    public ArrayIntList(ArrayIntList list) {
+    public ArrayList(ArrayList<E> list) {
         this(list.toArray());
     }
 
     /**
-     * Creates a new {@code ArrayIntList} from a {@code List}
+     * Creates a new {@code ArrayList} from a {@code List}
      * 
-     * @param list The {@code List} that the {@code ArrayIntList} should be created from
+     * @param list The {@code List} that the {@code ArrayList} should be created from
      */
-    public ArrayIntList(List<Integer> list) {
-        this(list.toArray(new Integer[list.size()]));
+    public ArrayList(List<E> list) {
+        this((E[]) list.toArray());
     }
 
     /**
-     * Creates a new {@code ArrayIntList} from an array
+     * Creates a new {@code ArrayList} from an array
      * 
-     * @param list An array of integers
+     * @param list An array of type E
      */
-    public ArrayIntList(int[] list) {
+    public ArrayList(E[] list) {
         this(list.length);
         elementData = list;
         size = list.length;
-    }
-
-    /**
-     * Creates a new {@code ArrayIntList} from an array
-     * 
-     * @param list An array of integers
-     */
-    public ArrayIntList(Integer[] list) {
-        this(Parser.toPrimitive(list));
     }
 
     /**
@@ -114,11 +131,20 @@ public class ArrayIntList {
     }
 
     /**
+     * Returns an iterator for the list
+     * 
+     * @return an Iterator over the list
+     */
+    public Iterator<E> iterator() {
+        return new ArrayListIterator();
+    }
+
+    /**
      * Adds a value to the end of the list
      * 
      * @param value the value to be added
      */
-    public void add(int value) {
+    public void add(E value) {
         addAll(size, value);
     }
 
@@ -129,46 +155,46 @@ public class ArrayIntList {
      * @param value the value to be added
      * @throws IndexOutOfBoundsException if index is not between {@code 0} and {@link #size()} (inclusive)
      */
-    public void add(int index, int value) {
+    public void add(int index, E value) {
         addAll(index, value);
     }
 
     /**
-     * Adds every element from a {@code ArrayIntList} of integers to the end of the list
+     * Adds every element from another {@code ArrayList} to this end of the list
      * 
-     * @param o The {@code ArrayIntList} of elements to add
+     * @param o The {@code ArrayList} of elements to add
      */
-    public void addAll(ArrayIntList o) {
+    public void addAll(ArrayList<E> o) {
         addAll(size, o.elementData);
     }
 
     /**
-     * Adds every element from an {@code ArrayIntList} of integers to the list at a specific index
+     * Adds every element from another {@code ArrayList} to this list at a specific index
      * 
      * @param index The index at which to add the elements
-     * @param o     The {@code ArrayIntList} of elements to add
+     * @param o     The {@code ArrayList} of elements to add
      */
-    public void addAll(int index, ArrayIntList o) {
+    public void addAll(int index, ArrayList<E> o) {
         addAll(index, o.elementData);
     }
 
     /**
-     * Adds every element from a {@code List} of integers to the end of the list
+     * Adds every element from a {@code List} to the end of this list
      * 
      * @param o The {@code List} of elements to add
      */
-    public void addAll(List<Integer> o) {
-        addAll(size, Parser.toPrimitive(o.toArray(new Integer[o.size()])));
+    public void addAll(List<E> o) {
+        addAll(size, (E[]) o.toArray());
     }
 
     /**
-     * Adds every element from a {@code List} of integers to the list at a specific index
+     * Adds every element from a {@code List} to this list at a specific index
      * 
      * @param index The index at which to add the elements
      * @param o The {@code List} of elements to add
      */
-    public void addAll(int index, List<Integer> o) {
-        addAll(index, Parser.toPrimitive(o.toArray(new Integer[o.size()])));
+    public void addAll(int index, List<E> o) {
+        addAll(index, (E[]) o.toArray());
     }
 
     /**
@@ -179,7 +205,7 @@ public class ArrayIntList {
      * @throws IndexOutOfBoundsException if index is not between {@code 0} and {@link #size()} (inclusive)
      */
     // There is no multiAdd without index because then there would be ambiguity as to which method you wanted to call
-    public void addAll(int index, int... values) {
+    public void addAll(int index, E... values) {
         indexBoundChecker(index, true);
         int prevSize = size;
         grow(values.length);
@@ -196,16 +222,16 @@ public class ArrayIntList {
     public void remove(int index) {
         indexBoundChecker(index, false);
         System.arraycopy(elementData, index + 1, elementData, index, size - index);
-        size--;
+        elementData[--size] = null;
     }
     /**
-     * Gets a value from the ArrayIntList
+     * Gets a value from the ArrayList
      * 
      * @param index the index to get the value
      * @return the value at the index
      * @throws IndexOutOfBoundsException if index is not between {@code 0} and {@link #size()} (exclusive)
      */
-    public int get(int index) {
+    public E get(int index) {
         indexBoundChecker(index, false);
         return elementData[index];
     }
@@ -217,7 +243,7 @@ public class ArrayIntList {
      * @param value The value
      * @throws IndexOutOfBoundsException if index is not between {@code 0} and {@link #size()} (exclusive)
      */
-    public void set(int index, int value) {
+    public void set(int index, E value) {
         indexBoundChecker(index, false);
         elementData[index] = value;
     }
@@ -228,7 +254,7 @@ public class ArrayIntList {
      * @param oldValue The value to be replaced
      * @param newValue The value to replace it with
      */
-    public void replaceAll(int oldValue, int newValue) {
+    public void replaceAll(E oldValue, E newValue) {
         int i;
         while ((i = indexOf(oldValue)) != -1) set(i, newValue);
     }
@@ -239,9 +265,9 @@ public class ArrayIntList {
      * @param value the value that will be searched for
      * @return The index of the given value. {@code -1} if the value is not found
      */
-    public int indexOf(int value) {
+    public int indexOf(E value) {
         for (int i = 0; i < size; i++) {
-            if (elementData[i] == value) return i;
+            if (elementData[i].equals(value)) return i;
         }
         return -1;
     }
@@ -251,12 +277,15 @@ public class ArrayIntList {
      * 
      * @return the smallest value in the list
      * @throws IllegalStateException if the list is empty
+     * @throws ClassCastException if {@code E} does not implement {@code Comparable<E>}
      */
-    public int min() {
+    public E min() {
         if (size == 0) throw new IllegalStateException("There is not minimum value to an empty list");
-        int min = Integer.MAX_VALUE;
-        for (int i = 0; i < size; i++) {
-            min = Math.min(min, elementData[size]);
+        E min = elementData[0];
+        if (size == 1) ((Comparable<E>) min).compareTo(min); // This checks to make sure E implements Comparable<E> even if size == 1
+        for (int i = 1; i < size; i++) {
+            E e = elementData[i];
+            if (((Comparable<E>) min).compareTo(e) > 0) min = e;
         }
         return min;
     }
@@ -267,11 +296,13 @@ public class ArrayIntList {
      * @return the largest value in the list
      * @throws IllegalStateException if the list is empty
      */
-    public int max() {
-        if (size == 0) throw new IllegalStateException("There is not maximum value to an empty list");
-        int max = Integer.MIN_VALUE;
-        for (int i = 0; i < size; i++) {
-            max = Math.max(max, elementData[size]);
+    public E max() {
+        if (size == 0) throw new IllegalStateException("There is not minimum value to an empty list");
+        E max = elementData[0];
+        if (size == 1) ((Comparable<E>) max).compareTo(max); // This checks to make sure E implements Comparable<E> even if size == 1
+        for (int i = 1; i < size; i++) {
+            E e = elementData[i];
+            if (((Comparable<E>) max).compareTo(e) < 0) max = e;
         }
         return max;
     }
@@ -282,7 +313,7 @@ public class ArrayIntList {
      * @param value The value to check for.
      * @return {@code true} if the value is in the list, {@code false} if it's not.
      */
-    public boolean contains(int value) {
+    public boolean contains(E value) {
         return indexOf(value) >= 0;
     }
 
@@ -307,7 +338,7 @@ public class ArrayIntList {
      * 
      * @return The list, but in the form of an array
      */
-    public int[] toArray() {
+    public E[] toArray() {
         return Arrays.copyOfRange(elementData, 0, size);
     }
 
@@ -325,22 +356,25 @@ public class ArrayIntList {
     }
 
     /**
-     * Grows the list, increasing the capacity if needed
+     * Grows the list, increasing the capacity if needed.
      * 
      * @param d How much to grow the list by
      * @throws IllegalArgumentException if d is less than {@code 0}
      */
     private void grow(int d) {
         if (d < 0) throw new IllegalArgumentException("Cannot shrink " + getClass().getSimpleName() + " capacity");
-        else if (d == 0) return;
-        else {
-            size += d;
-            if (size > elementData.length) {
-                int[] temp = elementData;
-                elementData = new int[size];
-                System.arraycopy(temp, 0, elementData, 0, temp.length);
-            }
-        }
+        else ensureCapacity(size += d);
+    }
+
+    /**
+     * Ensures that the capacity is at least c. More precisely,
+     * it sets the capacity to the larger of the c and
+     * {@code 1.5 * <the current capacity>}.
+     * 
+     * @param capacity The capacity it must be
+     */
+    public void ensureCapacity(int capacity) {
+        if (capacity > elementData.length) elementData = Arrays.copyOf(elementData, (int) Math.max(capacity, 1.5 * elementData.length));
     }
 
     /**
