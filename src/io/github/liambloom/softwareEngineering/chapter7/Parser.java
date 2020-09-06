@@ -11,7 +11,7 @@ public class Parser {
     protected static final Pattern INT_REGEX = Pattern.compile("-?\\d+");
     protected static final Pattern DOUBLE_REGEX = Pattern.compile("-?(?:\\d+\\.\\d*|\\.\\d+)");
 
-    public static Object parseType(String str, Class type) {
+    public static Object parseType(String str, @SuppressWarnings("rawtypes") Class type) {
         str = removeLeadingTrailingWhitespace(str);
         if (type == Integer.class) {
             try {
@@ -80,7 +80,7 @@ public class Parser {
             throw new IllegalArgumentException("Unsupported type " + type.getSimpleName());
     }
 
-    public static Object[] parseArrayType(Object[] unparsed, Class type) {
+    public static Object[] parseArrayType(Object[] unparsed, @SuppressWarnings("rawtypes") Class type) {
         Object[] arr = new Object[unparsed.length];
         System.out.println(Arrays.deepToString(unparsed));
 
@@ -199,6 +199,7 @@ public class Parser {
 
     public static void toPrimitive(Object[] arr) {
         for (int i = 0; i < arr.length; i++) {
+            @SuppressWarnings("rawtypes")
             Class c = arr[i].getClass();
             if (c == Integer.class.arrayType())
                 arr[i] = toPrimitive((Integer[]) arr[i]);

@@ -1,6 +1,7 @@
 package io.github.liambloom.softwareEngineering.chapter9.stocks;
 
 public abstract class ShareAsset implements Asset {
+    @SuppressWarnings("unused")
     private String symbol;
     private double totalCost;
     private double currentPrice;

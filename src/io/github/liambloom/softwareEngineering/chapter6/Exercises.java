@@ -105,7 +105,7 @@ public class Exercises {
         while (s.hasNextLine()) lines.add(s.nextLine());
         io.github.liambloom.softwareEngineering.chapter10.Exercises.exercise2(lines);
         for (String line : lines) {
-            System.out.println(s);
+            System.out.println(line);
         }
     }
     public static void exercise8 (Scanner src, PrintStream out) { // double space
@@ -148,6 +148,7 @@ public class Exercises {
                 if (line.isBlank()) line = "";
             }
         }
+        out.close();
     }
     public static void exercise12 (Scanner s) { // removes tags from html
         ArrayList<int[]> tags = new ArrayList<>();
@@ -258,18 +259,18 @@ public class Exercises {
     public static void exercise14 (Scanner s) { // Prints # of times words appear consecutively on a line if it is >1
         while (s.hasNextLine()) {
             Scanner l = new Scanner(s.nextLine());
-            int repititions = 1;
+            int repetitions = 1;
             String prevWord = "";
             while (l.hasNext()) {
                 String word = l.next();
-                if (word.equals(prevWord)) repititions++;
+                if (word.equals(prevWord)) repetitions++;
                 else {
-                    if (repititions > 1) System.out.printf("%s*%d ", prevWord, repititions);
+                    if (repetitions > 1) System.out.printf("%s*%d ", prevWord, repetitions);
                     prevWord = word;
-                    repititions = 1;
+                    repetitions = 1;
                 }
             }
-            if (repititions > 1) System.out.printf("%s*%d ", prevWord, repititions);
+            if (repetitions > 1) System.out.printf("%s*%d ", prevWord, repetitions);
             System.out.println();
         }
     }
@@ -317,14 +318,21 @@ public class Exercises {
         for (int i = 1; s.hasNextLine(); i++) {
             String line = s.nextLine();
             if (line.length() > longestLine.length()) longestLine = line;
-            Scanner l = new Scanner(line);
-            int longestToken = 0;
-            int j;
-            for (j = 0; l.hasNext(); j++) {
-                int token = l.next().length();
-                if (token > longestToken) longestToken = token;
+            Scanner l = null;
+            try { // This try catch block is here because otherwise there will be a warning
+                l = new Scanner(line);
+                int longestToken = 0;
+                int j;
+                for (j = 0; l.hasNext(); j++) {
+                    int token = l.next().length();
+                    if (token > longestToken) longestToken = token;
+                }
+                System.out.printf("Line %d has %d tokens (longest = %d)%n", i, j, longestToken);
             }
-            System.out.printf("Line %d has %d tokens (longest = %d)%n", i, j, longestToken);
+            finally {
+                if (l != null) 
+                    l.close();
+            }
         }
         System.out.println("Longest line: " + longestLine);
     }

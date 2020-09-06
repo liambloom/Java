@@ -74,9 +74,12 @@ public class ArrayList$ <E> { // This does not extend ArrayList because it needs
         return a.toString();
     }
 
+    @SuppressWarnings("unchecked")
     public ArrayList$<E> clone () {
         return new ArrayList$<>((ArrayList<E>) a.clone());
     }
+
+    @SuppressWarnings("rawtypes")
     public boolean equals (Object o) {
         return o instanceof ArrayList$ && a.equals(((ArrayList$) o).a);
     }

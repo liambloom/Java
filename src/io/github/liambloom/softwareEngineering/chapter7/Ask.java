@@ -16,6 +16,7 @@ public class Ask extends io.github.liambloom.softwareEngineering.chapter6.Ask {
 
     protected static class Defaults extends Object {
         public String prompt = null;
+        @SuppressWarnings("rawtypes")
         public Class type = Object.class;
         public String prompt (String fallback) {
             if (prompt != null && Ask.defaultPrompt != null) throw new IllegalStateException("You cannot use the new and deprecated default apis simultaneously");
@@ -48,7 +49,7 @@ public class Ask extends io.github.liambloom.softwareEngineering.chapter6.Ask {
         return parsedArray;
     }
 
-    private static Object[] forArray (final String prompt, final Class type) {
+    private static Object[] forArray (final String prompt, final @SuppressWarnings("rawtypes") Class type) {
         if (type.isPrimitive()) throw new IllegalArgumentException("Ask cannot parse variable depth primitive arrays");
         if (type != Integer.class && type != Double.class && type != Character.class && type != Boolean.class && type != String.class && type != Object.class) throw new IllegalArgumentException("Recieved type " + type.getSimpleName() + ", expected one of Integer, Double, Character, Boolean, String");
 
@@ -67,9 +68,10 @@ public class Ask extends io.github.liambloom.softwareEngineering.chapter6.Ask {
     public static Object[] forArray () {
         return forArray(defaults.prompt("Array"), defaults.type);
     }
-    public static Object[] forArray (final String prompt, final Class type, final int depth) {
+    public static Object[] forArray (final String prompt, final @SuppressWarnings("rawtypes") Class type, final int depth) {
         if (depth < 1) throw new IllegalArgumentException("An array cannot have a depth of less than 1");
         if (depth == 1 && type.isPrimitive()) throw new IllegalArgumentException("For a 1-dimensional primitive array, use one of the primitive array methods");
+        @SuppressWarnings("rawtypes")
         final Class wrapper;
         if (type.isPrimitive()) {
             if (depth == 1) throw new IllegalArgumentException("One-dimensional primitive arrays must be parsed by their type specific methods");
@@ -90,7 +92,7 @@ public class Ask extends io.github.liambloom.softwareEngineering.chapter6.Ask {
         }
 
     }
-    public static Object[] forArray (final Class type, final int depth) {
+    public static Object[] forArray (final @SuppressWarnings("rawtypes") Class type, final int depth) {
         return forArray(defaults.prompt(getArrayTypeString(type, depth)), type, depth);
     }
     public static Object[] forArray (final String prompt, final int depth) {
@@ -125,7 +127,7 @@ public class Ask extends io.github.liambloom.softwareEngineering.chapter6.Ask {
         return forPrimitiveBoolArray(defaults.prompt("boolean[]"));
     }
 
-    private static String getArrayTypeString (Class type, int depth) {
+    private static String getArrayTypeString (@SuppressWarnings("rawtypes") Class type, int depth) {
         return type.getSimpleName() + io.github.liambloom.softwareEngineering.chapter4.Exercises.exercise2("[]", depth);
     }
 }

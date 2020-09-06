@@ -4,7 +4,7 @@ import io.github.liambloom.softwareEngineering.chapter4.Ask;
 
 public class Main {
   public static void main(String[] args) {
-    final int foo = 12;
+    //final int foo = 12;
     if (Ask.forBoolean("Run test")) test();
     else {
       exercises();

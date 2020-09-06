@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class GroceryBill {
+    @SuppressWarnings("unused")
     private final Employee clerk;
 
     List<Item> items = new ArrayList<Item>();

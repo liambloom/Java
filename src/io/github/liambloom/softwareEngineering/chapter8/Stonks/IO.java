@@ -4,6 +4,7 @@ import io.github.liambloom.softwareEngineering.Globals;
 import io.github.liambloom.softwareEngineering.chapter7.Ask;
 
 public class IO {
+    @SuppressWarnings("unused")
     public static void main (String[] args) {
         Stonk stock1 = new Stonk(Ask.forToken("First stock's symbol").toUpperCase());
 

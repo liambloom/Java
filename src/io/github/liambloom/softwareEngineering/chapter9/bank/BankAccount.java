@@ -1,6 +1,6 @@
 package io.github.liambloom.softwareEngineering.chapter9.bank;
 
-public class BankAccount implements HasValue {
+public class BankAccount extends HasValue {
     private int value = 0; // IDK why this is required, but otherwise value is final
     public BankAccount (Startup s) {} // Unfortunately you can't make abstract constructors
     public void debit (Debit d) {
@@ -17,9 +17,10 @@ public class BankAccount implements HasValue {
 }
 
 // Interfaces because they don't do anything
-interface HasValue {
+abstract class HasValue {
     int value = 0;
 }
-interface Startup extends HasValue {}
-interface Debit extends HasValue {}
-interface Credit extends HasValue {}
+
+abstract class Startup extends HasValue {}
+abstract class Debit extends HasValue {}
+abstract class Credit extends HasValue {}

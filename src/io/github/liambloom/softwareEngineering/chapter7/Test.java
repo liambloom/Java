@@ -3,6 +3,7 @@ package io.github.liambloom.softwareEngineering.chapter7;
 import java.util.Arrays;
 import java.util.regex.Pattern;
 
+@SuppressWarnings("all")
 public class Test {
     public static Object def = new Object() {
       public final int foo = 2;

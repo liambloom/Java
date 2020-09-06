@@ -61,7 +61,6 @@ public class Exercises {
       return base * Math.pow(10, exponent);
   }
   public static double exercise13 (double salary, int hours) {
-      double normalTime = Math.min(hours, 8);
       return salary * (-0.5 * Math.min(hours, 8) + 1.5 * hours);
   }
   public static double exercise14 (double radius, double height) {
@@ -111,7 +110,7 @@ public class Exercises {
       System.out.println("Welcome, "+ lastName + ", " + firstName);
   }
   public static void exercise22 () {
-      System.out.println("University admission prgram!");
+      System.out.println("University admission program!");
       double gpa = Ask.num("What is your GPA?");
       int sat = (int) Ask.num("What is your SAT score");
       System.out.println("You were " + (gpa < 1.8 || sat < 900 ? "rejected!" : "accepted!"));

@@ -12,6 +12,7 @@ public class SelfChecks { // These were created to check my answers, but I did t
     }
 
     public static void sc3() {
+        @SuppressWarnings("unused")
         int[] data = /*new int[]*/{2};
     }
 
