@@ -7,62 +7,13 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 
-class Foo {
-    int i = 0;
-
-    public void increment() {
-        i++;
-    }
-    public String toString() {
-        return Integer.toString(i);
-    }
-}
-
 /**
- * This is a clone of {@code java.util.ArrayList<E>}. Test1.
+ * This is a clone of {@code java.util.ArrayList<E>}.
  * 
  * @author Liam Bloom 
  */
 @SuppressWarnings("unchecked")
 public class ArrayList<E> implements Iterable<E> {
-
-    /**
-     * Used for testing purposes only
-     * 
-     * @param args args
-     */
-    public static void main(final String[] args) {
-        /*ArrayList<Foo> x = new ArrayList<>();
-        Foo y = new Foo();
-        //x.repla
-        x.add(y);
-        x.toArray()[0].increment();
-        System.out.println(x.get(0));*/
-        final ArrayList<Integer> x = new ArrayList<>(new Integer[]{ 10, 25, 31, 47, 52, 68, 77 });
-        //ArrayList<String> x = new ArrayList<>(new String[]{"foo", "bar"});
-        /*ArrayList<Integer> x = new ArrayList<>(0);
-        x.add(2);
-        Foo[] f = (Foo[]) new Object[2];
-        f[0] = new Foo();
-        f[1] = new Foo();
-        System.out.println(Arrays.copyOfRange(f, 0, 1));*/
-        //x.reverse();
-        /*x.add(1);
-        x.add(1);
-        //x.add(3);
-        //x.add(1, 4);
-        //x.remove(4);
-        x.replaceAll(1, 2);*/
-        //x.stretch(3);
-        x.switchPairs();
-        System.out.println(x);
-        //System.out.println(x);
-        /*System.out.print("1, 2, 3, 4: ");
-        new ArrayList<Integer>(new Integer[]{ 1, 2, 3, 4 }).printInversions();
-        System.out.print("4, 3, 2, 1: ");
-        new ArrayList<Integer>(new Integer[]{ 4, 3, 2, 1 }).printInversions();*/
-    }
-
     /**
      * The iterator type for {@code ArrayList<E>};
      */
