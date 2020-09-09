@@ -4,7 +4,9 @@ import io.github.liambloom.softwareEngineering.chapter7.$;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Iterator;
+
 /**
  * This is a clone of {@code java.util.ArrayList<E>}.
  * 
@@ -26,7 +28,7 @@ public class ArrayList<E> implements Iterable<E> {
         x.add(y);
         x.get(0).increment();
         System.out.println(x.get(1));*/
-        ArrayList<Integer> x = new ArrayList<>(new Integer[]{ 7, 42, 308, 409, 19, 17, 2 });
+        //ArrayList<Integer> x = new ArrayList<>(new Integer[]{ 1, 3, 5, 2, 9, 7, -3, 0, 42, 308, 17 });
         //ArrayList<String> x = new ArrayList<>(new String[]{"foo", "bar"});
         //x.reverse();
         /*x.add(1);
@@ -35,7 +37,11 @@ public class ArrayList<E> implements Iterable<E> {
         //x.add(1, 4);
         //x.remove(4);
         x.replaceAll(1, 2);*/
-        System.out.println(x.isPairwiseSorted());
+        //System.out.println(x);
+        System.out.print("1, 2, 3, 4: ");
+        new ArrayList<Integer>(new Integer[]{ 1, 2, 3, 4 }).printInversions();
+        System.out.print("4, 3, 2, 1: ");
+        new ArrayList<Integer>(new Integer[]{ 4, 3, 2, 1 }).printInversions();
     }
 
     /**
@@ -233,6 +239,44 @@ public class ArrayList<E> implements Iterable<E> {
         System.arraycopy(elementData, index + 1, elementData, index, size - index);
         elementData[--size] = null;
     }
+
+    /**
+     * Exercise 11. Removes the last element of the list, returning it
+     * 
+     * @return the removed element
+     * @throws NoSuchElementException if the list's {@link #size()} is {@code 0}
+     */
+    public E removeLast() {
+        if (size == 0) throw new NoSuchElementException();
+        else {
+            E removed = get(size - 1);
+            remove(size - 1);
+            return removed;
+        }
+    }
+
+    /**
+     * Exercise 12. Removes the first n elements of the list
+     * 
+     * @param n how many elements to remove
+     * @throws IndexOutOfBoundsException if n is greater than the list's {@link #size()}
+     */
+    public void removeFront(int n) {
+        if (n > size) throw new IndexOutOfBoundsException(n);
+        System.arraycopy(elementData, n, elementData, 0, size - n);
+        for (int i = n; i < size; i++) elementData[i] = null;
+        size -= n;
+    }
+
+    /**
+     * Exercise 13. Removes every occurrence of an element
+     * @param e the element to remove
+     */
+    public void removeAll(E e) {
+        int i;
+        while ((i = indexOf(e)) != -1) remove(i);
+    }
+
     /**
      * Gets a value from the ArrayList
      * 
@@ -269,36 +313,17 @@ public class ArrayList<E> implements Iterable<E> {
     }
 
     /**
-     * Replaces an element in the list with another element. <strong>Warning:</strong>
-     * this does not clone of newValue. If there are multiple matches, they will all 
-     * be replaced by pointers to <em>the same object</em>, not copies of it.
-     * 
-     * @param oldValue The value to be replaced
-     * @param newValue The value to replace it with
-     * @param warn If {@code true}, a warning will be printed to {@code System.err} if
-     *              multiple pointers to {@code newValue} are added.
-     */
-    public void replaceAll(E oldValue, E newValue, boolean warn) {
-        int i;
-        int changed = 0;
-        while ((i = indexOf(oldValue)) != -1) {
-            /*if (warn && ++changed == 2 && !Cloneable.class.isAssignableFrom(newValue.getClass())) 
-                System.err.printf(
-                    "\u001b[33mWarning:\u001b[0m This list now has two references to the object %s. These are not just equal, they are \u001b[1mthe same object\u001b[0m.%n",
-                    newValue.toString(), newValue.getClass().getSimpleName());*/
-            set(i, newValue);
-        }
-    }
-
-    /**
-     * Exercise 3. Replaces an element in the list with another element. Same as 
-     * {@link #replaceAll(Object, Object, boolean)} but the last argument is set to true
+     * Exercise 3. Replaces an element in the list with another element.
+     * <strong>Warning:</strong> this does not clone of newValue. If there are
+     * multiple matches, they will all be replaced by pointers to <em>the same
+     * object</em>, not copies of it.
      * 
      * @param oldValue The value to be replaced
      * @param newValue The value to replace it with
      */
     public void replaceAll(E oldValue, E newValue) {
-        replaceAll(oldValue, newValue, true);
+        int i;
+        while ((i = indexOf(oldValue)) != -1) set(i, newValue);
     }
 
     /**
@@ -310,6 +335,15 @@ public class ArrayList<E> implements Iterable<E> {
             elementData[i] = elementData[size - i - 1];
             elementData[size - i - 1] = temp;
         }
+    }
+
+    /**
+     * Exercise 15. Mirrors the list by adding the elements, in reverse order,
+     * to the end of the list.
+     */
+    public void mirror() {
+        ensureCapacity(size * 2);
+        for (int i = size - 1; i >= 0; i++) add(elementData[i]);
     }
 
     /**
@@ -355,6 +389,21 @@ public class ArrayList<E> implements Iterable<E> {
         }
         return -1;
     }
+    
+    /**
+     * Exercise 8. Returns the number of times a particular element occurs in the list.
+     * I think this method should be named occurencesOf
+     * 
+     * @param e the element to check for
+     * @return the amount of times the element 'e' occurs in the list
+     */
+    public int count(E e) {
+        int c = 0;
+        for (int i = 0; i < size; i++) {
+            if (elementData[i].equals(e)) c++;
+        }
+        return c;
+    }
 
     /**
      * Self Check 8. Returns the smallest value in the list
@@ -395,7 +444,7 @@ public class ArrayList<E> implements Iterable<E> {
      * Exercise 7. Checks if the list is pairwise sorted. &ldquo;A list is
      * considered pairwise sorted if each successive pair of numbers is in
      * nondecreasing order&rdquo; (Stuart Reges and Marty Stepp, Building Java
-     * programs: a back to basics approach&mdash;Third Edition).
+     * programs: a back to basics approach&mdash;Third Edition, Page 948).
      * 
      * @return A boolean representing weather this list is pairwise sorted
      * @throws ClassCastException if {@code E} does not implement {@code Comparable<E>}
@@ -452,6 +501,48 @@ public class ArrayList<E> implements Iterable<E> {
     }
 
     /**
+     * Exercise 9. Returns the number of occurences of the mode of the list (the
+     * mode being the element that appears most often)
+     * 
+     * @return the number of occurences of the mode of the list
+     */
+    public int maxCount() {
+        HashMap<E, Integer> map = new HashMap<>();
+        for (int i = 0; i < size; i++) {
+            E e = elementData[i];
+            map.put(e, map.getOrDefault(e, 0) + 1);
+        }
+        int max = 0;
+        for (int e: map.values()) {
+            max = Math.max(max, e);
+        }
+        return max;
+    }
+
+    /**
+     * Exercise 10. Returns the length of the longest non-descending sequence of
+     * consecutive comparable elements in the list
+     * 
+     * @return The length of the longest non-descending sequence
+     * @throws ClassCastException if {@code E} does not implement {@code Comparable<E>}
+     */
+    public int longestSortedSequence() {
+        int len = 0;
+        int maxLen = 0;
+        if (size >= 1) {
+            // Why doesn't java have a void operator?
+            ((Comparable<E>) elementData[0]).compareTo(elementData[0]);
+            len++;
+            maxLen++;
+        }
+        for (int i = 1; i < size; i++) {
+            if (((Comparable<E>) elementData[i - 1]).compareTo(elementData[i]) <= 0) maxLen = Math.max(maxLen, ++len);
+            else len = 1;
+        }
+        return maxLen;
+    }
+
+    /**
      * Checks if the list contains a value
      * 
      * @param value The value to check for.
@@ -485,6 +576,34 @@ public class ArrayList<E> implements Iterable<E> {
     public E[] toArray() {
         return Arrays.copyOfRange(elementData, 0, size);
     }
+
+    /**
+     * Exercise 14. Prints the inversions of the list. &ldquo;An inversion is a pair
+     * of numbers in which the first appears before the second in the list, but the
+     * first is greater than the second.&rdquo; (Stuart Reges and Marty Stepp,
+     * Building Java programs: a back to basics approach&mdash;Third Edition, Page
+     * 949)
+     * 
+     * @throws ClassCastException if {@code E} does not implement {@code Comparable<E>}
+     */
+    public void printInversions() {
+        printInversions(0);
+    }
+
+    /**
+     * A recursive helper method for {@link #printInversions()}
+     * 
+     * @param startIndex the index to start inversions at
+     * @throws ClassCastException if {@code E} does not implement {@code Comparable<E>}
+     */
+    private void printInversions(int startIndex) {
+        if (startIndex == size - 1) return;
+        Comparable<E> base = (Comparable<E>) elementData[startIndex];
+        for (int i = startIndex + 1; i < size; i++) {
+            if (base.compareTo(elementData[i]) > 0) System.out.printf("(%s, %s)%n", base.toString(), elementData[i].toString());
+        }
+        printInversions(startIndex + 1);
+    }   
 
     /**
      * Throws an error if the index is out of bounds
