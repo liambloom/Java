@@ -7,8 +7,19 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 
+class Foo {
+    int i = 0;
+
+    public void increment() {
+        i++;
+    }
+    public String toString() {
+        return Integer.toString(i);
+    }
+}
+
 /**
- * This is a clone of {@code java.util.ArrayList<E>}.
+ * This is a clone of {@code java.util.ArrayList<E>}. Test1.
  * 
  * @author Liam Bloom 
  */
@@ -20,16 +31,21 @@ public class ArrayList<E> implements Iterable<E> {
      * 
      * @param args args
      */
-    public static void main(String[] args) {
-        /*java.util.ArrayList<Foo> x = new java.util.ArrayList<>();
+    public static void main(final String[] args) {
+        /*ArrayList<Foo> x = new ArrayList<>();
         Foo y = new Foo();
         //x.repla
         x.add(y);
-        x.add(y);
-        x.get(0).increment();
-        System.out.println(x.get(1));*/
-        //ArrayList<Integer> x = new ArrayList<>(new Integer[]{ 1, 3, 5, 2, 9, 7, -3, 0, 42, 308, 17 });
+        x.toArray()[0].increment();
+        System.out.println(x.get(0));*/
+        final ArrayList<Integer> x = new ArrayList<>(new Integer[]{ 10, 25, 31, 47, 52, 68, 77 });
         //ArrayList<String> x = new ArrayList<>(new String[]{"foo", "bar"});
+        /*ArrayList<Integer> x = new ArrayList<>(0);
+        x.add(2);
+        Foo[] f = (Foo[]) new Object[2];
+        f[0] = new Foo();
+        f[1] = new Foo();
+        System.out.println(Arrays.copyOfRange(f, 0, 1));*/
         //x.reverse();
         /*x.add(1);
         x.add(1);
@@ -37,11 +53,14 @@ public class ArrayList<E> implements Iterable<E> {
         //x.add(1, 4);
         //x.remove(4);
         x.replaceAll(1, 2);*/
+        //x.stretch(3);
+        x.switchPairs();
+        System.out.println(x);
         //System.out.println(x);
-        System.out.print("1, 2, 3, 4: ");
+        /*System.out.print("1, 2, 3, 4: ");
         new ArrayList<Integer>(new Integer[]{ 1, 2, 3, 4 }).printInversions();
         System.out.print("4, 3, 2, 1: ");
-        new ArrayList<Integer>(new Integer[]{ 4, 3, 2, 1 }).printInversions();
+        new ArrayList<Integer>(new Integer[]{ 4, 3, 2, 1 }).printInversions();*/
     }
 
     /**
@@ -97,7 +116,7 @@ public class ArrayList<E> implements Iterable<E> {
      * @param capacity The capacity of the new list. Must be &gt;= 0.
      * @throws IllegalArgumentException if capacity is less than 0.
      */
-    public ArrayList(int capacity) {
+    public ArrayList(final int capacity) {
         if (capacity < 0) throw new IllegalArgumentException("Capacity must be greater than 0, received " + capacity);
         /* I could avoid the unchecked cast, by not initializing elementData until
             the first value was added to it, and then generating the array using
@@ -107,21 +126,21 @@ public class ArrayList<E> implements Iterable<E> {
         elementData = (E[]) new Object[capacity];
     }
     
-    /**
+    /*/**
      * Creates a new {@code ArrayList} from an already exiting one
      * 
      * @param list A pre-existing {@code ArrayList}
-     */
+     /
     public ArrayList(ArrayList<E> list) {
         this(list.toArray());
-    }
+    }*/
 
     /**
      * Creates a new {@code ArrayList} from a {@code List}
      * 
      * @param list The {@code List} that the {@code ArrayList} should be created from
      */
-    public ArrayList(List<E> list) {
+    public ArrayList(final List<E> list) {
         this((E[]) list.toArray());
     }
 
@@ -130,7 +149,7 @@ public class ArrayList<E> implements Iterable<E> {
      * 
      * @param list An array of type E
      */
-    public ArrayList(E[] list) {
+    public ArrayList(final E[] list) {
         this(list.length);
         elementData = list;
         size = list.length;
@@ -159,7 +178,7 @@ public class ArrayList<E> implements Iterable<E> {
      * 
      * @param value the value to be added
      */
-    public void add(E value) {
+    public void add(final E value) {
         addAll(size, value);
     }
 
@@ -170,7 +189,7 @@ public class ArrayList<E> implements Iterable<E> {
      * @param value the value to be added
      * @throws IndexOutOfBoundsException if index is not between {@code 0} and {@link #size()} (inclusive)
      */
-    public void add(int index, E value) {
+    public void add(final int index, final E value) {
         addAll(index, value);
     }
 
@@ -179,7 +198,7 @@ public class ArrayList<E> implements Iterable<E> {
      * 
      * @param o The {@code ArrayList} of elements to add
      */
-    public void addAll(ArrayList<E> o) {
+    public void addAll(final ArrayList<E> o) {
         addAll(size, o.elementData);
     }
 
@@ -189,7 +208,7 @@ public class ArrayList<E> implements Iterable<E> {
      * @param index The index at which to add the elements
      * @param o     The {@code ArrayList} of elements to add
      */
-    public void addAll(int index, ArrayList<E> o) {
+    public void addAll(final int index, final ArrayList<E> o) {
         addAll(index, o.elementData);
     }
 
@@ -198,7 +217,7 @@ public class ArrayList<E> implements Iterable<E> {
      * 
      * @param o The {@code List} of elements to add
      */
-    public void addAll(List<E> o) {
+    public void addAll(final List<E> o) {
         addAll(size, (E[]) o.toArray());
     }
 
@@ -208,7 +227,7 @@ public class ArrayList<E> implements Iterable<E> {
      * @param index The index at which to add the elements
      * @param o The {@code List} of elements to add
      */
-    public void addAll(int index, List<E> o) {
+    public void addAll(final int index, final List<E> o) {
         addAll(index, (E[]) o.toArray());
     }
 
@@ -220,9 +239,9 @@ public class ArrayList<E> implements Iterable<E> {
      * @throws IndexOutOfBoundsException if index is not between {@code 0} and {@link #size()} (inclusive)
      */
     // There is no multiAdd without index because then there would be ambiguity as to which method you wanted to call
-    public void addAll(int index, E... values) {
+    public void addAll(final int index, final E... values) {
         indexBoundChecker(index, true);
-        int prevSize = size;
+        final int prevSize = size;
         grow(values.length);
         System.arraycopy(elementData, index, elementData, index + values.length, prevSize - index);
         System.arraycopy(values, 0, elementData, index, values.length);
@@ -234,7 +253,7 @@ public class ArrayList<E> implements Iterable<E> {
      * @param index the index of the value to be removed
      * @throws IndexOutOfBoundsException if index is not between {@code 0} and {@link #size()} (exclusive)
      */
-    public void remove(int index) {
+    public void remove(final int index) {
         indexBoundChecker(index, false);
         System.arraycopy(elementData, index + 1, elementData, index, size - index);
         elementData[--size] = null;
@@ -249,7 +268,7 @@ public class ArrayList<E> implements Iterable<E> {
     public E removeLast() {
         if (size == 0) throw new NoSuchElementException();
         else {
-            E removed = get(size - 1);
+            final E removed = get(size - 1);
             remove(size - 1);
             return removed;
         }
@@ -261,7 +280,7 @@ public class ArrayList<E> implements Iterable<E> {
      * @param n how many elements to remove
      * @throws IndexOutOfBoundsException if n is greater than the list's {@link #size()}
      */
-    public void removeFront(int n) {
+    public void removeFront(final int n) {
         if (n > size) throw new IndexOutOfBoundsException(n);
         System.arraycopy(elementData, n, elementData, 0, size - n);
         for (int i = n; i < size; i++) elementData[i] = null;
@@ -272,7 +291,7 @@ public class ArrayList<E> implements Iterable<E> {
      * Exercise 13. Removes every occurrence of an element
      * @param e the element to remove
      */
-    public void removeAll(E e) {
+    public void removeAll(final E e) {
         int i;
         while ((i = indexOf(e)) != -1) remove(i);
     }
@@ -284,7 +303,7 @@ public class ArrayList<E> implements Iterable<E> {
      * @return the value at the index
      * @throws IndexOutOfBoundsException if index is not between {@code 0} and {@link #size()} (exclusive)
      */
-    public E get(int index) {
+    public E get(final int index) {
         indexBoundChecker(index, false);
         return elementData[index];
     }
@@ -296,32 +315,32 @@ public class ArrayList<E> implements Iterable<E> {
      * @param value The value
      * @throws IndexOutOfBoundsException if index is not between {@code 0} and {@link #size()} (exclusive)
      */
-    public void set(int index, E value) {
+    public void set(final int index, final E value) {
         indexBoundChecker(index, false);
         elementData[index] = value;
     }
 
     /**
      * Exercise 6. Fills the list with a particular value. <strong>Warning:</strong>
-     * this does not clone of newValue. If there are multiple matches, they will all
+     * this does not clone newValue. If there are multiple matches, they will all
      * be replaced by pointers to <em>the same object</em>, not copies of it.
      * 
      * @param value the value to fill the list with
      */
-    public void fill(E value) {
+    public void fill(final E value) {
         for (int i = 0; i < size; i++) elementData[i] = value;
     }
 
     /**
      * Exercise 3. Replaces an element in the list with another element.
-     * <strong>Warning:</strong> this does not clone of newValue. If there are
+     * <strong>Warning:</strong> this does not clone newValue. If there are
      * multiple matches, they will all be replaced by pointers to <em>the same
      * object</em>, not copies of it.
      * 
      * @param oldValue The value to be replaced
      * @param newValue The value to replace it with
      */
-    public void replaceAll(E oldValue, E newValue) {
+    public void replaceAll(final E oldValue, final E newValue) {
         int i;
         while ((i = indexOf(oldValue)) != -1) set(i, newValue);
     }
@@ -331,7 +350,7 @@ public class ArrayList<E> implements Iterable<E> {
      */
     public void reverse() {
         for (int i = 0; i < size / 2; i++) {
-            E temp = elementData[i];
+            final E temp = elementData[i];
             elementData[i] = elementData[size - i - 1];
             elementData[size - i - 1] = temp;
         }
@@ -344,6 +363,66 @@ public class ArrayList<E> implements Iterable<E> {
     public void mirror() {
         ensureCapacity(size * 2);
         for (int i = size - 1; i >= 0; i++) add(elementData[i]);
+        size *= 2;
+    }
+
+    /**
+     * Exercise 16. Replaces every value with two of itself.
+     * <strong>Warning:</strong> this does not clone the value. The value will be
+     * replaced by two pointers to <em>the same object</em>, not copies of it.
+     */
+    public void stutter() {
+        stretch(2);
+    }
+
+    /**
+     * Exercise 17. Replaces every value with n of itself. <strong>Warning:</strong>
+     * this does not clone the value. The value will be replaced by n pointers
+     * to <em>the same object</em>, not copies of it.
+     * 
+     * @param n how many times to repeat each value
+     */
+    public void stretch(final int n) {
+        if (n <= 0) clear();
+        else {
+            ensureCapacity(size * n);
+            for (int i = size - 1; i >= 0; i--) {
+                for (int j = 0; j < n; j++) elementData[i * n + j] = elementData[i];
+            }
+            size *= n;
+        }
+    }
+
+    /**
+     * Exercise 20. Moves the 1st element in the list to the end of the list.
+     */
+    public void rotate() {
+        if (size == 0) return;
+        final E temp = elementData[0];
+        remove(0);
+        add(temp);
+    }
+
+    /**
+     * Exercise 21. Switches the positions of each pair of values in the list.
+     */
+    public void switchPairs() {
+        for (int i = 0; i < size / 2; i++) {
+            final E temp = elementData[i * 2];
+            elementData[i * 2] = elementData[i * 2 + 1];
+            elementData[i * 2 + 1] = temp;
+        }
+    }
+
+    /**
+     * Exercise 18. Appends a copy of the list to the end of the list.
+     * <strong>Warning:</strong> this does not clone the values. The value will be
+     * replaced by n pointers to <em>the same object</em>, not copies of it.
+     */
+    public void doubleList() {
+        ensureCapacity(size * 2);
+        System.arraycopy(elementData, 0, elementData, size, size);
+        size *= 2;
     }
 
     /**
@@ -352,7 +431,7 @@ public class ArrayList<E> implements Iterable<E> {
      * @param value the value that will be searched for
      * @return the index of the given value. {@code -1} if the value is not found
      */
-    public int indexOf(E value) {
+    public int indexOf(final E value) {
         for (int i = 0; i < size; i++) {
             if (elementData[i].equals(value)) return i;
         }
@@ -365,7 +444,7 @@ public class ArrayList<E> implements Iterable<E> {
      * @param value the value that will be searched for
      * @return the index of the last occurrence given value. {@code -1} if the value is not found
      */
-    public int lastIndexOf(E value) {
+    public int lastIndexOf(final E value) {
         for (int i = size - 1; i >= 0; i++) {
             if (elementData[i].equals(value)) return i;
         }
@@ -380,7 +459,7 @@ public class ArrayList<E> implements Iterable<E> {
      * @param l the list that will be searched for
      * @return the index of the last occurrence given value. {@code -1} if the value is not found
      */
-    public int indexOfSubList(ArrayList<E> l) {
+    public int indexOfSubList(final ArrayList<E> l) {
         outer: for (int i = 0; i < size; i++) {
             for (int j = 0; j < l.size; j++) {
                 if (!l.get(j).equals(get(i + j))) continue outer;
@@ -397,7 +476,7 @@ public class ArrayList<E> implements Iterable<E> {
      * @param e the element to check for
      * @return the amount of times the element 'e' occurs in the list
      */
-    public int count(E e) {
+    public int count(final E e) {
         int c = 0;
         for (int i = 0; i < size; i++) {
             if (elementData[i].equals(e)) c++;
@@ -417,7 +496,7 @@ public class ArrayList<E> implements Iterable<E> {
         E min = elementData[0];
         if (size == 1) ((Comparable<E>) min).compareTo(min); // This checks to make sure E implements Comparable<E> even if size == 1
         for (int i = 1; i < size; i++) {
-            E e = elementData[i];
+            final E e = elementData[i];
             if (((Comparable<E>) min).compareTo(e) > 0) min = e;
         }
         return min;
@@ -428,13 +507,14 @@ public class ArrayList<E> implements Iterable<E> {
      * 
      * @return the largest value in the list
      * @throws IllegalStateException if the list is empty
+     * @throws ClassCastException if {@code E} does not implement {@code Comparable<E>}
      */
     public E max() {
         if (size == 0) throw new IllegalStateException("There is not minimum value to an empty list");
         E max = elementData[0];
         if (size == 1) ((Comparable<E>) max).compareTo(max); // This checks to make sure E implements Comparable<E> even if size == 1
         for (int i = 1; i < size; i++) {
-            E e = elementData[i];
+            final E e = elementData[i];
             if (((Comparable<E>) max).compareTo(e) < 0) max = e;
         }
         return max;
@@ -492,12 +572,30 @@ public class ArrayList<E> implements Iterable<E> {
      *                            Integer, Long, Float, or Double
      */
     public ArrayList<E> runningTotal() {
-        double[] arr = asDoubleArr();
+        if (size == 0) return new ArrayList<E>(0);
+        final double[] arr = asDoubleArr();
         for (int i = 1; i < size; i++) arr[i] += arr[i - 1];
-        ArrayList<E> r = new ArrayList<>(size);
-        Class<? extends Number> e = (Class<? extends Number>) elementData[0].getClass();
+        final ArrayList<E> r = new ArrayList<>(size);
+        final Class<? extends Number> e = (Class<? extends Number>) elementData[0].getClass();
         for (int i = 0; i < size; i++) r.add((E) $.castNumber(arr[i], e));
         return r;
+    }
+
+    /**
+     * Exercise 19. Replaces each consecutive pair of values with their sum. If
+     * {@link #size()} is odd, the last element is ignored
+     * 
+     * @throws ClassCastException if any of the elements is a different type from
+     *                            another or if they are not one of Byte, Short,
+     *                            Integer, Long, Float, or Double
+     */
+    public void compress() {
+        if (size == 0) return;
+        final double[] arr = asDoubleArr();
+        final Class<? extends Number> e = (Class<? extends Number>) elementData[0].getClass();
+        for (int i = 0; i < size / 2; i++) elementData[i] = (E) $.castNumber(arr[i * 2] + arr[i * 2 + 1], e);
+        if (size % 2 != 0) elementData[size / 2] = elementData[size - 1];
+        size = (int) Math.ceil(size / 2.0);
     }
 
     /**
@@ -507,13 +605,13 @@ public class ArrayList<E> implements Iterable<E> {
      * @return the number of occurences of the mode of the list
      */
     public int maxCount() {
-        HashMap<E, Integer> map = new HashMap<>();
+        final HashMap<E, Integer> map = new HashMap<>();
         for (int i = 0; i < size; i++) {
-            E e = elementData[i];
+            final E e = elementData[i];
             map.put(e, map.getOrDefault(e, 0) + 1);
         }
         int max = 0;
-        for (int e: map.values()) {
+        for (final int e: map.values()) {
             max = Math.max(max, e);
         }
         return max;
@@ -548,7 +646,7 @@ public class ArrayList<E> implements Iterable<E> {
      * @param value The value to check for.
      * @return {@code true} if the value is in the list, {@code false} if it's not.
      */
-    public boolean contains(E value) {
+    public boolean contains(final E value) {
         return indexOf(value) >= 0;
     }
 
@@ -565,17 +663,22 @@ public class ArrayList<E> implements Iterable<E> {
      * Sets the list size to {@code 0}
      */
     public void clear() {
+        // Setting everything to null isn't required, but it allows the garbage collector to free up more space
+        for (int i = 0; i < size; i++) elementData[i] = null;
         size = 0;
     }
 
-    /**
+    /*/**
      * Returns the list as an array
      * 
      * @return The list, but in the form of an array
-     */
+     /
     public E[] toArray() {
-        return Arrays.copyOfRange(elementData, 0, size);
-    }
+        if (elementData.length == 0) return (E[]) new Object[0];
+        Class<E> e = 
+        elementData.getClass().sup
+        return (E[]) Arrays.copyOfRange(elementData, 0, size);
+    }*/
 
     /**
      * Exercise 14. Prints the inversions of the list. &ldquo;An inversion is a pair
@@ -596,9 +699,9 @@ public class ArrayList<E> implements Iterable<E> {
      * @param startIndex the index to start inversions at
      * @throws ClassCastException if {@code E} does not implement {@code Comparable<E>}
      */
-    private void printInversions(int startIndex) {
+    private void printInversions(final int startIndex) {
         if (startIndex == size - 1) return;
-        Comparable<E> base = (Comparable<E>) elementData[startIndex];
+        final Comparable<E> base = (Comparable<E>) elementData[startIndex];
         for (int i = startIndex + 1; i < size; i++) {
             if (base.compareTo(elementData[i]) > 0) System.out.printf("(%s, %s)%n", base.toString(), elementData[i].toString());
         }
@@ -612,7 +715,7 @@ public class ArrayList<E> implements Iterable<E> {
      * @param inclusive If false, it will throw an error if the index is equal to size
      * @throws IndexOutOfBoundsException if the index is not valid for the list's size
      */
-    private void indexBoundChecker(int index, boolean inclusive) {
+    private void indexBoundChecker(final int index, final boolean inclusive) {
         if (index >= size + (inclusive ? 1 : 0) || index < 0) {
             throw new IndexOutOfBoundsException(index);
         }
@@ -624,7 +727,7 @@ public class ArrayList<E> implements Iterable<E> {
      * @param d How much to grow the list by
      * @throws IllegalArgumentException if d is less than {@code 0}
      */
-    private void grow(int d) {
+    private void grow(final int d) {
         if (d < 0) throw new IllegalArgumentException("Cannot shrink " + getClass().getSimpleName() + " capacity");
         else ensureCapacity(size += d);
     }
@@ -633,14 +736,15 @@ public class ArrayList<E> implements Iterable<E> {
      * Turns the list into a double[]. Note: T extends both {@code Number} and
      * {@code E}, but I could not add both as bounds
      * 
+     * @param <T> the class of each element in the list
      * @return the list as a double[]
      * @throws ClassCastException if any of the elements is a different type from
      *                            another
      */
     private <T extends E> double[] asDoubleArr() {
         if (size == 0) return new double[0];
-        double[] prim = new double[size];
-        Class<T> t = (Class<T>) elementData[0].getClass();
+        final double[] prim = new double[size];
+        final Class<T> t = (Class<T>) elementData[0].getClass();
         if (t.isInterface()) throw new IllegalStateException("This should be impossible"); // This isn't in the javadoc because it should be impossible
         if (!Number.class.isAssignableFrom(t)) throw new ClassCastException(t.getName() + " is not a Number");
         for (int i = 0; i < size; i++) {
@@ -657,7 +761,7 @@ public class ArrayList<E> implements Iterable<E> {
      * 
      * @param capacity The capacity it must be
      */
-    public void ensureCapacity(int capacity) {
+    public void ensureCapacity(final int capacity) {
         if (capacity > elementData.length) elementData = Arrays.copyOf(elementData, (int) Math.max(capacity, 1.5 * elementData.length));
     }
 

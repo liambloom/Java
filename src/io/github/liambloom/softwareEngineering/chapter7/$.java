@@ -57,7 +57,7 @@ public class $ { // random utility functions that don't fit in anywhere
         else if (t.equals(Long.class)) return (T) (Long) Math.round(d);
         else if (t.equals(Float.class)) return (T) (Float) (float) d;
         else if (t.equals(Double.class)) return (T) (Double) d;
-        else throw new IllegalArgumentException("T must be one of Byte, Short, Integer, Long, Float, Double");
+        else throw new ClassCastException("T must be one of Byte, Short, Integer, Long, Float, Double");
     }
     public static <T extends Number> T castNumber (double d, T[] a) {
         return castNumber(d, (Class<T>) a.getClass().getComponentType());
