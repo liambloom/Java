@@ -12,7 +12,7 @@ public class BankAccount {
         amount += transactionFee; // Also exercise 11
         if (balance - amount >= 0) deposit(-amount);
     }
-    public void transfer (BankAccount to, double amount) { // Exericse 13
+    public void transfer (BankAccount to, double amount) { // Exercise 13
         amount = Math.max(Math.min(amount, balance - 5), 0);
         withdraw(amount + 5 - transactionFee);
         to.deposit(amount);

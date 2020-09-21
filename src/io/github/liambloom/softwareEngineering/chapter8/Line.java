@@ -16,7 +16,7 @@ public class Line { // Exercise 14
     public double getSlope () { // Exercise 15
         return p1.slope(p2);
     }
-    public boolean isCollinear (Point p) {
+    public boolean isCollinear (Point p) { // Exercise 17
         return p.isCollinear(p1, p2);
     }
 

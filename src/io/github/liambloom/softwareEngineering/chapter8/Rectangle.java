@@ -19,22 +19,22 @@ public class Rectangle { // Exercise 18
         this.height = height;
     }
     public Rectangle (Point p, int width, int height) { // Exercise 19
-       this(p.x, p.y, width, height);
+        this(p.x, p.y, width, height);
     }
 
     public boolean contains (int x, int y) { // Exercise 20
         return this.x <= x && this.y <= y && this.x + this.width >= x && this.y + this.height >= y;
     }
-    public boolean contians (Point p) { // Also Exercise 20
+    public boolean contains (Point p) { // Also Exercise 20
         return contains(p.x, p.y);
     }
 
-    public Rectangle union (Rectangle rect) {
+    public Rectangle union (Rectangle rect) { // Exercise 21
         final int x = Math.min(this.x, rect.x);
         final int y = Math.min(this.y, rect.y);
         return new Rectangle(x, y, Math.max(this.x + this.width, rect.x + rect.width) - x, Math.max(this.y + this.height, rect.y + rect.height) - y);
     }
-    public Rectangle intersection (Rectangle rect) {
+    public Rectangle intersection (Rectangle rect) { // Exercise 22
         final int x = Globals.Math.max(this.x, rect.x, 0);
         final int y = Globals.Math.max(this.y, rect.y, 0);
         return new Rectangle(x, y, Math.max(0, Math.min(this.x + this.width, rect.x + rect.width) - x), Math.max(0, Math.max(this.y + this.height, rect.y + rect.height) - y));
