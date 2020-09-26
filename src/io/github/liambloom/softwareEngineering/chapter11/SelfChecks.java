@@ -13,6 +13,7 @@ public class SelfChecks {
         final Integer[] a = { 1, 1, 3, 5, 5, 5, 5, 7, 7, 11 };
         final LinkedList<Integer> list = new LinkedList<>(Arrays.asList(a));
         // Self-check Code
+        @SuppressWarnings("unused") // For some reason it think that duplicates is unused
         int duplicates = 0;
         int previous;
         final Iterator<Integer> itr = list.iterator();

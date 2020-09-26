@@ -62,3 +62,4 @@
         }
     }
     ```
+10. Sets are good for places where you don’t want to have any duplicates, and, because of this, will sometimes take up less space

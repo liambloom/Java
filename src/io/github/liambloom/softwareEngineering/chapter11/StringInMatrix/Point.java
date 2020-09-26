@@ -1,4 +1,4 @@
-package io.github.liambloom.softwareEngineering.chapter11;
+package io.github.liambloom.softwareEngineering.chapter11.StringInMatrix;
 
 public class Point extends io.github.liambloom.softwareEngineering.chapter8.Point implements Cloneable {
     public Point(int x, int y) {

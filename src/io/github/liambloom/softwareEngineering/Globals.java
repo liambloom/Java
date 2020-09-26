@@ -32,7 +32,10 @@ public final class Globals {
             return max;
         }
     }
-    public static String repeat (String str, int repititions) {
-        return io.github.liambloom.softwareEngineering.chapter4.Exercises.exercise2(str, repititions);
+    public static String repeat (String str, int repetitions) {
+        return io.github.liambloom.softwareEngineering.chapter4.Exercises.exercise2(str, repetitions);
+    }
+    public static String repeat (char c, int repetitions) {
+        return repeat("" + c, repetitions);
     }
 }
