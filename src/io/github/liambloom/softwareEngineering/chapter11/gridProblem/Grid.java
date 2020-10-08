@@ -2,6 +2,8 @@ package io.github.liambloom.softwareEngineering.chapter11.gridProblem;
 
 import java.util.*;
 import java.util.function.BiConsumer;
+import java.awt.Point;
+//import io.github.liambloom.softwareEngineering.chapter11.StringInMatrix.Point;
 
 public class Grid implements Cloneable {
     public static final boolean[][] DEFAULT_GRID = {
@@ -88,6 +90,36 @@ public class Grid implements Cloneable {
         if (col + 1 < grid[0].length)
             alter(row, col + 1);
         return true;
+    }
+
+    public int objectCount() {
+        final Set<Point> points = new HashSet<>();
+        int objects = 0;
+        for (int row = 0; row < grid.length; row++) {
+            for (int col = 0; col < grid[row].length; col++) {
+                if (points.contains(new Point(row, col)))
+                    continue;
+                points.addAll(pointsInObject(row, col));
+                objects++;
+            } 
+        }
+        return objects;
+    }
+
+    public Set<Point> pointsInObject(int row, int col) {
+        Set<Point> points = new HashSet<>();
+        if (grid[row][col]) {
+            points.add(new Point(row, col));
+            if (row > 0)
+                points.addAll(pointsInObject(row - 1, col));
+            if (col > 0)
+                points.addAll(pointsInObject(row, col - 1));
+            if (row + 1 < grid.length)
+                points.addAll(pointsInObject(row + 1, col));
+            if (col + 1 < grid[0].length)
+                points.addAll(pointsInObject(row, col + 1));
+        }
+        return points;
     }
 
     public boolean containsObjects() {
