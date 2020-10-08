@@ -5,6 +5,8 @@ import java.util.*;
 import java.util.regex.*;
 
 public class CLI {
+    public static final Pattern pointRegex = Pattern.compile("\\(\\s*(\\d+)\\s*,\\s*(\\d+)\\s*\\)");
+
     public static final int COLUMN_WIDTH = 2;
     public static final char VERTICAL = '\u2502';
     public static final char HORIZONTAL = '\u2500';
@@ -24,11 +26,13 @@ public class CLI {
         final Scanner s = new Scanner(System.in);
         /*final Grid grid = new Grid();
         final CLI cli = new CLI(grid);*/
-        final Pattern pointRegex = Pattern.compile("\\(\\s*(\\d+)\\s*,\\s*(\\d+)\\s*\\)");
+        System.out.printf("This grid has %d objects on it%n", grid.objectCount());
         draw();
         while (grid.containsObjects()) {
-            System.out.print("Enter a point to remove an object: ");
+            System.out.print("Enter a point to remove an object (or 'quit' to quit): ");
             final String point = s.nextLine().trim();
+            if (point.toLowerCase().equals("quit"))
+                System.exit(0);
             final Matcher matcher = pointRegex.matcher(point);
             if (matcher.matches()) {
                 if (grid.alter(Integer.parseInt(matcher.group(2)) - 1, Integer.parseInt(matcher.group(1)) - 1))
