@@ -4,9 +4,10 @@ import java.util.*;
 
 public class SelfChecks {
     public static void main(String[] args) {
-        final LinkedList<Integer> list = new LinkedList<>(Arrays.asList(new Integer[]{ 1, 2, 3, 4, 5, 6 }));
+        /*final LinkedList<Integer> list = new LinkedList<>(Arrays.asList(new Integer[]{ 1, 2, 3, 4, 5, 6 }));
         sc7(list);
-        System.out.println(list);
+        System.out.println(list);*/
+        sc19();
     }
     public static void sc4() {
         // Given variables
@@ -49,5 +50,34 @@ public class SelfChecks {
         List<T> secondHalfClone = List.copyOf(secondHalf);
         secondHalf.clear();
         list.addAll(0, secondHalfClone);
+    }
+
+    @SuppressWarnings("all")
+    public static void sc18() {
+        Map<Integer, String> foo = new HashMap<>();
+        foo.remove("hi");
+    }
+    
+    public static void sc19_mystery(Map<String, String> map) {
+        Map<String, String> result = new TreeMap<String, String>();
+        for (String key : map.keySet()) {
+            if (key.compareTo(map.get(key)) < 0) {
+                result.put(key, map.get(key));
+            } else {
+                result.put(map.get(key), key);
+            }
+        }
+        System.out.println(result);
+    }
+
+    public static void sc19() {
+        Map<String, String> map = new HashMap<>();
+        //map.put("")
+        sc19_mystery(map);
+    }
+
+    public static void sc20() {
+        //final SortedMap<Integer, String> reverseWordCountMap = reverseMap(wordCountMap);
+        for (Integer key : new TreeSet<>(new TreeMap<Integer, String>().keySet()));
     }
 }

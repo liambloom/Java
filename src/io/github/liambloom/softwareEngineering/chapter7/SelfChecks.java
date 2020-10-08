@@ -1,7 +1,7 @@
 package io.github.liambloom.softwareEngineering.chapter7;
 
 //import liam.chapter4.Ask;
-import java.util.Arrays;
+import java.util.*;
 
 public class SelfChecks { // These were created to check my answers, but I did the problem before writing this.
     public static void main(String[] args) {
