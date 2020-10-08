@@ -41,7 +41,7 @@ import java.util.*;
 
 public class Main {
 
-    public static void main() {
+    public static void main(String[] args) {
         ArrayList<Person> people = new ArrayList<Person>();
         Person theOldest, theYoungest;
 
@@ -66,13 +66,31 @@ public class Main {
     } // main
 
     public static Person findOldest(ArrayList<Person> PersonComparableDatesList) {
-        // YOUR CODE HERE!!!
+        Iterator<Person> iter = PersonComparableDatesList.iterator();
+        if (!iter.hasNext())
+            throw new IllegalArgumentException("There is no oldest in an empty list");
+        Person oldest = iter.next();
+        while (iter.hasNext()) {
+            Person e = iter.next();
+            if (oldest.compareTo(e) > 0)
+                oldest = e;
+        }
+        return oldest;
 
     } // findOldest
 
     public static Person findYoungest(ArrayList<Person> PersonComparableDatesList) {
         // YOUR CODE HERE!!!
-
+        Iterator<Person> iter = PersonComparableDatesList.iterator();
+        if (!iter.hasNext())
+            throw new IllegalArgumentException("There is no youngest in an empty list");
+        Person youngest = iter.next();
+        while (iter.hasNext()) {
+            Person e = iter.next();
+            if (youngest.compareTo(e) < 0)
+                youngest = e;
+        }
+        return youngest;
     } // findYoungest
 
 }

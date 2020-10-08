@@ -22,12 +22,26 @@ public class Person implements Comparable<Person> {
     public final Date birthdate;
 
     public Person() {
-        // Date default is 0/0/0
-        // This doesn't exist
-        // That makes no sense
+        this("Firstname", "Lastname", 0, 0, 0);
     }
 
     public Person(String first, String last, int month, int day, int year) {
+        this.firstName = first;
+        this.lastName = last;
+        this.birthdate = new Date(month, day, year);
+    }
 
+    public Date getMyBirthDate() {
+        return birthdate;
+    }
+
+    @Override
+    public int compareTo(Person o) {
+        return this.birthdate.compareTo(o.birthdate);
+    }
+
+    @Override
+    public String toString() {
+        return String.format("%s %s, born %s", firstName, lastName, birthdate);
     }
 }

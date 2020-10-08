@@ -9,7 +9,8 @@ public class Date implements Comparable<Date> {
     private int myDay;
     private int myYear;
 
-    public Date() {
+    public Date() { 
+        // This date doesn't exist on the gregorian calendar
         setDate(0,0,0);
     }
     public Date(int m, int d, int y) {
@@ -49,7 +50,12 @@ public class Date implements Comparable<Date> {
     }    
 
     public int compareTo(Date o) {
-
+        if (myYear != o.myYear)
+            return myYear - o.myYear;
+        else if (myMonth != o.myMonth)
+            return myMonth - o.myMonth;
+        else
+            return myDay - o.myDay;
     }
     
     public String toString() {   
