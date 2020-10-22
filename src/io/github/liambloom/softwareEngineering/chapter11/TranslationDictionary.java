@@ -9,7 +9,7 @@ package io.github.liambloom.softwareEngineering.chapter11;
  * in an English-Spanish dictionary, holiday might be associated with
  * {fiesta, vacaciones}; in a Spanish-English dictionary, fiesta might 
  * be associated with {holiday, party, celebration, feast}.  In a dictionary 
- * map, a word is a key and a set of its translations is a “value” associated
+ * map, a word is a key and a set of its translations is a "value" associated
  * with that key.  Suppose the dictionary is implemented as a TreeMap and a
  * set of translations for each word implemented as a TreeSet.
  * 
