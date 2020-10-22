@@ -65,4 +65,23 @@ public class $ { // random utility functions that don't fit in anywhere
     public static <T extends Number> T castNumber (double d, T v) {
         return castNumber(d, (Class<T>) v.getClass());
     }
+    
+    /*
+     * This code is based on code by JasonD and ToolmakerSteve on stackoverflow (the
+     * original code can be found here https://stackoverflow.com/a/14126736). This
+     * method (and this method only) are licensed under CC-BY-SA 3.0
+     * (https://creativecommons.org/licenses/by-sa/3.0/). It has been modified to
+     * store the long value in a variable instead of casting it twice, and to be
+     * able to round.
+     */
+    public static String numberToString(Number num, int maxDecimalPlaces) {
+        final double n = num.doubleValue();
+        final long nLong = (long) n;
+        if (n == nLong)
+            return String.format("%d", nLong);
+        else {
+            final double pow = Math.pow(10, maxDecimalPlaces);
+            return String.format("%s", (double) (long) (n * pow) / pow);
+        }
+    }
 }

@@ -1,7 +1,6 @@
 package io.github.liambloom.softwareEngineering.chapter7;
 
 import java.util.Arrays;
-import java.util.TreeSet;
 
 public class MrM1DArrayProblems {
     public static void p1(final int[] a) {
@@ -140,33 +139,11 @@ public class MrM1DArrayProblems {
             }
             
         }
-        System.out.printf("mean = " + numberToString((double) sum / a.length, 2) + "   median = %d   mode = ", a.length % 2 == 0 ? (a[a.length / 2] + a[a.length / 2 - 1]) / 2 : a[a.length / 2]);
+        System.out.printf("mean = " + $.numberToString((double) sum / a.length, 2) + "   median = %d   mode = ", a.length % 2 == 0 ? (a[a.length / 2] + a[a.length / 2 - 1]) / 2 : a[a.length / 2]);
         System.out.print(modes[0]);
         for (int i = 1; i < modes.length && modes[i] != null; i++)
             System.out.print(", " + modes[i]);
         System.out.println();
-    }
-    
-    private static String numberToString(Number num, int maxDecimalPlaces) {
-        return numberToString(num, (byte) maxDecimalPlaces);
-    }
-    
-    /*
-     * This code is based on code by JasonD and ToolmakerSteve on stackoverflow (the
-     * original code can be found here https://stackoverflow.com/a/14126736). This
-     * method (and this method only) are licensed under CC-BY-SA 3.0
-     * (https://creativecommons.org/licenses/by-sa/3.0/). It has been modified to store
-     * the long value in a variable instead of casting it twice, and to be able to round.
-     */
-    private static String numberToString(Number num, byte maxDecimalPlaces) {
-        final double n = num.doubleValue();
-        final long nLong = (long) n;
-        if (n == nLong)
-            return String.format("%d", nLong);
-        else {
-            final double pow = Math.pow(10, maxDecimalPlaces);
-            return String.format("%s", (double) (long) (n * pow) / pow);
-        }
     }
 
     public static int[] p9(int n) { // to binary
