@@ -1,4 +1,4 @@
-package io.github.liambloom.softwareEngineering.chapter13.PersonComparableDates;
+package io.github.liambloom.softwareEngineering.chapter11.PersonComparableDates;
 
 /**
  * Person_Comparable_Dates class does the following:
@@ -6,10 +6,11 @@ package io.github.liambloom.softwareEngineering.chapter13.PersonComparableDates;
  * (1) implements "Comparable" and thus, YOU write the "compareTo()" method.
  * Rem: public int compareTo(Object x)
  * 
- * (2) has the needed instance variables: myFirstName & myLastName of type
+ * (2) has the needed instance variables: myFirstName &amp; myLastName of type
  * String, myBirthDate of type Date (Compositioned inside of Person in other
  * words, Person "hasA" Date) (3) has the needed constructors: default and
- * regular that takes in 2 Strings for the name & 3 ints for the Date object.
+ * regular that takes in 2 Strings for the name &amp; 3 ints for the Date
+ * object.
  * 
  * (4) has getMyBirthDate() that returns the Person's myBirthDate.
  * 

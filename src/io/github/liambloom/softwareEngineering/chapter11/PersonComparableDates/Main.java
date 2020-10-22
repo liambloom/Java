@@ -1,4 +1,4 @@
-package io.github.liambloom.softwareEngineering.chapter13.PersonComparableDates;
+package io.github.liambloom.softwareEngineering.chapter11.PersonComparableDates;
 
 /**
  * PersonComparableDates_CLIENT: Mr. Marques
@@ -15,7 +15,7 @@ package io.github.liambloom.softwareEngineering.chapter13.PersonComparableDates;
  * This program will have you write a PersonComparableDates class that creates
  * an ArrayList called 'people' that holds the type 'PersonComparableDates'. A
  * 'PersonComparableDates' has a firstName and lastName as well as it hasA
- * Date class that holds the PersonComparableDatess birthdate.
+ * Date class that holds the PersonComparableDates birthdate.
  * 
  * Your task: Find the youngest and oldest PersonComparableDates in the
  * ArrayList 'people'. Create the 'PersonComparableDates' class and have it
