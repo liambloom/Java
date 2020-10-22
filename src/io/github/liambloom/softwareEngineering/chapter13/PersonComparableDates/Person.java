@@ -1,4 +1,4 @@
-package io.github.liambloom.softwareEngineering.chapter11.PersonComparableDates;
+package io.github.liambloom.softwareEngineering.chapter13.PersonComparableDates;
 
 /**
  * Person_Comparable_Dates class does the following:
