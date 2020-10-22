@@ -29,6 +29,7 @@ public interface Polygon_Comparable extends Comparable<Polygon_Comparable> {
     }
     String getMyCategory();
 
+    // This solved a problem Mr. Marques had been having for YEARS
     @Override
     public default int compareTo(Polygon_Comparable o) {
         final double cmp = this.getMyArea() - o.getMyArea();

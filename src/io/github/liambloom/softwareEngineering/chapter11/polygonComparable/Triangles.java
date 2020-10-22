@@ -73,7 +73,7 @@ double myBase, myHeight, myArea;
     // ************************** toString() ******************************
     public String toString() 
     { 
-        return getMyType() + " and I am also a Triangle and I am also a Polygon_Comparable. AND my area = " + getMyArea();
+        return getMyType() + " and I am also a Triangle and I am also a Polygon_Comparable AND my area = " + getMyArea();
     }
         
 } // class Triangles

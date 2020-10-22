@@ -12,8 +12,6 @@ public class Parallelogram extends Trapezium {
 
     @Override
     public String toString() {
-        return "Parallelogram and I am also a " + super.toString() + 
-            (Thread.currentThread().getStackTrace()[2].getClassName().startsWith(getClass().getPackageName()) 
-                ? "" : " AND my area = " + getMyArea());
+        return "Parallelogram and I am also a " + super.toString();
     }
 }

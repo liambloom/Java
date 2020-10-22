@@ -11,7 +11,6 @@ package io.github.liambloom.softwareEngineering.chapter11.polygonComparable;
 
 public class Scalene extends Triangles
 {  
-
     // Constructors
     public Scalene() {
         super();

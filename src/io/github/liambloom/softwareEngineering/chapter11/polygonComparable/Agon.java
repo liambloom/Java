@@ -81,7 +81,7 @@ public abstract class Agon implements Polygon_Comparable
     @Override
     public String toString() 
     { 
-        return getMyType() + "and I am also an Agon and I am also a Polygon_Comparable AND my area = " + getMyArea();
+        return getMyType() + " and I am also an Agon and I am also a Polygon_Comparable AND my area = " + getMyArea();
     }    
     
 }

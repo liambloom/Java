@@ -22,8 +22,6 @@ public class Trapezium extends Quadrilaterals {
 
     @Override
     public String toString() {
-        return "Trapezium and I am also a " + super.toString() + 
-            (Thread.currentThread().getStackTrace()[2].getClassName().startsWith(getClass().getPackageName()) 
-                ? "" : " AND my area = " + getMyArea());
+        return "Trapezium and I am also a " + super.toString();
     }
 }

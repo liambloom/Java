@@ -13,6 +13,6 @@ public class Rhombus extends Parallelogram {
     // Inherited
     @Override
     public String toString() {
-        return "Rhombus and I am also a " + super.toString() + " AND my area = " + getMyArea();
+        return "Rhombus and I am also a " + super.toString();
     }
 }

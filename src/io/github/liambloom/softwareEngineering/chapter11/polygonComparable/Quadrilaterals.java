@@ -85,7 +85,7 @@ public abstract class Quadrilaterals implements Polygon_Comparable
     @Override
     public String toString() 
     { 
-        return "Quadrilateral and I am also a Polygon_Comparable";
+        return "Quadrilateral and I am also a Polygon_Comparable AND my area = " + getMyArea();
     }      
     
 }

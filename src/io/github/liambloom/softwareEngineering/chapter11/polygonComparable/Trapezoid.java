@@ -18,6 +18,6 @@ public class Trapezoid extends Trapezium {
     // Inherited
     @Override
     public String toString() {
-        return "Trapezoid and I am also a " + super.toString() + "AND my area = " + getMyArea();
+        return "Trapezoid and I am also a " + super.toString();
     }
 }

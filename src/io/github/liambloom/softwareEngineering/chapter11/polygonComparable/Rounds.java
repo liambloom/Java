@@ -72,7 +72,7 @@ public abstract class Rounds implements Polygon_Comparable
         @Override
         public String toString() 
         { 
-            return "Round and I am also a Polygon_Comparable";
+            return "Round and I am also a Polygon_Comparable AND my area = " + getMyArea();
         }
     
     }

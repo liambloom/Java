@@ -13,6 +13,6 @@ public class Circle extends Ellipse {
     // Inherited
     @Override
     public String toString() {
-        return "Circle and I am also an " + super.toString() + " AND my area = " + getMyArea();
+        return "Circle and I am also an " + super.toString();
     }
 }

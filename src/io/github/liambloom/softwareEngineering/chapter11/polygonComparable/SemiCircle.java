@@ -18,6 +18,6 @@ public class SemiCircle extends Rounds {
 
     @Override
     public String toString() {
-        return "SemiCircle and I am also a " + super.toString() + " AND my area = " + getMyArea();
+        return "SemiCircle and I am also a " + super.toString();
     }
 }

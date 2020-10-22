@@ -13,6 +13,6 @@ public class Square extends Rectangle {
     // Inherited
     @Override
     public String toString() {
-        return "Square and I am also a " + super.toString() + " AND my area = " + getMyArea();
+        return "Square and I am also a " + super.toString();
     }
 }

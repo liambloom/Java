@@ -18,8 +18,6 @@ public class Rectangle extends Parallelogram {
     // Inherited
     @Override
     public String toString() {
-        return "Rectangle and I am also a " + super.toString() + 
-            (Thread.currentThread().getStackTrace()[2].getClassName().startsWith(getClass().getPackageName()) 
-                ? "" : " AND my area = " + getMyArea());
+        return "Rectangle and I am also a " + super.toString();
     }
 }

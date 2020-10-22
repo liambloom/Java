@@ -22,8 +22,6 @@ public class Ellipse extends Rounds {
 
     @Override
     public String toString() {
-        return "Ellipse and I am also a " + super.toString() + 
-            (Thread.currentThread().getStackTrace()[2].getClassName().startsWith(getClass().getPackageName()) 
-                ? "" : " AND my area = " + getMyArea());
+        return "Ellipse and I am also a " + super.toString();
     }
 }
