@@ -1,4 +1,4 @@
-package io.github.liambloom.softwareEngineering.chapter13.polygonComparable;
+package io.github.liambloom.softwareEngineering.chapter11.polygonComparable;
 
 
 /**
@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Iterator;
 
+@SuppressWarnings({"rawtypes", "unchecked"})
 public class CLIENT
 {
     // **************************************************************************************************

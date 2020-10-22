@@ -1,4 +1,4 @@
-package io.github.liambloom.softwareEngineering.chapter13.polygonComparable;
+package io.github.liambloom.softwareEngineering.chapter11.polygonComparable;
 
 /**
  * This is just called a trapezoid in American and Canadian English.

@@ -1,4 +1,4 @@
-package io.github.liambloom.softwareEngineering.chapter13.polygonComparable;
+package io.github.liambloom.softwareEngineering.chapter11.polygonComparable;
 
 public class Ellipse extends Rounds {
     private double r1, r2;

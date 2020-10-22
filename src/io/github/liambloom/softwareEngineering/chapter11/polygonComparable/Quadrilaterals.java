@@ -1,4 +1,4 @@
-package io.github.liambloom.softwareEngineering.chapter13.polygonComparable;
+package io.github.liambloom.softwareEngineering.chapter11.polygonComparable;
 
 /**
  * Mr. Marques
@@ -35,8 +35,8 @@ public abstract class Quadrilaterals implements Polygon_Comparable
 
     }
 
-    // ************ abstract method(s) & the overiding of such *************
-             // TODO
+    // ************ abstract method(s) & the overriding of such *************
+             
     
     // ********************* Assessor and Mutator methods *************************
     public void setMyBase1(double b1)

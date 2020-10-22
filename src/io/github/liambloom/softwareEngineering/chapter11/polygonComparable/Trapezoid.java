@@ -1,4 +1,4 @@
-package io.github.liambloom.softwareEngineering.chapter13.polygonComparable;
+package io.github.liambloom.softwareEngineering.chapter11.polygonComparable;
 
 /**
  * This is specifically an Isosceles trapezoid, as not all trapezoids can be
