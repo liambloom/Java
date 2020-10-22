@@ -63,7 +63,7 @@ import java.util.Random;
 public class ScrambleParagraph {
     public static final Pattern scrambleableWord = Pattern.compile("[a-z]{4,}", Pattern.CASE_INSENSITIVE);
     public static final Pattern wordBorder = Pattern.compile("(?<=[a-z])(?=[^a-z])|(?<=[^a-z])(?=[a-z])", Pattern.CASE_INSENSITIVE);
-    public static final Random r = new Random();
+    protected  static final Random r = new Random();
 
     public static void main(String[] args) {
         System.out.println(scrambleParagraph("According to a research at an English University, it does not matter in what  order the letters in a word are, the only important thing is that the first  and last letter is at the right place. The rest can be a total mess and you  can still read it without a problem. This is because we do not read every  letter by itself, but the word as-a-whole!"));
@@ -80,13 +80,14 @@ public class ScrambleParagraph {
                 s += scrambleWord(words[i]) + '-';
             return s;
         }
-        //if (w.);
-        // TODO deal with punctuation
+        final boolean hasEndPunct = w.endsWith(".") || w.endsWith("!") || w.endsWith("?");
         final StringBuilder scrambled = new StringBuilder(w.length());
         scrambled.append(w.charAt(0));
-        for (int i = 1; i < w.length() - 1; i++)
+        for (int i = 1; i < w.length() - (hasEndPunct ? 2 : 1); i++)
             scrambled.insert(r.nextInt(i) + 1, w.charAt(i));
-        scrambled.append(w.charAt(w.length() - 1));
+        scrambled.append(w.charAt(w.length() - (hasEndPunct ? 2 : 1)));
+        if (hasEndPunct)
+            scrambled.append(w.charAt(w.length() - 1));
         return scrambled.toString();
     }
 

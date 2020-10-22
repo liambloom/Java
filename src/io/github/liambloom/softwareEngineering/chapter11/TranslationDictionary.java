@@ -96,7 +96,7 @@ public class TranslationDictionary {
 
     // =============================================================================
     /*
-     * Write a method that takes a dictionary and generates a reverse dictioanry. A
+     * Write a method that takes a dictionary and generates a reverse dictionary. A
      * reverse dictionary uses the same structure as the original dictionary, and
      * for each pair (word, translations) in the original dictionary there is a
      * reversed pair (translation, word) in the reverse dictionary. For example, if
