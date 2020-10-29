@@ -1,15 +1,20 @@
 package io.github.liambloom.softwareEngineering.chapter7;
 
 import java.util.Arrays;
+import java.util.Random;
 
 public class MrM2DArrayProblems {
-    public static void main(String[] args) {
-        int a[][] = { 
-            { 10, 30, 50, 200 }, 
-            { 60, 40, 70, 55 }, 
-            { 80, 5, 35, 100 } };
+    protected static final Random r = new Random();
 
-        p4(a);
+    public static void main(String[] args) {
+        boolean seats[][] = {  
+            {false, false, false, false, false, false, false, false},
+            { false, false, false, false, false, false, false, false}
+        };
+
+
+
+        p10(seats);
     }
 
     public static void p1(final int[][] a) {
@@ -90,10 +95,7 @@ public class MrM2DArrayProblems {
         }
         final int stringsMaxLength = Math.max(rowStringsLast.length(), rowStrings[stringsMaxLengthI].length());
         final int colOffset = maxD - colCount;
-        System.out.printf("%d == %d%n", maxD, rowStrings.length);
-        System.out.printf("colOffset = %d%n", colOffset);
         for (int i = 0; i < maxD; i++) {
-            System.out.println(i);
             System.out.printf("%-" + stringsMaxLength + "s\t", rowStrings[i]);
             if (i < colOffset)
                 System.out.println();
@@ -103,7 +105,7 @@ public class MrM2DArrayProblems {
         }
         System.out.printf("%-" + stringsMaxLength + "s\tMaxAvg col = %d with MaxAvg = %f", rowStringsLast, colData.maxIndex, colData.max());
     }
-    private static ArrayAndMaxIndex sumToAvg(int[] sums, int len) {
+    private static ArrayAndMaxIndex sumToAvg(final int[] sums, final int len) {
         final ArrayAndMaxIndex r = new ArrayAndMaxIndex(sums.length);
         for (int i = 0; i < sums.length; i++) {
             final double avg = (double) sums[i] / len;
@@ -123,6 +125,164 @@ public class MrM2DArrayProblems {
 
         public double max() {
             return array[maxIndex];
+        }
+    }
+
+    public static void p5(int[][] a) {
+        int sum = 0;
+        if (a.length >= 1) {
+            sum += sumOfArray(a[0]);
+            for (int i = 1; i < a.length - 1; i++) {
+                if (a[i].length >= 1) {
+                    sum += a[i][0];
+                    if (a[i].length >= 2)
+                        sum += a[i][a[i].length - 1];
+                }
+            }
+            if (a.length >= 2)
+                sum += sumOfArray(a[a.length - 1]);
+        }
+        System.out.printf("Sum of the edges = %d%n", sum);
+    }
+    private static int sumOfArray(final int[] a) {
+        int sum = 0;
+        for (int e : a)
+            sum += e;
+        return sum;
+    }
+
+    public static void p6(int[][] a) {
+        int sum = 0;
+        for (int i = 0; i < a.length; i++) {
+            if (a[i].length != a.length)
+                throw new IllegalArgumentException("Cannot find sum of diagonals of a non-square array");
+            sum += a[i][i];
+            if (a.length % 2 == 0 || a.length / 2 != i)
+                sum += a[i][a.length - 1 - i];
+        }
+        System.out.printf("BOTH diagonal sum = %d%n", sum);
+    }
+
+    public static void p7(final String[][] words) {
+        int longestRow = 0;
+        int longestColumn = 0;
+        int longestVowels = 0;
+        for (int i = 0; i < words.length; i++) {
+            for (int j = 0; j < words[i].length; j++) {
+                int vowels = 0;
+                final String word = words[i][j];
+                for (int k = 0; k < word.length(); k++) {
+                    switch (Character.toLowerCase(word.charAt(k))) {
+                        case 'a':
+                        case 'e':
+                        case 'i':
+                        case 'o':
+                        case 'u':
+                            vowels++;
+                    }
+                }
+                if (vowels >= longestVowels) {
+                    longestRow = i;
+                    longestColumn = j;
+                    longestVowels = vowels;
+                }
+            }
+        }
+        System.out.printf("%s     row = %d   col = %d    vowel count = %d", 
+            words[longestRow][longestColumn], longestRow, longestColumn, longestVowels);
+    }
+
+    public static void p8(final int[][] a) {
+        int points = 0;
+        for (int i = 0; i < 3; i++) {
+            int row, col, hp;
+            System.out.printf("Hit row: %d\tcol: %d     Point: %d%n", 
+                row = r.nextInt(a.length), col = r.nextInt(a[row].length), hp = a[row][col]);
+            points += hp;
+        }
+        System.out.println(" Sum = " + points);
+    }
+
+    // I know you said transpose it then print it out, but why do
+    // that when you can do both at the same time, which is probably
+    // more efficient
+    public static void p9(final int[][] a) {
+        for (int i = 0; i < a.length; i++) {
+            if (a[i].length != a.length)
+                throw new IllegalArgumentException("Cannot transpose a non-square array");
+            for (int j = 0; j < i; j++)
+                System.out.print(a[i][j] + ", ");
+            for (int j = i; j < a.length; j++) {
+                final int temp = a[j][i];
+                a[j][i] = a[i][j];
+                a[i][j] = temp;
+                System.out.print(temp + ", ");
+            }
+            System.out.println();
+        }
+    }
+
+    public static final int FIRST_CLASS_SEATS = 3;
+    public static void p10(boolean[][] seats) {
+        SeatGroup.main(
+            new SeatGroup2d("first", seats, 0, FIRST_CLASS_SEATS), 
+            new SeatGroup2d("second", seats, FIRST_CLASS_SEATS, Integer.MAX_VALUE)
+        );
+    }
+    private static class SeatGroup2d implements SeatGroup {
+        public final String name;
+        public final boolean[][] seats;
+        protected final int start;
+        protected final int end;
+        protected int[] firstEmpty = null;
+
+        public SeatGroup2d(final String name, final boolean[][] seats, final int start, final int end) {
+            this.name = name;
+            this.seats = seats;
+            this.start = start;
+            this.end = end;
+            for (int i = 0; i < seats.length && firstEmpty == null; i++) {
+                if (seats[i].length > start)
+                    firstEmpty = new int[] { i, start };
+            }
+        }
+
+        public void add() {
+            if (!isFull()) {
+                seats[firstEmpty[0]][firstEmpty[1]] = true;
+                updateFirstEmpty();
+            }
+        }
+
+        protected void updateFirstEmpty() {
+            if (isFull())
+                return;
+            if (updateFirstEmptyRow())
+                return;
+            for (firstEmpty[0]++; firstEmpty[0] < seats.length; firstEmpty[0]++) {
+                firstEmpty[1] = start;
+                if (updateFirstEmptyRow())
+                    return;
+            }
+            firstEmpty = null;
+        }
+
+        protected boolean updateFirstEmptyRow() {
+            boolean[] row = seats[firstEmpty[0]];
+            final int end = Math.min(row.length, this.end);
+            for (; firstEmpty[1] < end; firstEmpty[1]++) {
+                if (!row[firstEmpty[1]])
+                    return true;
+            }
+            return false;
+        }
+
+        public boolean isFull() {
+            return firstEmpty == null;
+        }
+
+        public String getName() {
+            return name;
         }
     }
 }

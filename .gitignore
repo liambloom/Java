@@ -8,6 +8,7 @@ desktop.ini
 NOTE_for_Mr._Marques.md
 .todo
 notes.md
-grid.cmd
+*.cmd
 **/SelfChecks.java
 **/Test.java
+*.gdoc

@@ -73,11 +73,9 @@
     | Union        | [`Set#addAll()`](https://docs.oracle.com/en/java/javase/14/docs/api/java.base/java/util/Set.html#addAll(java.util.Collection))       |
     | Intersection | [`Set#retainAll()`](https://docs.oracle.com/en/java/javase/14/docs/api/java.base/java/util/Set.html#retainAll(java.util.Collection)) |
 15. <!-- Unfortunately, you can't do a lettered list with markdown, so I had to use HTML -->
-    <ol style="list-style-type: lower-alpha;">
-    <li><code>[amanda]</code></li>
-    <li><code>[riley]</code></li>
-    <li><code>[zorah, alex, tyler, roy, charlie, phil]</code></li>
-    </ol>
+    1. `[amanda]`
+    2. `[riley]`
+    3. `[zorah, alex, tyler, roy, charlie, phil]`
 16. ```java
     Map<String, Short> ages = new HashMap<>();
     ages.put("Liam", 16);
@@ -85,24 +83,18 @@
     ages.put("Damien", 15);
     ```
 17. You can get use the methods [`Map#keySet()`](https://docs.oracle.com/en/java/javase/14/docs/api/java.base/java/util/Map.html#keySet()) to get the keys and [`Map#values()`](https://docs.oracle.com/en/java/javase/14/docs/api/java.base/java/util/Map.html#values()) to get the values.
-18. `{8=Ocho, 50=Fifty, 132=OneThreeTwo, 79=Seventy-nine, 50=Forty-one, 28=18}`
-19. <ol style="list-style-type: lower-alpha;">
-    <li><code>{chiq=five, deux=two, four=quatre, one=un, three=trois}</code></li>
-    <li><code>{board=skate, car=drive, computer=play}</code></li>
-    <li><code>{begin=end, boy=girl, evert=siskel, first=last, H=T}</code></li>
-    <li><code>{cotton=rain, light=tree, seed=tree, tree=violin}</code></li>
-    </ol>
-20. <ol style="list-style-type: lower-alpha;">
-    <li><code>[house, cast]</code></li>
-    <li><code>[ball, winkie, corn, grass, emerald]</code></li>
-    <li><code>[pumpkin, corn, pie]</code></li>
-    <li><code>[lab, lion, corgi, emu, nyan]</code></li>
-    </ol>
-21. <ol style="list-style-type: lower-alpha;">
-    <li><code>{bar=earth, baz=wind, foo=air, mumble=fire}</code></li>
-    <li><code>{five=quatro, one=dos, three=tres}</code></li>
-    <li><code>{b=years, c=seven, e=ago, g=seven}</code></li>
-    </ol>
+18. 1. `{8=Ocho, 50=Fifty, 132=OneThreeTwo, 79=Seventy-nine, 50=Forty-one, 28=18}`
+19. 2. `{chiq=five, deux=two, four=quatre, one=un, three=trois}`
+    3. `{board=skate, car=drive, computer=play}`
+    4. `{begin=end, boy=girl, evert=siskel, first=last, H=T}`
+    5. `{cotton=rain, light=tree, seed=tree, tree=violin}`
+20. 1. `[house, cast]`
+    2. `[ball, winkie, corn, grass, emerald]`
+    3. `[pumpkin, corn, pie]`
+    4. `[lab, lion, corgi, emu, nyan]`
+21. 1. `{bar=earth, baz=wind, foo=air, mumble=fire}`
+    2. `{five=quatro, one=dos, three=tres}`
+    3. `{b=years, c=seven, e=ago, g=seven}`
 22. ```java
     // ...
 

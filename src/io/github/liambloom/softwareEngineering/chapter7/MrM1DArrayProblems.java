@@ -108,7 +108,7 @@ public class MrM1DArrayProblems {
         Arrays.sort(a);
         int sum = 0;
         int modeCount = 0;
-        Integer[] modes = new Integer[a.length];
+        Integer[] modes = new Integer[a.length / 2];
         int currentCount = 0;
         Integer previous = null;
         for (int e : a) {
@@ -162,60 +162,21 @@ public class MrM1DArrayProblems {
 
     public static final int FIRST_CLASS_SEATS = 3;
     public static void p10(boolean[] seats) {
-        Ask.seperator = '?';
-        SeatGroup firstClass = new SeatGroup("first", seats, 0, Math.min(FIRST_CLASS_SEATS, seats.length));
-        SeatGroup secondClass = new SeatGroup("second", seats, FIRST_CLASS_SEATS, seats.length);
-        while (!firstClass.isFull() || !secondClass.isFull()) {
-            SeatGroup selected;
-            SeatGroup backup;
-            switch (Ask.forString("Would you like first or second class").strip()) {
-                case "1":
-                case "1st":
-                case "first":
-                    selected = firstClass;
-                    backup = secondClass;
-                    break;
-                case "2":
-                case "2nd":
-                case "second":
-                    selected = secondClass;
-                    backup = firstClass;
-                    break;
-                default:
-                    System.out.println("That's not a valid class");
-                    continue;
-            }
-            if (!selected.isFull())
-                selected.add();
-            else if (!backup.isFull() && askBackup(selected.name, backup.name))
-                backup.add();          
-        }
-    }
-
-    private static boolean askBackup(String failed, String instead) {
-        failed = Character.toUpperCase(failed.charAt(0)) + failed.substring(1);
-        switch (Ask.forString(failed + " class is unavailable, would you like " + instead + " class instead (y/n)").strip()) {
-            case "y":
-            case "yes":
-                return true;
-            case "n":
-            case "no":
-                return false;
-            default:
-                System.out.println("That's not a valid answer");
-                return askBackup(failed, instead);
-        }
+        SeatGroup.main(
+            new SeatGroup1d("first", seats, 0, Math.min(FIRST_CLASS_SEATS, seats.length)),
+            new SeatGroup1d("second", seats, FIRST_CLASS_SEATS, seats.length)
+        );
     }
 }
 
-class SeatGroup {
+class SeatGroup1d implements SeatGroup {
     public final int start;
     public final int end;
     public final String name;
     private final boolean[] allSeats;
     private int lastFull;
 
-    public SeatGroup(String name, boolean[] allSeats, int start, int end) {
+    public SeatGroup1d(String name, boolean[] allSeats, int start, int end) {
         this.name = name;
         this.allSeats = allSeats;
         this.start = start;
@@ -238,5 +199,9 @@ class SeatGroup {
     public boolean isFull() {
         assert lastFull + 1 == end || !allSeats[lastFull + 1];
         return lastFull + 1 == end;
+    }
+
+    public String getName() {
+        return name;
     }
 }
