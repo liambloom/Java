@@ -38,13 +38,25 @@ public class Student {
 
         public final static class LastName implements Comparator<Student> {
             public int compare(Student s1, Student s2) {
-                return s1.lastName.compareTo(s2.lastName);
+                int cln = s1.lastName.compareTo(s2.lastName);
+                if (cln == 0) {
+                    int cfn = s1.firstName.compareTo(s2.firstName);
+                    return cfn == 0 ? s1.idNum.compareTo(s2.idNum) : cfn;
+                }
+                else
+                    return cln;
             }
         }
 
         public final static class FirstName implements Comparator<Student> {
             public int compare(Student s1, Student s2) {
-                return s1.firstName.compareTo(s2.firstName);
+                int cfn = s1.firstName.compareTo(s2.firstName);
+                if (cfn == 0) {
+                    int cln = s1.lastName.compareTo(s2.lastName);
+                    return cln == 0 ? s1.idNum.compareTo(s2.idNum) : cln;
+                } 
+                else
+                    return cfn;
             }
         }
 
@@ -57,13 +69,14 @@ public class Student {
         public final static class Average implements Comparator<Student> {
             public int compare(Student s1, Student s2) {
                 final Double diff = s1.average - s2.average;
-                return diff > 0 ? 1 : diff < 0 ? -1 : 0;
+                return diff > 0 ? 1 : diff < 0 ? -1 : s1.idNum.compareTo(s2.idNum);
             }
         }
 
         public final static class LetterGrade implements Comparator<Student> {
             public int compare(Student s1, Student s2) {
-                return s1.letterGrade - s2.letterGrade;
+                int c = s1.letterGrade - s2.letterGrade;
+                return c == 0 ? c : s1.idNum.compareTo(s2.idNum);
             }
         }
     }
