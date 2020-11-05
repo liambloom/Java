@@ -73,6 +73,14 @@ public class ANSI {
         public static void revert() {
             System.out.print("\u001B[u");
         }
+
+        public static void hide() {
+            System.out.print("\u001B[?25l");
+        }
+
+        public static void show() {
+            System.out.print("\u001B[?25h");
+        }
     }
 
     public static class Eraser {

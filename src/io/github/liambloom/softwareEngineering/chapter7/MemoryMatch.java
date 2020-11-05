@@ -6,8 +6,18 @@ import java.util.function.Supplier;
 import io.github.liambloom.softwareEngineering.chapter7.ANSI.*;
 import io.github.liambloom.softwareEngineering.chapter7.ANSI.Display.Color;
 
-
-// ANSI Codes: https://gist.github.com/fnky/458719343aabd01cfb17a3a4f7296797
+/**
+ * Command line arguments:
+ * -d, --debug      Puts it in debug mode. This means that it uses the
+ *                      names Tom and Mary (from the example), instead
+ *                      of asking the user for the names; and it prevents
+ *                      the array from being shuffled
+ * --use-ansi       Uses ANSI codes to move around the cursor instead of
+ *                      just normal text. This does not work, and since
+ *                      it's not part of the assignment, I'm not going
+ *                      to fix it, but I also don't want to just throw 
+ *                      it away.
+ */
 public class MemoryMatch {
     public static final int NUM_PAIRS = 4;
     public static final int[] board = new int[NUM_PAIRS * 2];
@@ -18,8 +28,7 @@ public class MemoryMatch {
     public static final Scanner s = new Scanner(System.in);
     public static final int NAME_LEN = 12;
     private static boolean debug = false;
-    private static boolean useANSI = true;
-    private static boolean asciiOnly = false;
+    private static boolean useANSI = false;
     private static Player player1;
     private static Player player2;
 
@@ -30,8 +39,11 @@ public class MemoryMatch {
 
         public Player(int playerNumber) {
             this(playerNumber, ((Supplier<String>) (() -> {
-                System.out.printf("Player %d name: ");
-                return s.nextLine();
+                System.out.printf("Player %d name: ", playerNumber);
+                Cursor.show();
+                final String line = s.nextLine();
+                Cursor.hide();
+                return line;
             })).get());
         }
 
@@ -57,8 +69,8 @@ public class MemoryMatch {
                 Cursor.moveToCol(42);
                 System.out.print(score);
             }
-            else
-                print();
+            /*else
+                print();*/
         }
 
         private void goToRow() {
@@ -69,11 +81,11 @@ public class MemoryMatch {
         }
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args)
+        throws InterruptedException
+    {
         // Process arguments
-        Iterator<String> iter = Arrays.stream(args).iterator();
-        while (iter.hasNext()) {
-            final String arg = iter.next();
+        for (String arg : args) {
             switch (arg) {
                 case "-d":
                 case "--debug":
@@ -83,19 +95,12 @@ public class MemoryMatch {
                     }
                     debug = true;
                     break;
-                case "--no-ansi":
-                    if (!useANSI) {
-                        error("Duplicate argument: --no-ansi");
+                case "--use-ansi":
+                    if (useANSI) {
+                        error("Duplicate argument: --use-ansi");
                         System.exit(1);
                     }
-                    useANSI = false;
-                    break;
-                case "--ascii-only":
-                    if (asciiOnly) {
-                        error("Duplicate argument: --ascii-only");
-                        System.exit(1);
-                    }
-                    asciiOnly = true;
+                    useANSI = true;
                     break;
                 default:
                     error("Argument '" + arg + "' not recognized");
@@ -105,12 +110,17 @@ public class MemoryMatch {
 
         // Initialize array
         for (int i = 0; i < NUM_PAIRS; i++) {
-            board[2 * i] = i;
-            board[2 * i + 1] = i;
+            board[2 * i] = i + 1;
+            board[2 * i + 1] = i + 1;
         }
 
         // Shuffle the array
         shuffle();
+
+        if (useANSI) {
+            Cursor.hide();
+            java.lang.Runtime.getRuntime().addShutdownHook(new Thread(Cursor::show));
+        }
 
         // Save initial cursor position
         if (useANSI)
@@ -124,25 +134,135 @@ public class MemoryMatch {
         else {
             player1 = new Player(1);
             player2 = new Player(2);
+            if (useANSI) {
+                Cursor.revert();
+                Eraser.clearDown();
+            } 
+            else {
+                section();
+            }
         }
-        if (useANSI) {
-            Cursor.revert();
-            Eraser.clearDown();
-        }
-        else {
-            section();
-        }
+
+        // TEST START
+        /*Cursor.revert();
+        Cursor.moveDown(0);
+        System.out.println("foo");
+        Thread.sleep(1500);
+        Cursor.revert();
+        Cursor.moveDown(1);
+        System.out.println("bar");
+        Thread.sleep(5000);*/
+        // TEST END
 
         // Print the initial board
         printRound();
+
+        // While loop to control the round
+        boolean allFound = false;
+        Player p = player1;
+        while (!allFound) {
+            int[] tempShow = new int[2];
+
+            for (int i = 0; i <= 1; i++) {
+                clearIO();
+
+                System.out.printf("%s, what is your %s guess: ", p.name, numToString(i + 1));
+
+                if (useANSI)
+                    Cursor.show();
+
+                String err = null;
+                do {
+                    if (err != null) {
+                        System.out.println('\t' + err);
+                        System.out.print('\t');
+                    }
+
+                    err = null;
+
+                    if (s.hasNextInt()) {
+                        tempShow[i] = s.nextInt() - 1;
+                        if (tempShow[i] < 0 || tempShow[i] >= NUM_PAIRS * 2)
+                            err = "Please enter a number 1-" + NUM_PAIRS * 2;
+                        else if (found[tempShow[i]])
+                            err = "You cannot turn over a card that is already visible";
+                    }
+                    else
+                        err = "Please enter a valid integer";
+
+                    s.nextLine();
+
+                }
+                while (err != null);
+
+                found[tempShow[i]] = true;
+
+                if (useANSI) {
+                    Cursor.hide();
+                    Cursor.revert();
+                    Cursor.moveDown(4);
+                    Cursor.moveLeft(tempShow[i] * 4);
+                    System.out.print(board[tempShow[i]]);
+                }
+                else {
+                    section();
+                    printRound();
+                }
+            }
+
+            clearIO();
+            
+            if (board[tempShow[0]] == board[tempShow[1]]) {
+                System.out.println("MATCH!!  You get to go again!");
+                p.increment();
+                allFound = true;
+                for (int i = 0; i < found.length; i++) {
+                    if (!found[i]) {
+                        allFound = false;
+                        break;
+                    }
+                }
+            }
+            else {
+                p = p == player1 ? player2 : player1;
+                System.out.printf(">>>>> NO Match!  %s's turn. <<<<<<%n", p.name);
+                found[tempShow[0]] = false;
+                found[tempShow[1]] = false;
+            }
+            Thread.sleep(1000);
+
+            // Print new board at END of round
+            if (useANSI) {
+                for (int i : tempShow) {
+                    Cursor.revert();
+                    Cursor.moveDown(4);
+                    Cursor.moveLeft(i * 4);
+                    System.out.print('*');
+                }
+            }
+            else {
+                section();
+                printRound();
+            }
+        }
+
+        if (player1.score > player2.score)
+            System.out.println(player1.name + " wins!");
+        else if (player1.score < player2.score)
+            System.out.println(player2.name + " wins!");
+        else
+            System.out.println("It's a tie!");
     }
 
-    private static void printRound() {
+    private static void printRound() throws InterruptedException {
         player1.print();
+        //Thread.sleep(2500);
         player2.print();
+        //Thread.sleep(2500);
         System.out.println();
-        for (int i = 0; i < NUM_PAIRS * 2; i++)
+        for (int i = 1; i <= NUM_PAIRS * 2; i++)
             System.out.print(i + "   ");
+        System.out.println();
         for (int i = 0; i < NUM_PAIRS * 2; i++) {
             if (found[i])
                 System.out.print(board[i]);
@@ -157,7 +277,7 @@ public class MemoryMatch {
     private static void error(String s) {
         if (useANSI)
             Display.setFgColor(Color.Red);
-        System.out.println("\u001b[1;31merror:\u001b[0m " + s);
+        System.out.println("error: " + s);
         if (useANSI)
             Display.reset();
     }
@@ -174,20 +294,19 @@ public class MemoryMatch {
     }
 
     private static void section() {
-        if (!useANSI) {
-            System.out.println("_______________________________________");
-            System.out.println();
-        }
+        assert !useANSI;
+        System.out.println("_______________________________________");
+        System.out.println();
     }
 
     private static String numToString(int num) {
         String s = Integer.toString(num);
         switch (num % 10) {
             case 1:
-                s += superscript("st");
+                s += "st";
                 break;
             case 2:
-                s += superscript("nd");
+                s += "nd";
                 break;
             default:
                 // This should never happen
@@ -198,30 +317,12 @@ public class MemoryMatch {
 
     // Note: this is not a general superscript function.
     // This works specifically for my purpose, and that's it
-    private static String superscript(String original) {
-        if (asciiOnly)
-            return original;
-        String sup = "";
-        for (int i = 0; i < original.length(); i++) {
-            final char c = original.charAt(i);
-            switch (c) {
-                case 's':
-                    sup += '\u02E2';
-                    break;
-                case 't':
-                    sup += '\u1D57';
-                    break;
-                case 'n':
-                    sup += '\u207F';
-                    break;
-                case 'd':
-                    sup += '\u1D48';
-                    break;
-                default:
-                    // This should never happen
-                    assert false;
-            }
+
+    private static void clearIO() {
+        if (useANSI) {
+            Cursor.revert();
+            Cursor.moveDown(6);
+            Eraser.clearDown();
         }
-        return sup;
     }
 }
