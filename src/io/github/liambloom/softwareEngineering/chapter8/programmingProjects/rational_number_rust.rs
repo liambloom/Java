@@ -2,7 +2,6 @@
 use std::{
     ops::{Add, Sub, Mul, Div},
     fmt,
-    error::Error,
     default::Default,
 };
 
@@ -26,19 +25,17 @@ pub struct RationalNumber {
 }
 
 impl RationalNumber {
-    pub fn new(mut numer: i32, mut denom: i32) -> Result<RationalNumber, ErrorKind> {
+    pub fn new(mut numer: i32, mut denom: i32) -> RationalNumber {
         if denom == 0 {
-            Err(ErrorKind::ZeroDenominator)
+            panic!("Fraction {}/{} is illegal because it has a denominator of 0", numer, denom);
         }
-        else {
-            numer *= denom.signum();
-            denom = denom.abs();
-            let gcd = gcd(numer, denom).abs();
-            println!("{}, {}, {}", numer, denom, gcd);
-            Ok(RationalNumber { 
-                numer: numer / gcd, 
-                denom: denom / gcd,
-            })
+        numer *= denom.signum();
+        denom = denom.abs();
+        let gcd = gcd(numer, denom).abs();
+        println!("{}, {}, {}", numer, denom, gcd);
+        RationalNumber { 
+            numer: numer / gcd, 
+            denom: denom / gcd,
         }
     }
 }
@@ -79,7 +76,7 @@ impl Mul for RationalNumber {
     type Output = Self;
 
     fn mul(self, o: Self) -> Self {
-        RationalNumber::new(self.numer * o.numer, self.denom * o.denom).unwrap()
+        RationalNumber::new(self.numer * o.numer, self.denom * o.denom)
     }
 }
 
@@ -87,7 +84,7 @@ impl Div for RationalNumber {
     type Output = Self;
 
     fn div(self, o: Self) -> Self {
-        RationalNumber::new(self.numer * o.denom, self.denom * o.numer).unwrap()
+        RationalNumber::new(self.numer * o.denom, self.denom * o.numer)
     }
 }
 
@@ -97,31 +94,13 @@ impl fmt::Display for RationalNumber {
     }
 }
 
-#[derive(Copy, Clone, Debug)]
-pub enum ErrorKind {
-    ZeroDenominator,
-}
-
-impl Error for ErrorKind { }
-
-impl fmt::Display for ErrorKind {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        use ErrorKind::*;
-
-        match self {
-            ZeroDenominator => write!(f, "You attempted to create a rational number with a denominator of 0"),
-            //NumberTooLarge => write!(f, "Internally, both need to be within the u32 limit"),
-        }
-    }
-}
-
 #[cfg(test)]
 mod tests {
     use super::*;
 
     #[test]
     fn declare() {
-        let a = RationalNumber::new(1, 2).unwrap();
+        let a = RationalNumber::new(1, 2);
         assert_eq!(a.numer, 1);
         assert_eq!(a.denom, 2);
     }
@@ -135,53 +114,53 @@ mod tests {
 
     #[test]
     fn numer_neg() {
-        let a = RationalNumber::new(1, -2).unwrap();
+        let a = RationalNumber::new(1, -2);
         assert_eq!(a.numer, -1);
         assert_eq!(a.denom, 2);
     }
 
     #[test]
     fn simplify() {
-        let a = RationalNumber::new(2, 4).unwrap();
+        let a = RationalNumber::new(2, 4);
         assert_eq!(a.numer, 1);
         assert_eq!(a.denom, 2);
     }
 
     #[test]
     fn eq() {
-        assert_eq!(RationalNumber::new(1, 2).unwrap(), RationalNumber::new(1, 2).unwrap());
+        assert_eq!(RationalNumber::new(1, 2), RationalNumber::new(1, 2));
     }
 
     #[test]
     fn add() {
-        let a = RationalNumber::new(1, 2).unwrap();
-        let b = RationalNumber::new(2, 3).unwrap();
-        assert_eq!(a + b, RationalNumber::new(7, 6).unwrap());
+        let a = RationalNumber::new(1, 2);
+        let b = RationalNumber::new(2, 3);
+        assert_eq!(a + b, RationalNumber::new(7, 6));
     }
     #[test]
     fn sub() {
-        let a = RationalNumber::new(1, 2).unwrap();
-        let b = RationalNumber::new(2, 3).unwrap();
-        assert_eq!(a - b, RationalNumber::new(-1, 6).unwrap());
+        let a = RationalNumber::new(1, 2);
+        let b = RationalNumber::new(2, 3);
+        assert_eq!(a - b, RationalNumber::new(-1, 6));
     }
 
     #[test]
     fn mul() {
-        let a = RationalNumber::new(1, 2).unwrap();
-        let b = RationalNumber::new(2, 3).unwrap();
-        assert_eq!(a * b, RationalNumber::new(1, 3).unwrap());
+        let a = RationalNumber::new(1, 2);
+        let b = RationalNumber::new(2, 3);
+        assert_eq!(a * b, RationalNumber::new(1, 3));
     }
     
     #[test]
     fn div() {
-        let a = RationalNumber::new(1, 2).unwrap();
-        let b = RationalNumber::new(2, 3).unwrap();
-        assert_eq!(a / b, RationalNumber::new(3, 4).unwrap());
+        let a = RationalNumber::new(1, 2);
+        let b = RationalNumber::new(2, 3);
+        assert_eq!(a / b, RationalNumber::new(3, 4));
     }
 
     #[test]
     fn to_string() {
-        let a = RationalNumber::new(1, 2).unwrap();
+        let a = RationalNumber::new(1, 2);
         assert_eq!(a.to_string(), "1/2");
     }
 }
