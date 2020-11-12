@@ -3,6 +3,7 @@ use std::{
     ops::{Add, Sub, Mul, Div},
     fmt,
     default::Default,
+    convert::Into,
 };
 
 fn gcd(a: i32, b: i32) -> i32 {
@@ -37,6 +38,14 @@ impl RationalNumber {
             numer: numer / gcd, 
             denom: denom / gcd,
         }
+    }
+
+    pub fn get_numer(&self) -> &i32 {
+        &self.numer
+    }
+
+    pub fn get_denom(&self) -> &i32 {
+        &self.denom
     }
 }
 
@@ -85,6 +94,13 @@ impl Div for RationalNumber {
 
     fn div(self, o: Self) -> Self {
         RationalNumber::new(self.numer * o.denom, self.denom * o.numer)
+    }
+}
+
+// TODO see if this works with a reference
+impl Into<f64> for RationalNumber {
+    fn into(self) -> f64 {
+        self.numer as f64 / self.denom as f64
     }
 }
 
@@ -162,5 +178,11 @@ mod tests {
     fn to_string() {
         let a = RationalNumber::new(1, 2);
         assert_eq!(a.to_string(), "1/2");
+    }
+
+    #[test]
+    fn decimal_value() {
+        let a = RationalNumber::new(1, 2);
+        assert_eq!(Into::<f64>::into(a), 0.5);
     }
 }
