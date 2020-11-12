@@ -2,7 +2,7 @@ package io.github.liambloom.softwareEngineering.chapter8.programmingProjects;
 
 import io.github.liambloom.softwareEngineering.Globals;
 
-public class RationalNumber {
+public class RationalNumber { // PP1
     private final int numerator;
     private final int denominator; // Should always be positive
 
