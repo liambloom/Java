@@ -4,12 +4,22 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Iterator;
 import java.util.ListIterator;
+import java.util.Comparator;
 import java.lang.reflect.Array;
 
 public abstract class AbstractLinkedList<E, N extends AbstractLinkedList<E, N>.Node> implements List<E> {
     N head = null;
     N tail = null;
     int size = 0;
+
+    protected abstract class Node {
+        E data;
+        N next = null;
+
+        public Node(final E data) {
+            this.data = data;
+        }
+    }
 
     public boolean add(final E e) {
         listIterator(size).add(e);
@@ -36,13 +46,23 @@ public abstract class AbstractLinkedList<E, N extends AbstractLinkedList<E, N>.N
         return true;
     }
 
-    protected abstract class Node {
-        E data;
-        N next = null;
+    @SuppressWarnings("unchecked")
+    public void addSorted(final E data) {
+        if (data instanceof Comparable)
+            addSorted(data, (Comparator<E>) Comparator.naturalOrder());
+        else
+            throw new ClassCastException();
+    }
 
-        public Node(final E data) {
-            this.data = data;
-        }
+    public void addSorted(final E data, final Comparator<E> comparator) {
+        final ListIterator<E> iter = listIterator();
+        while (iter.hasNext() && comparator.compare(iter.next(), data) < 0);
+        iter.previous();
+        iter.add(data);
+    }
+
+    private void AddInOrder(final N node) {
+        addSorted(node.data);
     }
 
     public int size() {
@@ -164,6 +184,14 @@ public abstract class AbstractLinkedList<E, N extends AbstractLinkedList<E, N>.N
             }
         }
         return false;
+    }
+
+    private void removeNode(N node) {
+        Iterator<E> iter = iterator();
+        while (iter.hasNext()) {
+            if (node.data == null ? iter.next() == null : node.data.equals(iter.next()))
+                iter.remove();
+        }
     }
 
     public boolean removeAll(final Collection<?> c) {

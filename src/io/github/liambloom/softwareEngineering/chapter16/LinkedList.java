@@ -2,18 +2,18 @@ package io.github.liambloom.softwareEngineering.chapter16;
 
 import java.util.NoSuchElementException;
 import java.util.Iterator;
-import java.nio.channels.IllegalSelectorException;
 import java.util.ListIterator;
+import java.util.Comparator;
 
 public class LinkedList<E> extends AbstractLinkedList<E, LinkedList<E>.Node> {
     public static void main(String[] args) throws Throwable {
         ///*for (int i = 0; i < 100; i++)
-            new ListTests(new io.github.liambloom.softwareEngineering.chapter16.LinkedList<>()).runTests();
+            //new ListTests(new io.github.liambloom.softwareEngineering.chapter16.LinkedList<>()).runTests();
 
-        /*var list = new LinkedList<>();
-        list.addAll(java.util.Arrays.asList(1, 2, 3, 4, 5));
-        list.reverse();
-        System.out.println(list);*/
+        var list = new LinkedList<>();
+        list.addAll(java.util.Arrays.asList(1, 2, 3, 4, 3, 3, 5, 6, 3));
+        list.addSorted(3);
+        System.out.println(list);
     }
 
     class Node extends AbstractLinkedList<E, LinkedList<E>.Node>.Node {
@@ -114,7 +114,7 @@ public class LinkedList<E> extends AbstractLinkedList<E, LinkedList<E>.Node> {
 
         public void set(E e) {
             if (!modOk)
-                throw new IllegalSelectorException();
+                throw new IllegalStateException();
             lastReturned.data = e;
         }
     }
@@ -159,5 +159,22 @@ public class LinkedList<E> extends AbstractLinkedList<E, LinkedList<E>.Node> {
             current = temp;
         }
         head = current;
+    }
+
+    @Override
+    public void addSorted(final E data, final Comparator<E> comparator) {
+        size++;
+        Node newNode = new Node(data);
+        Node prev = null;
+        Node next = head;
+        while (comparator.compare(next.data, data) < 0) {
+            prev = next;
+            next = next.next;
+        }
+        newNode.next = next;
+        if (prev == null)
+            head = newNode;
+        else
+            prev.next = newNode;
     }
 }
