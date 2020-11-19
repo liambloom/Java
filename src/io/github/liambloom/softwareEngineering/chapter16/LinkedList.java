@@ -1,20 +1,17 @@
 package io.github.liambloom.softwareEngineering.chapter16;
 
-import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Iterator;
 import java.nio.channels.IllegalSelectorException;
 import java.util.ListIterator;
 
 public class LinkedList<E> extends AbstractLinkedList<E, LinkedList<E>.Node> {
-    Node head = null;
-    Node tail = null;
-    int size = 0;
+    public static void main(String[] args) throws Throwable {
+        for (int i = 0; i < 100; i++)
+            new ListTests(new io.github.liambloom.softwareEngineering.chapter16.LinkedList<>()).runTests();
+    }
 
     class Node extends AbstractLinkedList<E, LinkedList<E>.Node>.Node {
-        E data;
-        Node next = null;
-
         public Node(final E data) {
             super(data);
         }
@@ -75,10 +72,13 @@ public class LinkedList<E> extends AbstractLinkedList<E, LinkedList<E>.Node> {
         public void add(E e) {
             modOk = false;
             index++;
+            size++;
             Node newNode = new Node(e);
+            if (next == null)
+                tail = newNode;
             if (prev == null) {
-                newNode.next = head;
-                head = newNode;
+                next = newNode.next = head;
+                prev = head = newNode;
             }
             else {
                 newNode.next = next;
@@ -91,8 +91,15 @@ public class LinkedList<E> extends AbstractLinkedList<E, LinkedList<E>.Node> {
             if (!modOk)
                 throw new IllegalStateException();
             if (lastReturned == next) {
+                size--;
                 modOk = false;
-                prev.next = next.next;
+                if (lastReturned == head)
+                    next = head = head.next;
+                else 
+                    next = prev.next = next.next;
+                if (lastReturned == tail)
+                    tail = prev;
+                assert prev == null ? next == head : prev.next == next;
             }
             else {
                 previous();
@@ -133,16 +140,5 @@ public class LinkedList<E> extends AbstractLinkedList<E, LinkedList<E>.Node> {
                 index = i;
         }
         return index;
-    }
-
-    public List<E> subList(int start, final int end) {
-        if (start < 0 || start > end || end < size)
-            throw new IndexOutOfBoundsException();
-        List<E> newList = new LinkedList<>();
-        for (Node e = getNode(start); start < end; start++) {
-            newList.add(e.data);
-            e = e.next;
-        }
-        return newList;
     }
 }

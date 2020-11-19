@@ -7,9 +7,9 @@ import java.util.ListIterator;
 import java.lang.reflect.Array;
 
 public abstract class AbstractLinkedList<E, N extends AbstractLinkedList<E, N>.Node> implements List<E> {
-    N head;
-    N tail;
-    int size;
+    N head = null;
+    N tail = null;
+    int size = 0;
 
     public boolean add(final E e) {
         listIterator(size).add(e);
@@ -21,8 +21,9 @@ public abstract class AbstractLinkedList<E, N extends AbstractLinkedList<E, N>.N
     }
 
     public boolean addAll(Collection<? extends E> c) {
+        ListIterator<E> iter = listIterator(size);
         for (E e : c)
-            add(e);
+            iter.add(e);
         return c.size() != 0;
     }
 
@@ -57,12 +58,12 @@ public abstract class AbstractLinkedList<E, N extends AbstractLinkedList<E, N>.N
             return head;
         else if (i + 1 == size)
             return tail;
-        else if (i >= size)
+        else if (i >= size || i < 0)
             return null;
         else {
             N e = head;
             for (int j = 0; j < i; j++)
-                e = head.next;
+                e = e.next;
             return e;
         }
     }
@@ -189,6 +190,17 @@ public abstract class AbstractLinkedList<E, N extends AbstractLinkedList<E, N>.N
         return changed;
     }
 
+    public List<E> subList(int start, final int end) {
+        if (start < 0 || start > end || end > size)
+            throw new IndexOutOfBoundsException();
+        List<E> newList = new LinkedList<>();
+        for (Node e = getNode(start); start < end; start++) {
+            newList.add(e.data);
+            e = e.next;
+        }
+        return newList;
+    }
+
     public Object[] toArray() {
         return toArray(new Object[0]);
     }
@@ -205,5 +217,19 @@ public abstract class AbstractLinkedList<E, N extends AbstractLinkedList<E, N>.N
         for (int i = size; i < a.length; i++)
             r[i] = null;
         return a;
+    }
+
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append('[');
+        if (size > 0) {
+            Iterator<E> iter = iterator();
+            builder.append(iter.next().toString());
+            while (iter.hasNext())
+                builder.append(", " + iter.next().toString());
+        }
+        builder.append(']');
+        //System.out.println("String: " + builder.toString());
+        return builder.toString();
     }
 }
