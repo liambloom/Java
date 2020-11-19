@@ -7,8 +7,13 @@ import java.util.ListIterator;
 
 public class LinkedList<E> extends AbstractLinkedList<E, LinkedList<E>.Node> {
     public static void main(String[] args) throws Throwable {
-        for (int i = 0; i < 100; i++)
+        ///*for (int i = 0; i < 100; i++)
             new ListTests(new io.github.liambloom.softwareEngineering.chapter16.LinkedList<>()).runTests();
+
+        /*var list = new LinkedList<>();
+        list.addAll(java.util.Arrays.asList(1, 2, 3, 4, 5));
+        list.reverse();
+        System.out.println(list);*/
     }
 
     class Node extends AbstractLinkedList<E, LinkedList<E>.Node>.Node {
@@ -140,5 +145,19 @@ public class LinkedList<E> extends AbstractLinkedList<E, LinkedList<E>.Node> {
                 index = i;
         }
         return index;
+    }
+
+    // This method took me like 10 minutes
+    public void reverse() {
+        if (isEmpty())
+            return;
+        Node current = tail = head;
+        while (tail.next != null) {
+            final Node temp = tail.next;
+            tail.next = temp.next;
+            temp.next = current;
+            current = temp;
+        }
+        head = current;
     }
 }
