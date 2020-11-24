@@ -2,6 +2,7 @@ package io.github.liambloom.softwareEngineering.chapter16;
 
 import java.util.ListIterator;
 import java.util.NoSuchElementException;
+import io.github.liambloom.tests.ListTests;
 
 public class DoubleLinkedList<E> extends AbstractLinkedList<E, DoubleLinkedList<E>.Node> {
     public static void main(String[] args) throws Throwable {

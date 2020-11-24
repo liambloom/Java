@@ -4,6 +4,7 @@ import java.util.NoSuchElementException;
 import java.util.Iterator;
 import java.util.ListIterator;
 import java.util.Comparator;
+import io.github.liambloom.tests.ListTests;
 
 public class LinkedList<E> extends AbstractLinkedList<E, LinkedList<E>.Node> {
     public static void main(String[] args) throws Throwable {
