@@ -105,6 +105,7 @@ public abstract class AbstractLinkedList<E, N extends AbstractLinkedList<E, N>.N
         iter.add(data);
     }
 
+    @SuppressWarnings("unused")
     private void AddInOrder(final N node) {
         addSorted(node.data);
     }
@@ -239,6 +240,7 @@ public abstract class AbstractLinkedList<E, N extends AbstractLinkedList<E, N>.N
         return false;
     }
 
+    @SuppressWarnings("unused")
     private void removeNode(N node) {
         Iterator<E> iter = iterator();
         while (iter.hasNext()) {

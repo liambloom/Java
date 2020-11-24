@@ -135,7 +135,8 @@ public class LinkedList<E> extends AbstractLinkedList<E, LinkedList<E>.Node> {
     }
 
     //@Override
-    private void removeNode(Node node) {
+    @SuppressWarnings("unused")
+    private void removeNode(LinkedList<E>.Node node) {
         if (head == null)
             return;
         final E n = node.data;
