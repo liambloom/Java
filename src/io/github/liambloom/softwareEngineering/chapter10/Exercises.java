@@ -45,9 +45,7 @@ public class Exercises {
         for (int i = 0; i < a.size(); i++) {
             if (a.get(i).compareTo(a.get(minIndex)) < 0) minIndex = i;
         }
-        T min = a.get(minIndex);
-        a.remove(minIndex);
-        a.add(0, min);
+        a.add(0, a.remove(minIndex));
     }
     public static <T> void exercise7 (ArrayList<T> a) { // Remove duplicates (assumes that a is sorted)
         new ArrayList$<>(a).iterate(a::removeIf, (e, i) -> i != a.indexOf(e));
