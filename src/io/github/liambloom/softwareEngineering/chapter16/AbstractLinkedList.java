@@ -6,6 +6,7 @@ import java.util.Iterator;
 import java.util.ListIterator;
 import java.util.Comparator;
 import java.lang.reflect.Array;
+import java.util.NoSuchElementException;
 
 public abstract class AbstractLinkedList<E, N extends AbstractLinkedList<E, N>.Node> implements List<E> {
     N head = null;
@@ -18,6 +19,49 @@ public abstract class AbstractLinkedList<E, N extends AbstractLinkedList<E, N>.N
 
         public Node(final E data) {
             this.data = data;
+        }
+    }
+
+    protected abstract class AbstractListIterator implements ListIterator<E> {
+        N prev = null;
+        N next = head;
+        N lastReturned = null;
+        int index = 0;
+        boolean modOk = false;
+
+        public E next() {
+            if (next == null)
+                throw new NoSuchElementException();
+            else {
+                index++;
+                prev = next;
+                next = next.next;
+                modOk = true;
+                lastReturned = prev;
+                return prev.data;
+            }
+        }
+
+        public boolean hasNext() {
+            return next != null;
+        }
+
+        public int nextIndex() {
+            return index;
+        }
+
+        public boolean hasPrevious() {
+            return prev != null;
+        }
+
+        public int previousIndex() {
+            return index - 1;
+        }
+
+        public void set(E e) {
+            if (!modOk)
+                throw new IllegalStateException();
+            lastReturned.data = e;
         }
     }
 
@@ -144,6 +188,15 @@ public abstract class AbstractLinkedList<E, N extends AbstractLinkedList<E, N>.N
         Iterator<E> iter = iterator();
         for (int i = 0; iter.hasNext(); i++) {
             if (iter.next().equals(o))
+                return i;
+        }
+        return -1;
+    }
+
+    public int lastIndexOf(Object o) {
+        final ListIterator<E> iter = listIterator(size);
+        for (int i = size - 1; iter.hasPrevious(); i--) {
+            if (iter.previous().equals(o))
                 return i;
         }
         return -1;
