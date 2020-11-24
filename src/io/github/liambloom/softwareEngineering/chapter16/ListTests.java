@@ -1,26 +1,73 @@
 package io.github.liambloom.softwareEngineering.chapter16;
 
 import java.util.*;
-import java.util.function.UnaryOperator;
+import java.util.function.*;
 import java.lang.reflect.*;
+import org.fusesource.jansi.AnsiConsole;
+import static org.fusesource.jansi.Ansi.*;
+import static org.fusesource.jansi.Ansi.Color.*;
 
 public class ListTests {
     private final Random r = new Random();
     private final Runtime runtime = Runtime.getRuntime();
     private final Thread hook = new Thread(this::testCanceled);
-    private final long seed;
+    private final Supplier<List<Integer>> supplier;
+    private long seed;
+    private boolean failed = false;
 
     protected List<Integer> subject;
     protected List<Integer> control = new ArrayList<>();
 
-    public ListTests(List<Integer> subject) throws Throwable {
-        this.subject = subject;
-
-        seed = r.nextLong();
-        r.setSeed(seed);
+    public ListTests(final Supplier<List<Integer>> supplier) {
+        this.supplier = supplier;
+        this.subject = supplier.get();
     }
 
-    public void runTests() throws Throwable {
+    public ListTests(final List<Integer> subject) {
+        this.supplier = null;
+        this.subject = subject;
+    }
+
+    public class Result {
+        public final List<Integer> subject = Collections.unmodifiableList(ListTests.this.subject);
+        public final List<Integer> control = Collections.unmodifiableList(ListTests.this.control);
+        public final long seed = ListTests.this.seed;
+        public final Throwable error;
+        public final Method failedOn;
+
+        public Result() {
+            this(null, null);
+        }
+
+        public Result(Method failedOn, Throwable error) {
+            this.failedOn = failedOn;
+            this.error = error;
+        }
+
+        public boolean succeeded() {
+            return this.error == null;
+        }
+    }
+
+    public Result runTests() {
+        return runTests(r.nextLong());
+    }
+
+    public Result runTests(final long seed) {
+        if (failed) {
+            if (supplier == null)
+                throw new IllegalStateException();
+            else {
+                this.subject = supplier.get();
+                this.control = new ArrayList<>();
+                failed = false;
+            }
+        }
+
+        AnsiConsole.systemInstall();
+
+        this.seed = seed;
+        r.setSeed(seed);
         System.out.println("Running test " + seed);
         runtime.addShutdownHook(hook);
 
@@ -28,8 +75,8 @@ public class ListTests {
             System.out.print(method.getName() + "(");
 
             if (control.size() != subject.size())
-                throw new IllegalStateException(
-                        "Sizes have become desynced (control is " + control.size() + ", subject is " + subject.size());
+                return endTests(new Result(method, new IllegalStateException("Sizes have become desynced (control is "
+                    + control.size() + ", subject is " + subject.size() + ")")));
 
             if (control.size() == 0) {
                 // Add test data
@@ -40,7 +87,7 @@ public class ListTests {
             }
 
             if (control.size() == 0)
-                throw new IllegalStateException("Either size() or add(Object) don't work");
+                return endTests(new Result(method, new IllegalStateException("Either size() or add(Object) don't work")));
 
             Class<?>[] params = method.getParameterTypes();
             Object[] args = new Object[params.length];
@@ -94,14 +141,16 @@ public class ListTests {
                             ok = iter1.hasNext() == iter2.hasNext();
                             errMsg = new UnequalReturnValuesException("Iterators were different lengths");
                         }
-                    } else if (res1 instanceof Spliterator) {
+                    } 
+                    else if (res1 instanceof Spliterator) {
                         // I'm just run it, to make sure it doesn't throw an error.
                         // I have no idea what a spliterator is, or how it works,
                         // so I'm not going to actually check the values, since
                         // .equals() won't work for it.
                         method.invoke(subject, args);
                         ok = true;
-                    } else {
+                    } 
+                    else {
                         Object res2 = method.invoke(subject, args);
                         if (res1 == null)
                             ok = res2 == null;
@@ -112,51 +161,54 @@ public class ListTests {
                         errMsg = new UnequalReturnValuesException("Returned different values. control: %s; subject: %s",
                                 res1 == null ? "null" : res1.toString(), res2 == null ? "null" : res1.toString());
                     }
-                } catch (Exception e) {
+                } 
+                catch (Exception e) {
                     ok = false;
                     errMsg = e.getCause();
                 }
-            } catch (Exception e1) {
+            } 
+            catch (Exception e1) {
                 try {
                     method.invoke(control, args);
                     ok = false;
                     errMsg = e1.getCause();
-                } catch (Exception e2) {
+                } 
+                catch (Exception e2) {
                     ok = e1.getClass() == e2.getClass();
                 }
             }
             final boolean sameResult = control.equals(subject);
 
             if (ok && sameResult)
-                System.out.println("\u001b[32mok\u001b[0m");
+                System.out.println(ansi().fg(GREEN).a("ok").reset());
             else {
-                System.out.println("\u001b[31mfail\u001b[0m");
+                failed = true;
+                System.out.println(ansi().fg(RED).a("fail").reset());
                 System.out.printf("returned same: %b, post-values same: %b%n", ok, sameResult);
-                if (!sameResult)
-                    System.out.printf("control: %s; %nsubject: %s%n", control, subject);
-                if (!ok)
-                    throw errMsg;
-                return;
+                if (ok)
+                    errMsg = new IllegalStateException("control is not equal to subject");
+                return endTests(new Result(method, errMsg));
             }
         }
 
+        return endTests(new Result());
+    }
+
+    public boolean hasFailed() {
+        return failed;
+    }
+
+    private Result endTests(Result result) {
+        if (!result.succeeded()) {
+            failed = true;
+            result.error.printStackTrace();
+        }
         runtime.removeShutdownHook(hook);
+        AnsiConsole.systemUninstall();
+        return result;
     }
 
     private void testCanceled() {
-        System.out.println("Test canceled: " + seed);
-    }
-
-    public class UnequalReturnValuesException extends RuntimeException {
-        final String message;
-        private static final long serialVersionUID = 1L;
-
-        public UnequalReturnValuesException(String message, Object... formatArgs) {
-            this.message = String.format(message, formatArgs);
-        }
-
-        public String toString() {
-            return message;
-        }
+        System.out.println("Aborting test " + seed);
     }
 }
