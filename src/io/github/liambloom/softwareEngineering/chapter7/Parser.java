@@ -162,7 +162,7 @@ public class Parser {
                 if (startsWithBracket && endsWithBracket)
                     deep[i] = parseArray(elements[i]);
                 else
-                    throw new Error(elements[i] + " is not a valid anything");
+                    throw new IllegalArgumentException(elements[i] + " is not a valid anything");
             }
         }
         System.out.println(Arrays.deepToString(deep));

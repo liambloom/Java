@@ -28,8 +28,8 @@ public class Projects { // 1 & 6
     }
     private static final String[] dayNames = {"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"};
     public static void calendar (int days, int firstSun) {
-        if (days > 31 || days < 28) throw new Error("You cannot have " + days + " days in a month");
-        else if (firstSun < 1 || firstSun > 7) throw new Error("The first sunday of the month cannot be the " + firstSun + "th of the month");
+        if (days > 31 || days < 28) throw new IllegalArgumentException("You cannot have " + days + " days in a month");
+        else if (firstSun < 1 || firstSun > 7) throw new IllegalArgumentException("The first sunday of the month cannot be the " + firstSun + "th of the month");
         for (int i = 0; i < 7; i++) {
             System.out.print("  " + dayNames[i] + "  ");
         }

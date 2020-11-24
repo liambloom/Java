@@ -3,7 +3,7 @@ package io.github.liambloom.softwareEngineering.chapter2;
 public class Hourglass { // this should really create an hourglass object, but that's ch3
     private static int height;
     public static void main (int inputHeight) {
-        if (inputHeight % 2 == 1) throw new Error("Height must be even"); 
+        if (inputHeight % 2 == 1) throw new IllegalArgumentException("Height must be even"); 
         height = inputHeight;
         // hourglass
         line();
