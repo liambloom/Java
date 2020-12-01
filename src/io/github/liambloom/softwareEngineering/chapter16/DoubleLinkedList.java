@@ -2,15 +2,8 @@ package io.github.liambloom.softwareEngineering.chapter16;
 
 import java.util.ListIterator;
 import java.util.NoSuchElementException;
-import io.github.liambloom.tests.ListTests;
 
-public class DoubleLinkedList<E> extends AbstractLinkedList<E, DoubleLinkedList<E>.Node> {
-    public static void main(String[] args) throws Throwable {
-        var tests = new ListTests(new io.github.liambloom.softwareEngineering.chapter16.DoubleLinkedList<>());
-        for (int i = 0; i < 100; i++)
-            tests.runTests();
-    }
-    
+public class DoubleLinkedList<E> extends AbstractLinkedList<E, DoubleLinkedList<E>.Node> {    
     class Node extends AbstractLinkedList<E, DoubleLinkedList<E>.Node>.Node {
         Node prev = null;
 
@@ -44,6 +37,8 @@ public class DoubleLinkedList<E> extends AbstractLinkedList<E, DoubleLinkedList<
             if (prev == null) {
                 next = newNode.next = head;
                 prev = head = newNode;
+                if (newNode.next != null)
+                    newNode.next.prev = newNode;
             }
             else {
                 newNode.next = next;
