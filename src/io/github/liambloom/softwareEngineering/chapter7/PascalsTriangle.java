@@ -2,8 +2,8 @@ package io.github.liambloom.softwareEngineering.chapter7;
 
 public class PascalsTriangle {
     public static void main(String[] args) {
-        method3(5);
-        method3(6);
+        method2(5);
+        method2(6);
     }
 
     public static void method1(final int rows) {
@@ -38,10 +38,11 @@ public class PascalsTriangle {
     }
 
     public static void method2(final int rows) {
-        final int[][] matrix = new int[rows][rows];
+        final int[][] matrix = new int[rows][];
 
         // fill 1s
         for (int i = 0; i < rows; i++) {
+            matrix[i] = new int[i + 1];
             matrix[i][0] = 1;
             matrix[i][i] = 1;
         }
@@ -76,11 +77,13 @@ public class PascalsTriangle {
 
     public static void method3(final int rows) {
         final int cols = (rows + 1) / 2;
-        final int[][] matrix = new int[rows][cols];
+        final int[][] matrix = new int[rows][];
 
         // fill 1s
-        for (int[] row : matrix)
-            row[0] = 1;
+        for (int i = 0; i < rows; i++) {
+            matrix[i] = new int[i / 2 + 1];
+            matrix[i][0] = 1;
+        }
 
         // fill rest
         for (int i = 2; i < rows; i++) {
