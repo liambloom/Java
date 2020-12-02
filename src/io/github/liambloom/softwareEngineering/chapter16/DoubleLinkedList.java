@@ -3,7 +3,7 @@ package io.github.liambloom.softwareEngineering.chapter16;
 import java.util.ListIterator;
 import java.util.NoSuchElementException;
 
-public class DoubleLinkedList<E> extends AbstractLinkedList<E, DoubleLinkedList<E>.Node> {    
+public class DoubleLinkedList<E> extends AbstractLinkedList<E, DoubleLinkedList<E>.Node> {
     class Node extends AbstractLinkedList<E, DoubleLinkedList<E>.Node>.Node {
         Node prev = null;
 
