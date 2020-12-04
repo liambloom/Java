@@ -4,15 +4,8 @@ import java.util.NoSuchElementException;
 import java.util.Iterator;
 import java.util.ListIterator;
 import java.util.Comparator;
-import io.github.liambloom.tests.ListTests;
 
 public class LinkedList<E> extends AbstractLinkedList<E, LinkedList<E>.Node> {
-    public static void main(String[] args) throws Throwable {
-        var tests = new ListTests(new io.github.liambloom.softwareEngineering.chapter16.LinkedList<>());
-        for (int i = 0; i < 100; i++)
-            tests.runTests();
-    }
-
     class Node extends AbstractLinkedList<E, LinkedList<E>.Node>.Node {
         public Node(final E data) {
             super(data);
