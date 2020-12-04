@@ -14,8 +14,7 @@ public class Point {
         setLocation(x, y);
     }
     public Point () {
-        x = 0;
-        y = 0;
+        this(0, 0);
     }
     public Point (Point p) { // Self Check 21
         setLocation(p);
