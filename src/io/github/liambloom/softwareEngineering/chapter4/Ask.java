@@ -51,7 +51,7 @@ public class Ask {
       console.nextLine();
       return val;
     }
-    else if (console.hasNext("^-?\\d+$")) System.out.println("Please input a whole number between -2^31 and 2^31-1 (inclusive)");
+    else if (console.hasNext("^\\s*(?:\\+|-)?\\d+\\s*$")) System.out.println("Please input a whole number between -2^31 and 2^31-1 (inclusive)");
     else System.out.println("Please input a whole number");
     console.nextLine();
     return forInt(prompt);
@@ -81,7 +81,7 @@ public class Ask {
       console.nextLine();
       return val;
     }
-    else if (console.hasNext("^-?(?:\\d+.?\\d*|\\d*.?\\d+)$")) System.out.println("Your number has too many digits");
+    else if (console.hasNext("^(?:\\+|-)?(?:\\d+.?\\d*|\\d*.?\\d+)$")) System.out.println("Your number has too many digits");
     else System.out.println("Please input a number");
     console.nextLine();
     return forDouble(prompt);
