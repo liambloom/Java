@@ -9,20 +9,29 @@ public class LinkedList<E> extends AbstractLinkedList<E, LinkedList<E>.Node> {
     class Node extends AbstractLinkedList<E, LinkedList<E>.Node>.Node {
         public Node(final E data) {
             super(data);
-        }/*
-
-        public Node(final Node node) {
-            super(node.data);
-        }*/
+        }
     }
 
     class LinkedListIterator extends AbstractLinkedList<E, LinkedList<E>.Node>.AbstractListIterator {
+        Node prev2 = null;
+
+        @Override
+        public E next() {
+            prev2 = prev;
+            return super.next();
+        }
+
         public E previous() {
+            index--;
             if (prev == null)
                 throw new NoSuchElementException();
             else {
                 next = prev;
-                prev = getNode(--index - 1);
+                if (prev2 != null)
+                    prev = prev2;
+                else
+                    prev = getNode(index - 1);
+                prev2 = null;
                 modOk = true;
                 lastReturned = next;
                 return next.data;
@@ -33,6 +42,7 @@ public class LinkedList<E> extends AbstractLinkedList<E, LinkedList<E>.Node> {
             modOk = false;
             index++;
             size++;
+            prev2 = prev;
             Node newNode = new Node(e);
             if (next == null)
                 tail = newNode;
@@ -48,6 +58,7 @@ public class LinkedList<E> extends AbstractLinkedList<E, LinkedList<E>.Node> {
         }
 
         public void remove() {
+            assert prev2 == null;
             if (!modOk)
                 throw new IllegalStateException();
             if (lastReturned == next) {
@@ -109,23 +120,6 @@ public class LinkedList<E> extends AbstractLinkedList<E, LinkedList<E>.Node> {
             current = temp;
         }
         head = current;
-    }
-
-    @Override
-    public void addSorted(final E data, final Comparator<E> comparator) {
-        size++;
-        Node newNode = new Node(data);
-        Node prev = null;
-        Node next = head;
-        while (comparator.compare(next.data, data) < 0) {
-            prev = next;
-            next = next.next;
-        }
-        newNode.next = next;
-        if (prev == null)
-            head = newNode;
-        else
-            prev.next = newNode;
     }
 
     //@Override
