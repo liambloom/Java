@@ -100,8 +100,12 @@ public abstract class AbstractLinkedList<E, N extends AbstractLinkedList<E, N>.N
 
     public void addSorted(final E data, final Comparator<E> comparator) {
         final ListIterator<E> iter = listIterator();
-        while (iter.hasNext() && comparator.compare(iter.next(), data) < 0);
-        iter.previous();
+        while (iter.hasNext()) {
+            if (comparator.compare(iter.next(), data) < 0) {
+                iter.previous();
+                break;
+            }
+        }
         iter.add(data);
     }
 
