@@ -3,7 +3,6 @@ package io.github.liambloom.softwareEngineering.chapter16;
 import java.util.NoSuchElementException;
 import java.util.Iterator;
 import java.util.ListIterator;
-import java.util.Comparator;
 
 public class LinkedList<E> extends AbstractLinkedList<E, LinkedList<E>.Node> {
     class Node extends AbstractLinkedList<E, LinkedList<E>.Node>.Node {
@@ -124,7 +123,7 @@ public class LinkedList<E> extends AbstractLinkedList<E, LinkedList<E>.Node> {
 
     //@Override
     @SuppressWarnings("unused")
-    private void removeNode(LinkedList<E>.Node node) {
+    private void removeNode(Node node) {
         if (head == null)
             return;
         final E n = node.data;

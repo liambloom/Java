@@ -97,7 +97,6 @@ impl Div for RationalNumber {
     }
 }
 
-// TODO see if this works with a reference
 impl Into<f64> for RationalNumber {
     fn into(self) -> f64 {
         self.numer as f64 / self.denom as f64
