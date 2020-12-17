@@ -61,7 +61,6 @@ public class CLIENT {
                 newNode = new Node(name[0], parent.getGenerationLevel() + 1, prev);
             }
             placeNodeInFamilyTreeOfUniSprouts(parent, newNode);
-            printFamilyTreeOfUniSprouts(root);
         }
     } // buildFamilyTreeOfUniSprouts()
 
@@ -76,7 +75,6 @@ public class CLIENT {
 
     private static Node findNodeInner(String name, Node under) {
         for (Node current = under.getChildren(); current != null; current = current.getNext()) {
-            System.out.println("checked " + current.getName());
             if (current.getName().equals(name))
                 return current;
             else {
@@ -90,7 +88,6 @@ public class CLIENT {
 
     // ============== placeNodeInFamilyTreeOfUniSprouts =================
     public static void placeNodeInFamilyTreeOfUniSprouts(Node parent, Node child) {
-        System.out.println("Inserting " + child.getName());
         if ((root == null) != (parent == null))
             throw new IllegalArgumentException();
         if (parent == null) 
@@ -126,14 +123,31 @@ public class CLIENT {
             rowCount += 2;
         final String[] rowStrings = new String[rowCount];
         final String name = node.getName();
-        colCount = Math.max(colCount + subtrees.size() - 1, name.length());
-        rowStrings[0] = " ".repeat((colCount - name.length() - 1) / 2)
+        colCount += subtrees.size() - 1;
+        if (name.length() > colCount) {
+            if (rowCount > 1)   {
+                final String[] firstCol = subtrees.get(0);
+                final String firstBorder = " ".repeat((name.length() - colCount) / 2);
+                for (int i = 0; i < firstCol.length; i++)
+                    firstCol[i] = firstBorder + firstCol[i];
+                
+                final String[] lastCol = subtrees.get(subtrees.size() - 1);
+                final String lastBorder = " ".repeat((name.length() - colCount + 1) / 2);
+                for (int i = 0; i < lastCol.length; i++)
+                    lastCol[i] += lastBorder;
+            }
+            colCount = name.length();
+        }
+        rowStrings[0] = " ".repeat((colCount - name.length()) / 2)
             + name
-            + " ".repeat((colCount - name.length()) / 2);
+            + " ".repeat((colCount - name.length() + 1) / 2);
         if (rowCount > 1) {
-            final StringBuilder[] builders = new StringBuilder[rowStrings.length - 1];
+            final StringBuilder[] builders = new StringBuilder[rowStrings.length - 2];
             for (int i = 0; i < builders.length; i++)
-                builders[i] = new StringBuilder();
+                builders[i] = new StringBuilder(colCount);
+            final char[] branchChars = new char[colCount];
+            for (int i = 0; i < branchChars.length; i++)
+                branchChars[i] = '\u2500';
             final int center = (colCount - 1) / 2;
             int i = 0;
             final ListIterator<String[]> iter = subtrees.listIterator();
@@ -142,71 +156,63 @@ public class CLIENT {
                 final String[] col = iter.next();
                 final int subColSize = col[0].length();
                 final boolean isLast = !iter.hasNext();
-                final boolean containsCenter = center > i && center < i + subColSize;
                 final int subCenter = (subColSize - 1) / 2;
-                final int sectionCount = containsCenter && center - i != subCenter && !(isFirst && isLast) ? 3 : 2;
-                final int[] sectionLengths = new int[sectionCount];
-                sectionLengths[0] = subCenter;
-                sectionLengths[sectionLengths.length - 1] = subColSize - subCenter - 1;
-                final char[] sectionChars = new char[sectionCount];
-                for (int j = 0; j < sectionChars.length; j++)
-                    sectionChars[j] = '\u2500';
-                final char[] dividerChars = new char[sectionCount - 1];
-                for (int j = 0; j < dividerChars.length; j++)
-                    dividerChars[j] = '\u252c';
 
-                if (isFirst) {
-                    sectionChars[0] = ' ';
-                    if (isLast) {
-                        sectionChars[1] = ' ';
-                        dividerChars[0] = '\u2502';
+                char centerChar = '\u252c';
+                if (isFirst ^ isLast) {
+                    if (isFirst) {
+                        centerChar = '\u250c';
+                        for (int j = 0; j < subCenter; j++)
+                            branchChars[j] = ' ';
                     }
-                    else 
-                        dividerChars[0] = '\u250c';
-                }
-                else if (isLast) {
-                    sectionChars[sectionChars.length - 1] = ' ';
-                    dividerChars[dividerChars.length - 1] = '\u2510';
-                }
-
-                if (containsCenter && !(isFirst && isLast)) {
-                    final int c = Integer.valueOf(center).compareTo(subCenter);
-                    if (c < 0) {
-                        dividerChars[0] = '\u2534';
-                        sectionLengths[0] = center - i;
-                        sectionLengths[1] = subCenter - (center - i);
+                    else { // isLast
+                        centerChar = '\u2510';
+                        for (int j = i + subCenter; j < branchChars.length; j++)
+                            branchChars[j] = ' ';
                     }
-                    else if (c > 0){
-                        dividerChars[dividerChars.length - 1] = '\u2534';
-                        sectionLengths[sectionLengths.length - 2] = center - i - subCenter;
-                        sectionLengths[sectionLengths.length - 1] = subColSize - (center - i);
-                    }
-                    else if (col.length == 0)
-                        dividerChars[0] = '\u2502';
-                    else
-                        dividerChars[0] = '\u253c';
                 }
-
-                for (int j = 0; j < sectionCount; j++) {
-                    for (int k = 0; k < sectionLengths[j]; k++)
-                        builders[0].append(sectionChars[j]);
-                    if (j + 1 != sectionCount)
-                        builders[0].append(dividerChars[j]);
+                else if (isFirst && isLast) {
+                    centerChar = ' ';
+                    for (int j = 0; j < branchChars.length; j++)
+                        branchChars[j] = ' ';
                 }
+                branchChars[i + subCenter] = centerChar;
 
                 for (int j = 0; j < col.length; j++) {
-                    if (i > 0) {
-                        builders[j + 1].append(' ');
-                        System.out.println("Adding space");
-                    }
-                    builders[j + 1].append(col[j]);
+                    builders[j].append(col[j]);
+                    assert col[j].length() == subColSize;
+                }
+                for (int j = col.length; j < builders.length; j++)
+                    builders[j].append(" ".repeat(subColSize));
+
+                if (!isLast) {
+                    for (StringBuilder builder : builders)
+                        builder.append(' ');
                 }
                 
-                i += col[0].length();
+                i += subColSize + 1;
             }
 
+            char centerChar;
+            switch (branchChars[center]) {
+                case '\u2500':
+                    centerChar = '\u2534';
+                    break;
+                case '\u252c':
+                    centerChar = '\u253c';
+                    break;
+                case ' ':
+                    centerChar = '\u2502';
+                    break;
+                default:
+                    throw new IllegalStateException("Illegal central character '" + branchChars[center] + "' in \"" + new String(branchChars) + '"'); 
+            }
+            branchChars[center] = centerChar;
+
+            rowStrings[1] = new String(branchChars);
+
             for (i = 0; i < builders.length; i++)
-                rowStrings[i + 1] = builders[i].toString();
+                rowStrings[i + 2] = builders[i].toString();
         }
 
         return rowStrings;
@@ -214,7 +220,84 @@ public class CLIENT {
 
     // ========================= printRelatives ===============================
     public static void printRelatives(String name) {
-        // TODO
+        Ancestors ancestors;
+        try {
+            ancestors = new Ancestors(name, root);
+        }
+        catch (NoSuchElementException e) {
+            System.out.println("There is no one named " + name);
+            return;
+        }
+
+        System.out.println("Grandparent: " + (ancestors.grandparent == null ? "None" : ancestors.grandparent.getName()));
+
+        System.out.println("Parent: " + (ancestors.parent == null ? "None" : ancestors.parent.getName()));
+
+        System.out.print("Siblings: ");
+        if (ancestors.parent == null)
+            System.out.println("None");
+        else {
+            boolean isFirst = true;
+            for (Node c = ancestors.parent.getChildren(); c != null; c = c.getNext()) {
+                if (c != ancestors.self) {
+                    if (!isFirst)
+                        System.out.print(", ");
+                    else
+                        isFirst = false;
+                    System.out.print(c.getName());
+                }
+            }
+            if (isFirst)
+                System.out.print("None");
+            System.out.println();
+        }   
+
+        System.out.print("Cousins: ");
+        if (ancestors.grandparent == null)
+            System.out.println("None");
+        else {
+            boolean isFirst = true;
+            for (Node c = ancestors.grandparent.getChildren(); c != null; c = c.getNext()) {
+                if (c != ancestors.parent) {
+                    for (Node d = c.getChildren(); d != null; d = d.getNext()) {
+                        if (!isFirst)
+                            System.out.print(", ");
+                        else
+                            isFirst = false;
+                        System.out.print(d.getName());
+                    }
+                }
+            }
+            if (isFirst)
+                System.out.print("None");
+            System.out.println();
+        }
+
+        StringBuilder grandChildren = new StringBuilder();
+        System.out.print("Children: ");
+        boolean isFirstChild = true;
+        boolean isFirstGrandChild = true;
+        for (Node c = ancestors.self.getChildren(); c != null; c = c.getNext()) {
+            if (!isFirstChild)
+                System.out.print(", ");
+            else
+                isFirstChild = false;
+            System.out.print(c.getName());
+
+            for (Node g = c.getChildren(); g != null; g = g.getNext()) {
+                if (!isFirstGrandChild)
+                    grandChildren.append(", ");
+                else
+                    isFirstGrandChild = false;
+                grandChildren.append(g.getName());
+            }
+        }
+        if (isFirstChild)
+            System.out.print("None");
+        System.out.println();
+
+        System.out.print("Grandchildren: " + (isFirstGrandChild ? "None" : grandChildren));
+
     } // printRelatives()
 
 } // FamilyTreeOfUniSprouts_CLIENT
