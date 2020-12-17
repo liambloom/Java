@@ -67,23 +67,7 @@ public class CLIENT {
     private static Node findNode(String name) {
         if (root == null)
             throw new IllegalStateException();
-        final Node n = name == root.getName() ? root : findNodeInner(name, root);
-        if (n == null)
-            throw new NoSuchElementException("No element named " + name);
-        return n;
-    }
-
-    private static Node findNodeInner(String name, Node under) {
-        for (Node current = under.getChildren(); current != null; current = current.getNext()) {
-            if (current.getName().equals(name))
-                return current;
-            else {
-                final Node n = findNodeInner(name, current);
-                if (n != null)
-                    return n;
-            }
-        }
-        return null;
+        return new Ancestors(name, root).self;
     }
 
     // ============== placeNodeInFamilyTreeOfUniSprouts =================
@@ -229,74 +213,33 @@ public class CLIENT {
             return;
         }
 
-        System.out.println("Grandparent: " + (ancestors.grandparent == null ? "None" : ancestors.grandparent.getName()));
+        System.out.println("Grandparent: " + ancestors.grandparent.getName());
+        System.out.println("Parent: " + ancestors.parent.getName());
 
-        System.out.println("Parent: " + (ancestors.parent == null ? "None" : ancestors.parent.getName()));
+        RelativeListBuilder siblings = new RelativeListBuilder("Sibling");
+        RelativeListBuilder cousins = new RelativeListBuilder("Cousin");
+        for (Node c = ancestors.grandparent.getChildren(); c != null; c = c.getNext()) {
+            RelativeListBuilder cTracker = c == ancestors.parent ? siblings : cousins;
 
-        System.out.print("Siblings: ");
-        if (ancestors.parent == null)
-            System.out.println("None");
-        else {
-            boolean isFirst = true;
-            for (Node c = ancestors.parent.getChildren(); c != null; c = c.getNext()) {
-                if (c != ancestors.self) {
-                    if (!isFirst)
-                        System.out.print(", ");
-                    else
-                        isFirst = false;
-                    System.out.print(c.getName());
-                }
+            for (Node d = c.getChildren(); d != null; d = d.getNext()) {
+                if (d == ancestors.self)
+                    continue;
+                cTracker.append(d);
             }
-            if (isFirst)
-                System.out.print("None");
-            System.out.println();
-        }   
-
-        System.out.print("Cousins: ");
-        if (ancestors.grandparent == null)
-            System.out.println("None");
-        else {
-            boolean isFirst = true;
-            for (Node c = ancestors.grandparent.getChildren(); c != null; c = c.getNext()) {
-                if (c != ancestors.parent) {
-                    for (Node d = c.getChildren(); d != null; d = d.getNext()) {
-                        if (!isFirst)
-                            System.out.print(", ");
-                        else
-                            isFirst = false;
-                        System.out.print(d.getName());
-                    }
-                }
-            }
-            if (isFirst)
-                System.out.print("None");
-            System.out.println();
         }
+        System.out.println(siblings);
+        System.out.println(cousins);
 
-        StringBuilder grandChildren = new StringBuilder();
-        System.out.print("Children: ");
-        boolean isFirstChild = true;
-        boolean isFirstGrandChild = true;
+        RelativeListBuilder children = new RelativeListBuilder("Children");
+        RelativeListBuilder grandchildren = new RelativeListBuilder("Grandchildren");
         for (Node c = ancestors.self.getChildren(); c != null; c = c.getNext()) {
-            if (!isFirstChild)
-                System.out.print(", ");
-            else
-                isFirstChild = false;
-            System.out.print(c.getName());
+            children.append(c);
 
-            for (Node g = c.getChildren(); g != null; g = g.getNext()) {
-                if (!isFirstGrandChild)
-                    grandChildren.append(", ");
-                else
-                    isFirstGrandChild = false;
-                grandChildren.append(g.getName());
-            }
+            for (Node g = c.getChildren(); g != null; g = g.getNext())
+                grandchildren.append(g);
         }
-        if (isFirstChild)
-            System.out.print("None");
-        System.out.println();
-
-        System.out.print("Grandchildren: " + (isFirstGrandChild ? "None" : grandChildren));
+        System.out.println(children);
+        System.out.println(grandchildren);
 
     } // printRelatives()
 

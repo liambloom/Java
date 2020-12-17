@@ -8,12 +8,26 @@ public class Ancestors {
     public final Node self;
 
     public Ancestors(final String name, final Node root) {
+        if (root == null)
+            throw new IllegalArgumentException("Root cannot be null");
         final Ancestors ancestors = getAncestors(name, root, null, null);
         if (ancestors == null)
-            throw new NoSuchElementException();
-        this.grandparent = ancestors.grandparent;
-        this.parent = ancestors.parent;
-        this.self = ancestors.self;
+            throw new NoSuchElementException("No element named " + name);
+        self = ancestors.self;
+
+        if (ancestors.parent == null) {
+            parent = new Node("None", self.getGenerationLevel() - 1, null);
+            parent.setChildren(self);
+        }
+        else
+            parent = ancestors.parent;
+
+        if (ancestors.grandparent == null) {
+            grandparent = new Node("None", parent.getGenerationLevel() - 2, null);
+            grandparent.setChildren(parent);
+        }
+        else
+            grandparent = ancestors.grandparent;
     }
 
     private Ancestors(final Node grandparent, final Node parent, final Node self) {
