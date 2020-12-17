@@ -209,38 +209,40 @@ public class CLIENT {
             ancestors = new Ancestors(name, root);
         }
         catch (NoSuchElementException e) {
-            System.out.println("There is no one named " + name);
+            System.out.println(e.getMessage());
             return;
         }
 
         System.out.println("Grandparent: " + ancestors.grandparent.getName());
         System.out.println("Parent: " + ancestors.parent.getName());
 
-        RelativeListBuilder siblings = new RelativeListBuilder("Sibling");
-        RelativeListBuilder cousins = new RelativeListBuilder("Cousin");
-        for (Node c = ancestors.grandparent.getChildren(); c != null; c = c.getNext()) {
-            RelativeListBuilder cTracker = c == ancestors.parent ? siblings : cousins;
+        {
+            RelativeListBuilder siblings = new RelativeListBuilder("Sibling");
+            RelativeListBuilder cousins = new RelativeListBuilder("Cousin");
+            for (Node c = ancestors.grandparent.getChildren(); c != null; c = c.getNext()) {
+                RelativeListBuilder cTracker = c == ancestors.parent ? siblings : cousins;
 
-            for (Node d = c.getChildren(); d != null; d = d.getNext()) {
-                if (d == ancestors.self)
-                    continue;
-                cTracker.append(d);
+                for (Node d = c.getChildren(); d != null; d = d.getNext()) {
+                    if (d != ancestors.self)
+                        cTracker.append(d);
+                }
             }
+            System.out.println(siblings);
+            System.out.println(cousins);
         }
-        System.out.println(siblings);
-        System.out.println(cousins);
 
-        RelativeListBuilder children = new RelativeListBuilder("Children");
-        RelativeListBuilder grandchildren = new RelativeListBuilder("Grandchildren");
-        for (Node c = ancestors.self.getChildren(); c != null; c = c.getNext()) {
-            children.append(c);
+        {
+            RelativeListBuilder children = new RelativeListBuilder("Children");
+            RelativeListBuilder grandchildren = new RelativeListBuilder("Grandchildren");
+            for (Node c = ancestors.self.getChildren(); c != null; c = c.getNext()) {
+                children.append(c);
 
-            for (Node g = c.getChildren(); g != null; g = g.getNext())
-                grandchildren.append(g);
+                for (Node g = c.getChildren(); g != null; g = g.getNext())
+                    grandchildren.append(g);
+            }
+            System.out.println(children);
+            System.out.println(grandchildren);
         }
-        System.out.println(children);
-        System.out.println(grandchildren);
-
     } // printRelatives()
 
 } // FamilyTreeOfUniSprouts_CLIENT
