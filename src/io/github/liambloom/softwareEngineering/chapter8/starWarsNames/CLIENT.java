@@ -46,7 +46,6 @@ package io.github.liambloom.softwareEngineering.chapter8.starWarsNames;
         Largest group in Names = Republic: 7 
 */
 
-
 public class CLIENT {
     public static void main(String[] args) {
         Name n1 = new Name("Luke", "R", "Skywalker");
@@ -119,10 +118,27 @@ public class CLIENT {
     // ===========================================================================
     // Return the most common last name found,null if none.If more than one exists
     // common, pick the first one.
+    // I was going to do this using maps, but IDK how to make it so if more than one
+    // exists, the first one is used, with using maps.
     public static String mostCommonLastName(Name list[]) {
-        // TODO
-        // He expects the O(n^2) way from most people, but I can do it
-        // using a map (O(n)) if I want.
+        if (list.length == 0)
+            return null;
+        String maxName = list[0].lastName;
+        int max = 1;
+        for (int i = 0; i < list.length; i++) {
+            if (list[i].equals(maxName))
+                continue;
+            int counter = 1;
+            for (int j = i + 1; j < list.length; j++) {
+                if (list[i].lastName.equals(list[j].lastName))
+                    counter++;
+            }
+            if (counter > max) {
+                max = counter;
+                maxName = list[i].lastName;
+            }
+        }
+        return maxName;
     }
 
     // ==============================================================================
