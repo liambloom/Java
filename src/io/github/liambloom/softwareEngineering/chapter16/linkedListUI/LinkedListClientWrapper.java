@@ -176,7 +176,6 @@ public class LinkedListClientWrapper extends LinkedList<Object> // delete the wo
 
     // -------------------------------------------------------------------------------------------------------------
     public void set() {
-        Object current, n;
         int selection;
 
         do {
