@@ -1,5 +1,5 @@
 /**
- * ====================> ArrayListABCProgram ⇐====================
+ * ====================> ArrayListABCProgram <=====================
  * 
  *    Given an ArrayList letterList of letters "A"-"H"
  *    go through the list and make the following changes:
