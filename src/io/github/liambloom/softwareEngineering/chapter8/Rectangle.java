@@ -1,7 +1,6 @@
 package io.github.liambloom.softwareEngineering.chapter8;
 
 import io.github.liambloom.softwareEngineering.Globals;
-import java.util.function.BiFunction;
 
 public class Rectangle { // Exercise 18
     public final int x;
@@ -52,13 +51,11 @@ public class Rectangle { // Exercise 18
         // Library on Github: https://github.com/liambloom/command-line-draw
         // Library on npm (node package manager): https://www.npmjs.com/package/command-line-draw
 
-        BiFunction<String, Integer, String> repeat = io.github.liambloom.softwareEngineering.chapter4.Exercises::exercise2;
-
         for (int i = 0; i < y; i++) System.out.println();
 
-        final String xString = repeat.apply(" ", x * 2);
-        final String horizontal = repeat.apply("\u2500", width * 2 - 2);
-        final String space = repeat.apply(" ", width * 2 - 2);
+        final String xString = " ".repeat(x * 2);
+        final String horizontal = "\u2500".repeat(width * 2 - 2);
+        final String space = " ".repeat(width * 2 - 2);
 
         System.out.println(xString + "\u250c" + horizontal + "\u2510");
         for (int i = 0; i < height - 2; i++) System.out.println(xString + "\u2502" + space + "\u2502");
