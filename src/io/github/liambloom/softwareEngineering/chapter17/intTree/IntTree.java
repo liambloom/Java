@@ -28,10 +28,8 @@ public class IntTree {
             .test(ref2::countEvenBranches, 3)
             .testOutput(() -> ref2.printLevel(3), "0\n7\n6\n")
             .testOutput(ref2::printLeaves, "leaves: 9 4 0\n")
-            .test(() -> {
-                System.out.printf("ref1: %b%nref2: %b%nref3: %b%n", ref1.isFull(), ref2.isFull(), ref3.isFull());
-                return !ref1.isFull() && !ref2.isFull() && ref3.isFull();
-            }, true);
+            .test(() -> !ref1.isFull() && !ref2.isFull() && ref3.isFull(), true)
+            .test(ref2::toString, "(2, (8, 0, empty), (1, (7, 4, empty), (6, empty, 9)))");
 
         tester.close();
     }
@@ -207,13 +205,39 @@ public class IntTree {
         }
     }
 
-    // Exercise 7 (failing)
+    // Exercise 7
     public boolean isFull() {
         return isFull(overallRoot);
     }
 
     private boolean isFull(IntTreeNode root) {
-        return root == null || root.left == null && root.right == null;
+        return root == null || root.left == null && root.right == null || root.left != null && isFull(root.left) &&  root.right != null && isFull(root.right);
+    }
+
+    // Exercise 8
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        toString(builder, overallRoot);
+        return builder.toString();
+    }
+
+    private void toString(StringBuilder builder, IntTreeNode root) {
+        if (root == null)
+            builder.append("empty");
+        else {
+            boolean isLeaf = root.left == null && root.right == null;
+            if (!isLeaf)
+                builder.append('(');
+            builder.append(root.data);
+            if (!isLeaf) {
+                builder.append(", ");
+                toString(builder, root.left);
+                builder.append(", ");
+                toString(builder, root.right);
+                builder.append(')');
+            }
+        }
     }
 
     // Exercise 17 (untested)
