@@ -11,22 +11,27 @@ package io.github.liambloom.softwareEngineering.chapter17.intTree;
 import io.github.liambloom.tests.Tester;
 
 public class IntTree {
-public static final IntTree ref1 = new IntTree(new IntTreeNode(3, new IntTreeNode(5, new IntTreeNode(1), null),
-        new IntTreeNode(2, new IntTreeNode(4), new IntTreeNode(6))));
-public static final IntTree ref2 = new IntTree(
-        new IntTreeNode(2, new IntTreeNode(8, new IntTreeNode(0), null), new IntTreeNode(1,
-                new IntTreeNode(7, new IntTreeNode(4), null), new IntTreeNode(6, null, new IntTreeNode(9)))));
-public static final IntTree ref3 = new IntTree(
-        new IntTreeNode(2, new IntTreeNode(3, new IntTreeNode(8), new IntTreeNode(7)), new IntTreeNode(1)));
+    public static final IntTree ref1 = new IntTree(new IntTreeNode(3, new IntTreeNode(5, new IntTreeNode(1), null),
+            new IntTreeNode(2, new IntTreeNode(4), new IntTreeNode(6))));
+    public static final IntTree ref2 = new IntTree(
+            new IntTreeNode(2, new IntTreeNode(8, new IntTreeNode(0), null), new IntTreeNode(1,
+                    new IntTreeNode(7, new IntTreeNode(4), null), new IntTreeNode(6, null, new IntTreeNode(9)))));
+    public static final IntTree ref3 = new IntTree(
+            new IntTreeNode(2, new IntTreeNode(3, new IntTreeNode(8), new IntTreeNode(7)), new IntTreeNode(1)));
 
     public static void main(String[] args) {
-        Tester tester = new Tester(Tester.Policy.RunLast);
+        Tester tester = new Tester(Tester.Policy.RunAll);
         tester
             .test(ref1::countLeftNodes, 3)
             .test(ref1::countEmpty, 7)
             .test(ref1::depthSum, 50)
             .test(ref2::countEvenBranches, 3)
-            .testOutput(() -> ref2.printLevel(3), "0\n7\n6\n");
+            .testOutput(() -> ref2.printLevel(3), "0\n7\n6\n")
+            .testOutput(ref2::printLeaves, "leaves: 9 4 0\n")
+            .test(() -> {
+                System.out.printf("ref1: %b%nref2: %b%nref3: %b%n", ref1.isFull(), ref2.isFull(), ref3.isFull());
+                return !ref1.isFull() && !ref2.isFull() && ref3.isFull();
+            }, true);
 
         tester.close();
     }
@@ -178,5 +183,48 @@ public static final IntTree ref3 = new IntTree(
         }
         else if (currentLevel == targetLevel)
             System.out.println(root.data);
+    }
+
+    // Exercise 6
+    public void printLeaves() {
+        if (overallRoot == null)
+            System.out.println("no leaves");
+        else {
+            System.out.print("leaves:");
+            printLeaves(overallRoot);
+            System.out.println();
+        }
+    }
+
+    private void printLeaves(IntTreeNode root) {
+        if (root == null)
+            return;
+        else if (root.left == null && root.right == null)
+            System.out.print(" " + root.data);
+        else {
+            printLeaves(root.right);
+            printLeaves(root.left);
+        }
+    }
+
+    // Exercise 7 (failing)
+    public boolean isFull() {
+        return isFull(overallRoot);
+    }
+
+    private boolean isFull(IntTreeNode root) {
+        return root == null || root.left == null && root.right == null;
+    }
+
+    // Exercise 17 (untested)
+    public IntTree combineWith(final IntTree t1, final IntTree t2) {
+        return new IntTree(combineWith(t1.overallRoot, t2.overallRoot));
+    }
+
+    private IntTreeNode combineWith(final IntTreeNode t1, final IntTreeNode t2) {
+        return t1 == null && t2 == null ? null 
+            : new IntTreeNode(t1 != null ? t2 != null ? 3 : 1 : 2, 
+                combineWith(t1 == null ? null : t1.left, t2 == null ? null : t2.left), 
+                combineWith(t1 == null ? null : t1.right, t2 == null ? null : t2.right));
     }
 }
