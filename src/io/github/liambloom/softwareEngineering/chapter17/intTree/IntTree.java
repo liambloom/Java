@@ -20,7 +20,7 @@ public class IntTree {
             new IntTreeNode(2, new IntTreeNode(3, new IntTreeNode(8), new IntTreeNode(7)), new IntTreeNode(1)));
 
     public static void main(String[] args) {
-        Tester tester = new Tester(Tester.Policy.RunAll);
+        Tester tester = new Tester(Tester.Policy.RunLast);
         tester
             .test(ref1::countLeftNodes, 3)
             .test(ref1::countEmpty, 7)
@@ -29,7 +29,20 @@ public class IntTree {
             .testOutput(() -> ref2.printLevel(3), "0\n7\n6\n")
             .testOutput(ref2::printLeaves, "leaves: 9 4 0\n")
             .test(() -> !ref1.isFull() && !ref2.isFull() && ref3.isFull(), true)
-            .test(ref2::toString, "(2, (8, 0, empty), (1, (7, 4, empty), (6, empty, 9)))");
+            .test(ref2::toString, "(2, (8, 0, empty), (1, (7, 4, empty), (6, empty, 9)))")
+            .test(() -> ref1.equals(ref1) && !ref1.equals(ref2), true)
+            .test(() -> {
+                    IntTree ref = ref1.clone();
+                    ref.doublePositives();
+                    return ref;
+                }, new IntTree(new IntTreeNode(6, new IntTreeNode(10, new IntTreeNode(2), null),
+                        new IntTreeNode(4, new IntTreeNode(8), new IntTreeNode(12)))))
+            .test(() -> {
+                    IntTree ref = ref1.clone();
+                    ref.numberNodes();
+                    return ref;
+                }, new IntTree(new IntTreeNode(1, new IntTreeNode(2, new IntTreeNode(3), null),
+                        new IntTreeNode(4, new IntTreeNode(5), new IntTreeNode(6)))));
 
         tester.close();
     }
@@ -240,6 +253,60 @@ public class IntTree {
         }
     }
 
+    // Exercise 9
+    @Override
+    public boolean equals(Object o) {
+        return o instanceof IntTree && equals(overallRoot, ((IntTree) o).overallRoot);
+    }
+
+    private boolean equals(final IntTreeNode self, final IntTreeNode other) {
+        return self == null ? other == null : other != null && self.data == other.data && equals(self.left, other.left) && equals(self.right, other.right);
+    }
+
+    // Exercise 10
+    public void doublePositives() {
+        doublePositives(overallRoot);
+    }
+
+    private void doublePositives(IntTreeNode root) {
+        if (root != null) {
+            if (root.data > 0)
+                root.data *= 2;
+            doublePositives(root.left);
+            doublePositives(root.right);
+        }
+    }
+
+    // Exercise 11
+    public void numberNodes() {
+        numberNode(overallRoot, new Counter(1));
+    }
+
+    private void numberNode(IntTreeNode node, Counter count) {
+        if (node != null) {
+            node.data = count.get();
+            count.increment();
+            numberNode(node.left, count);
+            numberNode(node.right, count);
+        }
+    }
+
+    private class Counter {
+        int i;
+
+        public Counter(int i) {
+            this.i = i;
+        }
+
+        public void increment() {
+            i++;
+        }
+
+        public int get() {
+            return i;
+        }
+    }
+
     // Exercise 17 (untested)
     public IntTree combineWith(final IntTree t1, final IntTree t2) {
         return new IntTree(combineWith(t1.overallRoot, t2.overallRoot));
@@ -250,5 +317,17 @@ public class IntTree {
             : new IntTreeNode(t1 != null ? t2 != null ? 3 : 1 : 2, 
                 combineWith(t1 == null ? null : t1.left, t2 == null ? null : t2.left), 
                 combineWith(t1 == null ? null : t1.right, t2 == null ? null : t2.right));
+    }
+
+    @Override
+    public IntTree clone() {
+        return new IntTree(clone(overallRoot));
+    }
+
+    private IntTreeNode clone(IntTreeNode og) {
+        if (og == null)
+            return null;
+        else
+            return new IntTreeNode(og.data, clone(og.left), clone(og.right));
     }
 }
