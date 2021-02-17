@@ -21,7 +21,7 @@ import io.github.liambloom.softwareEngineering.chapter16.LinkedList;
 
 public class LinkedListClientWrapper extends LinkedList<Object> // delete the word SHELL
 {
-    /*** Constructor for objects of class myArrayListLL */
+    /* Constructor for objects of class myArrayListLL */
     /*public LinkedListClientWrapper() // delete the word SHELL
     {
         //super();

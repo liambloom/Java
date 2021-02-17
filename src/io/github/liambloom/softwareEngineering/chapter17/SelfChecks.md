@@ -129,3 +129,7 @@
             0 : 1 + countBranches(node.left) + countBranches(node.right);
     }
     ```
+14. A binary search tree is a type of binary tree. A binary search tree has all the properties of a normal binary tree, but with the additional property that the element are sorted so that the left node is always less than its parent and the right node is always greater. How duplicates are handled doesn't matter as long as it's consistent, although the examples in this chapter put them on the left.
+15. b*, c, e. (*b would break the rules set forth in this chapter, but it's not necessarily invalid)
+16. The elements will be in order
+17. 

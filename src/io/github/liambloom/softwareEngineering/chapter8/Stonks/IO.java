@@ -1,6 +1,5 @@
 package io.github.liambloom.softwareEngineering.chapter8.Stonks;
 
-import io.github.liambloom.softwareEngineering.Globals;
 import io.github.liambloom.softwareEngineering.chapter7.Ask;
 
 public class IO {
@@ -10,7 +9,7 @@ public class IO {
 
     }
     public static double makePurchase (Stonk stock) {
-        for (int i = 0; i < Ask.forInt("# of purchases made",0, (int) Globals.Math.Infinity); i++) {
+        for (int i = 0; i < Ask.forInt("# of purchases made",0, Integer.MAX_VALUE); i++) {
             System.out.printf("Stock #%d%n", i + 1);
             stock.purchase(Ask.forInt("# of shares"), Ask.forDouble("Price / share"));
             System.out.println();

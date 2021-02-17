@@ -1,9 +1,6 @@
 package io.github.liambloom.softwareEngineering.chapter4;
 
-import io.github.liambloom.softwareEngineering.Globals;
-
 public class Exercises {
-  public static int Infinity = (int) Globals.Math.Infinity;
   public static void main (String[] args) {
     exercise21(500);
   }
@@ -57,8 +54,8 @@ public class Exercises {
   }
   public static void exercise8 () {
     Ask.seperator = '?';
-    int min = Infinity;
-    int max = -Infinity;
+    int min = Integer.MAX_VALUE;
+    int max = Integer.MIN_VALUE;
     int nums = Ask.forInt("How many numbers do you want to enter");
     for (int i = 0; i < nums; i++) {
       int next = Ask.forInt("Number " + (i + 1));
@@ -71,7 +68,7 @@ public class Exercises {
   public static void exercise9 () {
     Ask.seperator = '?';
     int sum = 0;
-    int max = -Infinity;
+    int max = Integer.MIN_VALUE;
     int nums = Ask.forInt("How many integers");
     for (int i = 0; i < nums; i++) {
       int next = Ask.forInt("Next integer");

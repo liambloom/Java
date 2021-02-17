@@ -1,7 +1,5 @@
 package io.github.liambloom.softwareEngineering.chapter8.programmingProjects;
 
-import io.github.liambloom.softwareEngineering.Globals;
-
 public class RationalNumber { // PP1
     private final int numerator;
     private final int denominator; // Should always be positive
@@ -9,7 +7,7 @@ public class RationalNumber { // PP1
     public RationalNumber(int numerator, int denominator) {
         if (denominator == 0)
             throw new IllegalArgumentException();
-        final int gcd = Globals.Math.gcd(numerator *= Integer.signum(denominator), denominator = Math.abs(denominator));
+        final int gcd = gcd(numerator *= Integer.signum(denominator), denominator = Math.abs(denominator));
         this.numerator = numerator / gcd;
         this.denominator = denominator / gcd;
     }
@@ -29,12 +27,12 @@ public class RationalNumber { // PP1
     // This is one of my favorite things about rust: 
     // https://doc.rust-lang.org/std/ops/index.html
     public RationalNumber add(RationalNumber o) {
-        final int lcm = Globals.Math.lcm(this.denominator, o.denominator);
+        final int lcm = lcm(this.denominator, o.denominator);
         return new RationalNumber(this.numerator * lcm / this.denominator + o.numerator * lcm / o.denominator, lcm);
     }
 
     public RationalNumber subtract(RationalNumber o) {
-        final int lcm = Globals.Math.lcm(this.denominator, o.denominator);
+        final int lcm = lcm(this.denominator, o.denominator);
         return new RationalNumber(this.numerator * lcm / this.denominator - o.numerator * lcm / o.denominator, lcm);
     }
 
@@ -44,6 +42,14 @@ public class RationalNumber { // PP1
 
     public RationalNumber divide(RationalNumber o ) {
         return new RationalNumber(this.numerator * o.denominator, this.denominator * o.numerator);
+    }
+
+    protected static int gcd(int a, int b) {
+        return b == 0 ? a : gcd(b, a % b);
+    }
+
+    protected static int lcm(int a, int b) {
+        return a * (b / gcd(a, b));
     }
 
     double getDecimalValue() {

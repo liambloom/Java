@@ -1,6 +1,5 @@
 package io.github.liambloom.softwareEngineering.chapter9.lawFirm;
 
-import io.github.liambloom.softwareEngineering.Globals;
 
 public class HarvardLawyer extends Lawyer {
     public double getSalary () {
@@ -10,6 +9,6 @@ public class HarvardLawyer extends Lawyer {
         return super.getVacationDays() + 3;
     }
     public String getVacationForm () {
-        return Globals.repeat(super.getVacationForm(), 4);
+        return super.getVacationForm().repeat(4);
     }
 }

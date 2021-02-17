@@ -3,8 +3,6 @@ package io.github.liambloom.softwareEngineering.chapter8;
 // This is the Point class
 // It does not have the encapsulation added in section 8.4, as it is unnecessary to the property functioning of the class
 
-import io.github.liambloom.softwareEngineering.Globals;
-
 public class Point {
     // PUBLIC. There is no reason for these fields to be private, as there is no such thing as an illegal state for a point.
     public int x;
@@ -37,7 +35,7 @@ public class Point {
         return (double) getDy(p) / getDx(p);
     }
     public boolean isVertical (Point p) { // Exercise 4
-        return slope(p) == Globals.Math.Infinity;
+        return slope(p) == Double.POSITIVE_INFINITY;
     }
     public boolean isHorizontal (Point p) {
         return slope(p) == 0;
