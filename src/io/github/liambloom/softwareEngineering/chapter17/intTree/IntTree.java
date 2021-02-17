@@ -10,7 +10,7 @@ package io.github.liambloom.softwareEngineering.chapter17.intTree;
 
 import io.github.liambloom.tests.Tester;
 
-public class IntTree {
+public class IntTree implements Cloneable {
     public static final IntTree ref1 = new IntTree(new IntTreeNode(3, new IntTreeNode(5, new IntTreeNode(1), null),
             new IntTreeNode(2, new IntTreeNode(4), new IntTreeNode(6))));
     public static final IntTree ref2 = new IntTree(
@@ -21,28 +21,32 @@ public class IntTree {
 
     public static void main(String[] args) {
         Tester tester = new Tester(Tester.Policy.RunLast);
-        tester
-            .test(ref1::countLeftNodes, 3)
-            .test(ref1::countEmpty, 7)
-            .test(ref1::depthSum, 50)
-            .test(ref2::countEvenBranches, 3)
-            .testOutput(() -> ref2.printLevel(3), "0\n7\n6\n")
-            .testOutput(ref2::printLeaves, "leaves: 9 4 0\n")
-            .test(() -> !ref1.isFull() && !ref2.isFull() && ref3.isFull(), true)
-            .test(ref2::toString, "(2, (8, 0, empty), (1, (7, 4, empty), (6, empty, 9)))")
-            .test(() -> ref1.equals(ref1) && !ref1.equals(ref2), true)
-            .test(() -> {
-                    IntTree ref = ref1.clone();
-                    ref.doublePositives();
-                    return ref;
-                }, new IntTree(new IntTreeNode(6, new IntTreeNode(10, new IntTreeNode(2), null),
-                        new IntTreeNode(4, new IntTreeNode(8), new IntTreeNode(12)))))
-            .test(() -> {
-                    IntTree ref = ref1.clone();
-                    ref.numberNodes();
-                    return ref;
-                }, new IntTree(new IntTreeNode(1, new IntTreeNode(2, new IntTreeNode(3), null),
-                        new IntTreeNode(4, new IntTreeNode(5), new IntTreeNode(6)))));
+        try {
+            tester
+                .test(ref1::countLeftNodes, 3)
+                .test(ref1::countEmpty, 7)
+                .test(ref1::depthSum, 50)
+                .test(ref2::countEvenBranches, 3)
+                .testOutput(() -> ref2.printLevel(3), "0\n7\n6\n")
+                .testOutput(ref2::printLeaves, "leaves: 9 4 0\n")
+                .test(() -> !ref1.isFull() && !ref2.isFull() && ref3.isFull(), true)
+                .test(ref2::toString, "(2, (8, 0, empty), (1, (7, 4, empty), (6, empty, 9)))")
+                .test(() -> ref1.equals(ref1) && !ref1.equals(ref2), true)
+                .testThis(ref1.clone(), IntTree.class.getMethod("doublePositives"), new Object[0], new IntTree(new IntTreeNode(6,
+                        new IntTreeNode(10, new IntTreeNode(2), null), new IntTreeNode(4, new IntTreeNode(8),
+                        new IntTreeNode(12)))))
+                .testThis(ref1.clone(), IntTree.class.getMethod("numberNodes"), new Object[0], new IntTree(new IntTreeNode(1,
+                        new IntTreeNode(2, new IntTreeNode(3), null), new IntTreeNode(4, new IntTreeNode(5),
+                        new IntTreeNode(6)))))
+                .testThis(ref1.clone(), IntTree.class.getMethod("removeLeaves"), new Object[0], new IntTree(new IntTreeNode(3,
+                        new IntTreeNode(5), new IntTreeNode(2))))
+                .test(ref1::copy, ref1)
+                .testThis(ref2.clone(), IntTree.class.getMethod("completeToLevel", int.class), new Object[]{4}, new IntTree(
+                        new IntTreeNode(2, new IntTreeNode(8, new IntTreeNode(0), new IntTreeNode(-1)), new IntTreeNode(1,
+                        new IntTreeNode(7, new IntTreeNode(4), new IntTreeNode(-1)), new IntTreeNode(6, new IntTreeNode(-1),
+                        new IntTreeNode(9))))));
+        }
+        catch (NoSuchMethodException | IllegalAccessException ignored) {}
 
         tester.close();
     }
@@ -208,14 +212,15 @@ public class IntTree {
     }
 
     private void printLeaves(IntTreeNode root) {
-        if (root == null)
-            return;
-        else if (root.left == null && root.right == null)
-            System.out.print(" " + root.data);
-        else {
-            printLeaves(root.right);
-            printLeaves(root.left);
+        if (root != null) {
+            if (root.left == null && root.right == null)
+                System.out.print(" " + root.data);
+            else {
+                printLeaves(root.right);
+                printLeaves(root.left);
+            }
         }
+
     }
 
     // Exercise 7
@@ -291,19 +296,54 @@ public class IntTree {
         }
     }
 
-    private class Counter {
-        int i;
-
-        public Counter(int i) {
-            this.i = i;
+    // Exercise 12
+    public void removeLeaves() {
+        if (overallRoot != null) {
+            if (isLeaf(overallRoot))
+                overallRoot = null;
+            else
+                removeLeaves(overallRoot);
         }
+    }
 
-        public void increment() {
-            i++;
+    private void removeLeaves(IntTreeNode root) {
+        if (root.left != null) {
+            if (isLeaf(root.left))
+                root.left = null;
+            else
+                removeLeaves(root.left);
         }
+        if (root.right != null) {
+            if (isLeaf(root.right))
+                root.right = null;
+            else
+                removeLeaves(root.right);
+        }
+    }
 
-        public int get() {
-            return i;
+    // Exercise 13
+    public IntTree copy() {
+        // I had already done this by the time I got to exercise 12
+        return clone();
+    }
+
+    // Exercise 14
+    public void completeToLevel(int level) {
+        if (level < 1)
+            throw new IllegalArgumentException();
+        completeToLevel(overallRoot, level);
+    }
+
+    private void completeToLevel(IntTreeNode root, int level) {
+        if (level > 1 && root.left == null ^ root.right == null) {
+            if (root.left == null)
+                root.left = new IntTreeNode(-1);
+            else
+                completeToLevel(root.left, level - 1);
+            if (root.right == null)
+                root.right = new IntTreeNode(-1);
+            else
+                completeToLevel(root.right, level - 1);
         }
     }
 
@@ -319,7 +359,12 @@ public class IntTree {
                 combineWith(t1 == null ? null : t1.right, t2 == null ? null : t2.right));
     }
 
+    private boolean isLeaf(IntTreeNode node) {
+        return node.left == null && node.right == null;
+    }
+
     @Override
+    @SuppressWarnings("MethodDoesntCallSuperMethod")
     public IntTree clone() {
         return new IntTree(clone(overallRoot));
     }
@@ -329,5 +374,21 @@ public class IntTree {
             return null;
         else
             return new IntTreeNode(og.data, clone(og.left), clone(og.right));
+    }
+}
+
+class Counter {
+    int i;
+
+    public Counter(int i) {
+        this.i = i;
+    }
+
+    public void increment() {
+        i++;
+    }
+
+    public int get() {
+        return i;
     }
 }
