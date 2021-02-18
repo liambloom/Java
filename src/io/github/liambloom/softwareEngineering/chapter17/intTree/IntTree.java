@@ -8,8 +8,6 @@ package io.github.liambloom.softwareEngineering.chapter17.intTree;
 // documentation refers to these as "sequential trees."
 // BJP 3rd Edition pg 1020-1023
 
-// TODO: Use x = change(x) pattern
-
 import io.github.liambloom.tests.Tester;
 
 import java.util.LinkedList;
@@ -25,7 +23,7 @@ public class IntTree implements Cloneable {
             new IntTreeNode(2, new IntTreeNode(3, new IntTreeNode(8), new IntTreeNode(7)), new IntTreeNode(1)));
 
     public static void main(String[] args) {
-        Tester tester = new Tester(Tester.Policy.RunAll);
+        Tester tester = new Tester(Tester.Policy.RunUntilFailure);
         try {
             tester
                 .test(ref1::countLeftNodes, 3)
@@ -36,7 +34,7 @@ public class IntTree implements Cloneable {
                 .testOutput(ref2::printLeaves, "leaves: 9 4 0\n")
                 .testAssert(() -> !ref1.isFull() && !ref2.isFull() && ref3.isFull())
                 .test(ref2::toString, "(2, (8, 0, empty), (1, (7, 4, empty), (6, empty, 9)))")
-                .testAssert(() -> ref1.equals(ref1) && !ref1.equals(ref2))
+                .testAssert(() -> ref1.equals(ref1.clone()) && !ref1.equals(ref2))
                 .testThis(ref1.clone(), IntTree.class.getMethod("doublePositives"), new Object[0], new IntTree(new IntTreeNode(6,
                         new IntTreeNode(10, new IntTreeNode(2), null), new IntTreeNode(4, new IntTreeNode(8),
                         new IntTreeNode(12)))))
@@ -93,7 +91,7 @@ public class IntTree implements Cloneable {
     // post: returns a sequential tree with n as its root unless
     // n is greater than max, in which case it returns an
     // empty tree
-    private IntTreeNode buildTree(int n, int max) {
+    private static IntTreeNode buildTree(int n, int max) {
         if (n > max) {
             return null;
         } else {
@@ -109,7 +107,7 @@ public class IntTree implements Cloneable {
     }
 
     // post: prints in preorder the tree with given root
-    private void printPreorder(IntTreeNode root) {
+    private static void printPreorder(IntTreeNode root) {
         if (root != null) {
             System.out.print(" " + root.data);
             printPreorder(root.left);
@@ -125,7 +123,7 @@ public class IntTree implements Cloneable {
     }
 
     // post: prints in inorder the tree with given root
-    private void printInorder(IntTreeNode root) {
+    private static void printInorder(IntTreeNode root) {
         if (root != null) {
             printInorder(root.left);
             System.out.print(" " + root.data);
@@ -141,7 +139,7 @@ public class IntTree implements Cloneable {
     }
 
     // post: prints in postorder the tree with given root
-    private void printPostorder(IntTreeNode root) {
+    private static void printPostorder(IntTreeNode root) {
         if (root != null) {
             printPostorder(root.left);
             printPostorder(root.right);
@@ -159,7 +157,7 @@ public class IntTree implements Cloneable {
 
     // post: prints in reversed preorder the tree with given
     // root, indenting each line to the given level
-    private void printSideways(IntTreeNode root, int level) {
+    private static void printSideways(IntTreeNode root, int level) {
         if (root != null) {
             printSideways(root.right, level + 1);
             for (int i = 0; i < level; i++) {
@@ -175,7 +173,7 @@ public class IntTree implements Cloneable {
         return countLeftNodes(overallRoot);
     }
 
-    private int countLeftNodes(IntTreeNode root) {
+    private static int countLeftNodes(IntTreeNode root) {
         return root == null ? 0 : 1 + countLeftNodes(root.left);
     }
 
@@ -184,7 +182,7 @@ public class IntTree implements Cloneable {
         return countEmpty(overallRoot);
     }
 
-    private int countEmpty(IntTreeNode root) {
+    private static int countEmpty(IntTreeNode root) {
         return root == null ? 1 : countEmpty(root.left) + countEmpty(root.right);
     }
 
@@ -193,7 +191,7 @@ public class IntTree implements Cloneable {
         return depthSum(overallRoot, 1);
     }
 
-    private int depthSum(IntTreeNode root, int level) {
+    private static int depthSum(IntTreeNode root, int level) {
         return root == null ? 0 : root.data * level + depthSum(root.left, level + 1) + depthSum(root.right, level + 1);
     }
 
@@ -202,9 +200,9 @@ public class IntTree implements Cloneable {
         return countEvenBranches(overallRoot);
     }
 
-    private int countEvenBranches(IntTreeNode root) {
-        return root == null || root.left == null && root.right == null 
-            ? 0 
+    private static int countEvenBranches(IntTreeNode root) {
+        return root == null || root.left == null && root.right == null
+            ? 0
             : (root.data + 1) % 2 + countEvenBranches(root.left) + countEvenBranches(root.right);
     }
 
@@ -215,7 +213,7 @@ public class IntTree implements Cloneable {
         printLevel(overallRoot, 1, level);
     }
 
-    private void printLevel(IntTreeNode root, int currentLevel, int targetLevel) {
+    private static void printLevel(IntTreeNode root, int currentLevel, int targetLevel) {
         if (root == null)
             return;
         if (currentLevel < targetLevel) {
@@ -237,7 +235,7 @@ public class IntTree implements Cloneable {
         }
     }
 
-    private void printLeaves(IntTreeNode root) {
+    private static void printLeaves(IntTreeNode root) {
         if (root != null) {
             if (root.left == null && root.right == null)
                 System.out.print(" " + root.data);
@@ -254,7 +252,7 @@ public class IntTree implements Cloneable {
         return isFull(overallRoot);
     }
 
-    private boolean isFull(IntTreeNode root) {
+    private static boolean isFull(IntTreeNode root) {
         return root == null || root.left == null && root.right == null || root.left != null && isFull(root.left) &&  root.right != null && isFull(root.right);
     }
 
@@ -266,7 +264,7 @@ public class IntTree implements Cloneable {
         return builder.toString();
     }
 
-    private void toString(StringBuilder builder, IntTreeNode root) {
+    private static void toString(StringBuilder builder, IntTreeNode root) {
         if (root == null)
             builder.append("empty");
         else {
@@ -290,7 +288,7 @@ public class IntTree implements Cloneable {
         return o instanceof IntTree && equals(overallRoot, ((IntTree) o).overallRoot);
     }
 
-    private boolean equals(final IntTreeNode self, final IntTreeNode other) {
+    private static boolean equals(final IntTreeNode self, final IntTreeNode other) {
         return self == null ? other == null : other != null && self.data == other.data && equals(self.left, other.left) && equals(self.right, other.right);
     }
 
@@ -299,7 +297,7 @@ public class IntTree implements Cloneable {
         doublePositives(overallRoot);
     }
 
-    private void doublePositives(IntTreeNode root) {
+    private static void doublePositives(IntTreeNode root) {
         if (root != null) {
             if (root.data > 0)
                 root.data *= 2;
@@ -313,7 +311,7 @@ public class IntTree implements Cloneable {
         numberNode(overallRoot, 1);
     }
 
-    private int numberNode(IntTreeNode node, int count) {
+    private static int numberNode(IntTreeNode node, int count) {
         if (node != null) {
             node.data = count++;
             count = numberNode(node.left, count);
@@ -324,26 +322,16 @@ public class IntTree implements Cloneable {
 
     // Exercise 12
     public void removeLeaves() {
-        if (overallRoot != null) {
-            if (isLeaf(overallRoot))
-                overallRoot = null;
-            else
-                removeLeaves(overallRoot);
-        }
+        overallRoot = removeLeaves(overallRoot);
     }
 
-    private static void removeLeaves(IntTreeNode root) {
-        if (root.left != null) {
-            if (isLeaf(root.left))
-                root.left = null;
-            else
-                removeLeaves(root.left);
-        }
-        if (root.right != null) {
-            if (isLeaf(root.right))
-                root.right = null;
-            else
-                removeLeaves(root.right);
+    private static IntTreeNode removeLeaves(IntTreeNode node) {
+        if (node == null || isLeaf(node))
+            return null;
+        else {
+            node.left = removeLeaves(node.left);
+            node.right = removeLeaves(node.right);
+            return node;
         }
     }
 
@@ -360,78 +348,56 @@ public class IntTree implements Cloneable {
         completeToLevel(overallRoot, level);
     }
 
-    private void completeToLevel(IntTreeNode root, int level) {
-        if (level > 1) {
-            if (root.left == null) {
-                if (root.right != null)
-                    root.left = new IntTreeNode(-1);
-            }
-            else
-                completeToLevel(root.left, level - 1);
-            if (root.right == null) {
-                if (root.left != null)
-                    root.right = new IntTreeNode(-1);
-            }
-            else
-                completeToLevel(root.right, level - 1);
+    private static void completeToLevel(IntTreeNode root, int level) {
+        if (level > 1 && !(root.left == null && root.right == null)) {
+            root.left = completeOneSide(root.left, level);
+            root.right = completeOneSide(root.right, level);
+        }
+    }
+
+    private static IntTreeNode completeOneSide(IntTreeNode node, int level) {
+        if (node == null)
+            return new IntTreeNode(-1);
+        else {
+            completeToLevel(node, level - 1);
+            return node;
         }
     }
 
     // Exercise 15
     public void trim(int min, int max) {
-        IntTreeNode wrapper = new IntTreeNode(0, overallRoot, null);
-        trim(wrapper, min, max);
-        overallRoot = wrapper.left;
+        overallRoot = trim(overallRoot, min, max);
     }
 
-    private void trim(IntTreeNode node, int min, int max) {
-        while (node.left != null && node.left.data < min)
-            node.left = node.left.right;
-        if (node.left != null)
-            trim(node.left, min, max);
-        while (node.right != null && node.right.data > max)
-            node.right = node.right.left;
-        if (node.right != null)
-            trim(node.right, min, max);
+    private static IntTreeNode trim(IntTreeNode node, int min, int max) {
+        while (node != null && node.data < min)
+            node = node.right;
+        while (node != null && node.data > max)
+            node = node.left;
+        if (node != null) {
+            node.left = trim(node.left, min, max);
+            node.right = trim(node.right, min, max);
+        }
+        return node;
     }
 
     // Exercise 16
     public void tighten() {
-        IntTreeNode wrapper = new IntTreeNode(0, overallRoot, null);
-        tighten(wrapper);
-        overallRoot = wrapper.left;
+        overallRoot = tighten(overallRoot);
     }
 
-    private void tighten(IntTreeNode node) {
-        while (node.left != null) {
-            if (node.left.left == null) {
-                if (node.left.right != null)
-                    node.left = node.left.right;
-                else
-                    break;
-            }
-            else if (node.left.right == null)
-                node.left = node.left.left;
+    private static IntTreeNode tighten(IntTreeNode node) {
+        while (node != null && node.left == null ^ node.right == null) {
+            if (node.left == null)
+                node = node.right;
             else
-                break;
+                node = node.left;
         }
-        if (node.left != null)
-            tighten(node.left);
-
-        while (node.right != null) {
-            if (node.right.left == null) {
-                if (node.right.right != null)
-                    node.right = node.right.right;
-                else
-                    break;
-            }
-            else if (node.right.right == null)
-                node.right = node.right.left;
-            else
-                break;
+        if (node != null) {
+            node.left = tighten(node.left);
+            node.right = tighten(node.right);
         }
-        if (node.right != null)
-            tighten(node.right);
+        return node;
     }
 
     // Exercise 17
@@ -439,10 +405,10 @@ public class IntTree implements Cloneable {
         return new IntTree(combineWith(this.overallRoot, other.overallRoot));
     }
 
-    private IntTreeNode combineWith(final IntTreeNode t1, final IntTreeNode t2) {
-        return t1 == null && t2 == null ? null 
-            : new IntTreeNode(t1 != null ? t2 != null ? 3 : 1 : 2, 
-                combineWith(t1 == null ? null : t1.left, t2 == null ? null : t2.left), 
+    private static IntTreeNode combineWith(final IntTreeNode t1, final IntTreeNode t2) {
+        return t1 == null && t2 == null ? null
+            : new IntTreeNode(t1 != null ? t2 != null ? 3 : 1 : 2,
+                combineWith(t1 == null ? null : t1.left, t2 == null ? null : t2.left),
                 combineWith(t1 == null ? null : t1.right, t2 == null ? null : t2.right));
     }
 
@@ -453,7 +419,7 @@ public class IntTree implements Cloneable {
         return list;
     }
 
-    private void buildInorderList(List<Integer> list, IntTreeNode node) {
+    private static void buildInorderList(List<Integer> list, IntTreeNode node) {
         if (node != null) {
             buildInorderList(list, node.left);
             list.add(node.data);
@@ -463,43 +429,38 @@ public class IntTree implements Cloneable {
 
     // Exercise 19
     public void evenLevels() {
-        if (overallRoot == null || isLeaf(overallRoot))
-            overallRoot = null;
-        else
-            evenLevels(overallRoot, 1);
+        overallRoot = evenLevels(overallRoot, 1);
     }
 
-    private void evenLevels(IntTreeNode root, int level) {
-        if (level % 2 == 0) {
-            if (root.left != null && isLeaf(root.left))
-                root.left = null;
-            if (root.right != null && isLeaf(root.right))
-                root.right = null;
+    private static IntTreeNode evenLevels(IntTreeNode node, int level) {
+        if (node != null) {
+            if (level % 2 != 0 && isLeaf(node))
+                node = null;
+            else {
+                node.left = evenLevels(node.left, level + 1);
+                node.right = evenLevels(node.right, level + 1);
+            }
         }
-        if (root.left != null)
-            evenLevels(root.left, level + 1);
-        if (root.right != null)
-            evenLevels(root.right, level + 1);
+        return node;
     }
 
     // Exercise 20
     public void makePerfect() {
-        makePerfect(overallRoot, maxLevel(overallRoot));
+        overallRoot = makePerfect(overallRoot, maxLevel(overallRoot));
     }
 
-    private int maxLevel(IntTreeNode node) {
+    private static int maxLevel(IntTreeNode node) {
         return node == null ? 0 : Math.max(maxLevel(node.left) + 1, maxLevel(node.right) + 1);
     }
 
-    private void makePerfect(IntTreeNode node, int level) {
-        if (level > 1) {
-            if (node.left == null)
-                node.left = new IntTreeNode(0);
-            makePerfect(node.left, level - 1);
-            if (node.right == null)
-                node.right = new IntTreeNode(0);
-            makePerfect(node.right, level - 1);
+    private static IntTreeNode makePerfect(IntTreeNode node, int level) {
+        if (level >= 1) {
+            if (node == null)
+                node = new IntTreeNode(0);
+            node.left = makePerfect(node.left, level - 1);
+            node.right = makePerfect(node.right, level - 1);
         }
+        return node;
     }
 
     private static boolean isLeaf(IntTreeNode node) {
@@ -512,7 +473,7 @@ public class IntTree implements Cloneable {
         return new IntTree(clone(overallRoot));
     }
 
-    private IntTreeNode clone(IntTreeNode og) {
+    private static IntTreeNode clone(IntTreeNode og) {
         if (og == null)
             return null;
         else
