@@ -10,6 +10,9 @@ package io.github.liambloom.softwareEngineering.chapter17.intTree;
 
 import io.github.liambloom.tests.Tester;
 
+import java.util.LinkedList;
+import java.util.List;
+
 public class IntTree implements Cloneable {
     public static final IntTree ref1 = new IntTree(new IntTreeNode(3, new IntTreeNode(5, new IntTreeNode(1), null),
             new IntTreeNode(2, new IntTreeNode(4), new IntTreeNode(6))));
@@ -20,7 +23,7 @@ public class IntTree implements Cloneable {
             new IntTreeNode(2, new IntTreeNode(3, new IntTreeNode(8), new IntTreeNode(7)), new IntTreeNode(1)));
 
     public static void main(String[] args) {
-        Tester tester = new Tester(Tester.Policy.RunLast);
+        Tester tester = new Tester(Tester.Policy.RunAll);
         try {
             tester
                 .test(ref1::countLeftNodes, 3)
@@ -29,9 +32,9 @@ public class IntTree implements Cloneable {
                 .test(ref2::countEvenBranches, 3)
                 .testOutput(() -> ref2.printLevel(3), "0\n7\n6\n")
                 .testOutput(ref2::printLeaves, "leaves: 9 4 0\n")
-                .test(() -> !ref1.isFull() && !ref2.isFull() && ref3.isFull(), true)
+                .testAssert(() -> !ref1.isFull() && !ref2.isFull() && ref3.isFull())
                 .test(ref2::toString, "(2, (8, 0, empty), (1, (7, 4, empty), (6, empty, 9)))")
-                .test(() -> ref1.equals(ref1) && !ref1.equals(ref2), true)
+                .testAssert(() -> ref1.equals(ref1) && !ref1.equals(ref2))
                 .testThis(ref1.clone(), IntTree.class.getMethod("doublePositives"), new Object[0], new IntTree(new IntTreeNode(6,
                         new IntTreeNode(10, new IntTreeNode(2), null), new IntTreeNode(4, new IntTreeNode(8),
                         new IntTreeNode(12)))))
@@ -44,7 +47,28 @@ public class IntTree implements Cloneable {
                 .testThis(ref2.clone(), IntTree.class.getMethod("completeToLevel", int.class), new Object[]{4}, new IntTree(
                         new IntTreeNode(2, new IntTreeNode(8, new IntTreeNode(0), new IntTreeNode(-1)), new IntTreeNode(1,
                         new IntTreeNode(7, new IntTreeNode(4), new IntTreeNode(-1)), new IntTreeNode(6, new IntTreeNode(-1),
-                        new IntTreeNode(9))))));
+                        new IntTreeNode(9))))))
+                .test(() -> {
+                    IntTree tree = new IntTree(new IntTreeNode(8, new IntTreeNode(4, new IntTreeNode(2, new IntTreeNode(1),
+                        new IntTreeNode(3)), new IntTreeNode(6, new IntTreeNode(5), new IntTreeNode(7))),
+                        new IntTreeNode(12, new IntTreeNode(10, new IntTreeNode(9), new IntTreeNode(11)),
+                        new IntTreeNode(14, new IntTreeNode(13), new IntTreeNode(15)))));
+                    tree.trim(3, 10);
+                    return tree.inOrderList();
+                }, List.of(3, 4, 5, 6, 7, 8, 9, 10))
+                .testThis(ref2.clone(), IntTree.class.getMethod("tighten"), new Object[0], new IntTree(new IntTreeNode(2, new IntTreeNode(0),
+                        new IntTreeNode(1, new IntTreeNode(4), new IntTreeNode(9)))))
+                .test(() -> ref2.combineWith(ref3), new IntTree(new IntTreeNode(3, new IntTreeNode(3, new IntTreeNode(3),
+                        new IntTreeNode(2)), new IntTreeNode(3, new IntTreeNode(1, new IntTreeNode(1), null),
+                        new IntTreeNode(1, null, new IntTreeNode(1))))))
+                .test(ref3::inOrderList, List.of(8, 3, 7, 2, 1))
+                .testThis(ref2, IntTree.class.getMethod("evenLevels"), new Object[0], new IntTree(new IntTreeNode(2, new IntTreeNode(8),
+                        new IntTreeNode(1, new IntTreeNode(7, new IntTreeNode(4), null), new IntTreeNode(6, null,
+                        new IntTreeNode(9))))))
+                .testThis(ref2.clone(), IntTree.class.getMethod("makePerfect"), new Object[0], new IntTree(new IntTreeNode(2,
+                        new IntTreeNode(8, new IntTreeNode(0, new IntTreeNode(0), new IntTreeNode(0)), new IntTreeNode(0,
+                        new IntTreeNode(0), new IntTreeNode(0))), new IntTreeNode(1, new IntTreeNode(7, new IntTreeNode(4),
+                        new IntTreeNode(0)), new IntTreeNode(6, new IntTreeNode(0), new IntTreeNode(9))))));
         }
         catch (NoSuchMethodException | IllegalAccessException ignored) {}
 
@@ -284,16 +308,16 @@ public class IntTree implements Cloneable {
 
     // Exercise 11
     public void numberNodes() {
-        numberNode(overallRoot, new Counter(1));
+        numberNode(overallRoot, 1);
     }
 
-    private void numberNode(IntTreeNode node, Counter count) {
+    private int numberNode(IntTreeNode node, int count) {
         if (node != null) {
-            node.data = count.get();
-            count.increment();
-            numberNode(node.left, count);
-            numberNode(node.right, count);
+            node.data = count++;
+            count = numberNode(node.left, count);
+            count = numberNode(node.right, count);
         }
+        return count;
     }
 
     // Exercise 12
@@ -306,7 +330,7 @@ public class IntTree implements Cloneable {
         }
     }
 
-    private void removeLeaves(IntTreeNode root) {
+    private static void removeLeaves(IntTreeNode root) {
         if (root.left != null) {
             if (isLeaf(root.left))
                 root.left = null;
@@ -335,21 +359,82 @@ public class IntTree implements Cloneable {
     }
 
     private void completeToLevel(IntTreeNode root, int level) {
-        if (level > 1 && root.left == null ^ root.right == null) {
-            if (root.left == null)
-                root.left = new IntTreeNode(-1);
+        if (level > 1) {
+            if (root.left == null) {
+                if (root.right != null)
+                    root.left = new IntTreeNode(-1);
+            }
             else
                 completeToLevel(root.left, level - 1);
-            if (root.right == null)
-                root.right = new IntTreeNode(-1);
+            if (root.right == null) {
+                if (root.left != null)
+                    root.right = new IntTreeNode(-1);
+            }
             else
                 completeToLevel(root.right, level - 1);
         }
     }
 
-    // Exercise 17 (untested)
-    public IntTree combineWith(final IntTree t1, final IntTree t2) {
-        return new IntTree(combineWith(t1.overallRoot, t2.overallRoot));
+    // Exercise 15
+    public void trim(int min, int max) {
+        IntTreeNode wrapper = new IntTreeNode(0, overallRoot, null);
+        trim(wrapper, min, max);
+        overallRoot = wrapper.left;
+    }
+
+    private void trim(IntTreeNode node, int min, int max) {
+        while (node.left != null && node.left.data < min)
+            node.left = node.left.right;
+        if (node.left != null)
+            trim(node.left, min, max);
+        while (node.right != null && node.right.data > max)
+            node.right = node.right.left;
+        if (node.right != null)
+            trim(node.right, min, max);
+    }
+
+    // Exercise 16
+    public void tighten() {
+        IntTreeNode wrapper = new IntTreeNode(0, overallRoot, null);
+        tighten(wrapper);
+        overallRoot = wrapper.left;
+    }
+
+    private void tighten(IntTreeNode node) {
+        while (node.left != null) {
+            if (node.left.left == null) {
+                if (node.left.right != null)
+                    node.left = node.left.right;
+                else
+                    break;
+            }
+            else if (node.left.right == null)
+                node.left = node.left.left;
+            else
+                break;
+        }
+        if (node.left != null)
+            tighten(node.left);
+
+        while (node.right != null) {
+            if (node.right.left == null) {
+                if (node.right.right != null)
+                    node.right = node.right.right;
+                else
+                    break;
+            }
+            else if (node.right.right == null)
+                node.right = node.right.left;
+            else
+                break;
+        }
+        if (node.right != null)
+            tighten(node.right);
+    }
+
+    // Exercise 17
+    public IntTree combineWith(final IntTree other) {
+        return new IntTree(combineWith(this.overallRoot, other.overallRoot));
     }
 
     private IntTreeNode combineWith(final IntTreeNode t1, final IntTreeNode t2) {
@@ -359,7 +444,63 @@ public class IntTree implements Cloneable {
                 combineWith(t1 == null ? null : t1.right, t2 == null ? null : t2.right));
     }
 
-    private boolean isLeaf(IntTreeNode node) {
+    // Exercise 18
+    public List<Integer> inOrderList() {
+        List<Integer> list = new LinkedList<>();
+        buildInorderList(list, overallRoot);
+        return list;
+    }
+
+    private void buildInorderList(List<Integer> list, IntTreeNode node) {
+        if (node != null) {
+            buildInorderList(list, node.left);
+            list.add(node.data);
+            buildInorderList(list, node.right);
+        }
+    }
+
+    // Exercise 19
+    public void evenLevels() {
+        if (overallRoot == null || isLeaf(overallRoot))
+            overallRoot = null;
+        else
+            evenLevels(overallRoot, 1);
+    }
+
+    private void evenLevels(IntTreeNode root, int level) {
+        if (level % 2 == 0) {
+            if (root.left != null && isLeaf(root.left))
+                root.left = null;
+            if (root.right != null && isLeaf(root.right))
+                root.right = null;
+        }
+        if (root.left != null)
+            evenLevels(root.left, level + 1);
+        if (root.right != null)
+            evenLevels(root.right, level + 1);
+    }
+
+    // Exercise 20
+    public void makePerfect() {
+        makePerfect(overallRoot, maxLevel(overallRoot));
+    }
+
+    private int maxLevel(IntTreeNode node) {
+        return node == null ? 0 : Math.max(maxLevel(node.left) + 1, maxLevel(node.right) + 1);
+    }
+
+    private void makePerfect(IntTreeNode node, int level) {
+        if (level > 1) {
+            if (node.left == null)
+                node.left = new IntTreeNode(0);
+            makePerfect(node.left, level - 1);
+            if (node.right == null)
+                node.right = new IntTreeNode(0);
+            makePerfect(node.right, level - 1);
+        }
+    }
+
+    private static boolean isLeaf(IntTreeNode node) {
         return node.left == null && node.right == null;
     }
 
@@ -374,21 +515,5 @@ public class IntTree implements Cloneable {
             return null;
         else
             return new IntTreeNode(og.data, clone(og.left), clone(og.right));
-    }
-}
-
-class Counter {
-    int i;
-
-    public Counter(int i) {
-        this.i = i;
-    }
-
-    public void increment() {
-        i++;
-    }
-
-    public int get() {
-        return i;
     }
 }
