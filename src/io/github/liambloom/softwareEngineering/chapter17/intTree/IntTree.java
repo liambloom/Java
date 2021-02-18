@@ -8,6 +8,8 @@ package io.github.liambloom.softwareEngineering.chapter17.intTree;
 // documentation refers to these as "sequential trees."
 // BJP 3rd Edition pg 1020-1023
 
+// TODO: Use x = change(x) pattern
+
 import io.github.liambloom.tests.Tester;
 
 import java.util.LinkedList;

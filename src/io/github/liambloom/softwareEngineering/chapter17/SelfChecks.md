@@ -10,19 +10,19 @@
       *   *
      ╱
     *
-3.  a. 3\
-    b. 3\
-    c. 3 (`1`, `4`, and `6`)\
-    d. `3`\
+3.  a. 3 <br>
+    b. 3 <br>
+    c. 3 (`1`, `4`, and `6`) <br>
+    d. `3` <br>
     e. Siblings: `5`, Children: `4`, `6`
-4.  Preorder: `3, 5, 1, 2, 4, 6`\
-    Inorder: `1, 5, 3, 4, 2, 6`\
+4.  Preorder: `3, 5, 1, 2, 4, 6` <br>
+    Inorder: `1, 5, 3, 4, 2, 6` <br>
     Postorder: `1, 5, 4, 6, 2, 3`
-5.  Preorder: `3, 47, 23, -2, 55, 63, 94, 28`\
-    Inorder: `23, 47, 55, -2, 19, 63, 94, 28`\
+5.  Preorder: `3, 47, 23, -2, 55, 63, 94, 28` <br>
+    Inorder: `23, 47, 55, -2, 19, 63, 94, 28` <br>
     Postorder: `23, 55, -2, 47, 19, 28, 94, 63`
-6.  Preorder: `2, 1, 7, 4, 3, 56, 9, 8`\
-    Inorder: `2, 1, 3, 4, 5, 7, 1, 6, 8, 9`\
+6.  Preorder: `2, 1, 7, 4, 3, 56, 9, 8` <br>
+    Inorder: `2, 1, 3, 4, 5, 7, 1, 6, 8, 9` <br>
     Postorder: `3, 5, 4, 7, 8, 9, 6, 1, 2`
 7. There would be no base case and a `NullPointerException` would be thrown
 8. [You did this one for us](https://github.com/liambloom/Java/blob/master/src/io/github/liambloom/softwareEngineering/chapter17/intTree/IntTree.java#L64)
@@ -132,4 +132,44 @@
 14. A binary search tree is a type of binary tree. A binary search tree has all the properties of a normal binary tree, but with the additional property that the element are sorted so that the left node is always less than its parent and the right node is always greater. How duplicates are handled doesn't matter as long as it's consistent, although the examples in this chapter put them on the left.
 15. b*, c, e. (*b would break the rules set forth in this chapter, but it's not necessarily invalid)
 16. The elements will be in order
-17. 
+17. <img src="img/sc17.jpg" style="vertical-align:top;"> <br>
+    Preorder: Leia, Boba, Darth, Chewy, Han, Jabba, R2D2, Luke <br>
+    Inorder: Boba, Chewy, Darth, Han, Jabba, Leia, Luke, R2D2 <br>
+    Postorder: Chewy, Jabba, Han, Darth, Boba, Luke, R2D2, Leia
+18. <img src="img/sc18.jpg" style="vertical-align:top;"> <br>
+    Preorder: Meg, Joe, Brian, Cleveland, Lois, Quagmire, Stewie, Peter <br>
+    Inorder: Brian, Cleveland, Joe, Lois, Quagmire, Meg, Stewie, Peter <br>
+    PostOrder: Cleveland, Brian, Quagmire, Lois, Joe, Peter, Stewie, Meg
+19. <img src="img/sc19.jpg" style="vertical-align:top;"> <br>
+    Preorder: Kirk, Chekov, Khaaaan!, Spock, Scotty, McCoy, Uhuru, Sulu <br>
+    Inorder: Chekov, Khaaaan!, Kirk, McCoy, Scotty, Spock, Sulu, Uhuru <br>
+    Postorder: Khaaaan!, Chekov, McCoy, Scotty, Sulu, Uhuru, Spock, Kirk
+20. <img src="img/sc20.jpg" style="vertical-align:top;"> <br>
+    Preorder: Lisa, Bart, Homer, Flanders, Marge, Maggie, Smithers, Milhouse <br>
+    Inorder: Bart, Flanders, Homer, Lisa, Maggie, Marge, Milhouse, Smithers <br>
+    Postorder: Flanders, Homer, Bart, Maggie, Milhouse, Smithers, Marge, Lisa
+21. So that it is able to set the root
+22. It is a pattern where a variable is set to the return of a method for which that variable is also an argument. It is used in binary trees to allow a method to modify one of its parameters, generally a parent node.
+23. No more than `N`
+24. It is worse than the implementation in the chapter because, although they both work, the one in the chapter checks far fewer nodes. If `n` is the number of nodes in the tree, then this one has a time complexity of `O(n)` while the one in the chapter is only `O(log n)`.
+25. ```java
+    public int min() {
+        if (overallRoot == null)
+            throw new IllegalStateException();
+        return min(overallRoot);
+    }
+
+    private int min(IntTreeNode node) {
+        return node.left == null ? node.data : min(node.left);
+    }
+
+    public int max() {
+        if (overallRoot == null)
+            throw new IllegalStateException();
+        return max(overallRoot);
+    }
+
+    private int max(IntTreeNode node) {
+        return node.right == null ? node.data : max(node.right)
+    }
+    ```
