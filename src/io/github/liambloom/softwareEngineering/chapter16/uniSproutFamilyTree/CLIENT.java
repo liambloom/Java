@@ -177,20 +177,12 @@ public class CLIENT {
                 i += subColSize + 1;
             }
 
-            char centerChar;
-            switch (branchChars[center]) {
-                case '\u2500':
-                    centerChar = '\u2534';
-                    break;
-                case '\u252c':
-                    centerChar = '\u253c';
-                    break;
-                case ' ':
-                    centerChar = '\u2502';
-                    break;
-                default:
-                    throw new IllegalStateException("Illegal central character '" + branchChars[center] + "' in \"" + new String(branchChars) + '"'); 
-            }
+            char centerChar = switch (branchChars[center]) {
+                case '\u2500' -> '\u2534';
+                case '\u252c' -> '\u253c';
+                case ' ' -> '\u2502';
+                default -> throw new IllegalStateException("Illegal central character '" + branchChars[center] + "' in \"" + new String(branchChars) + '"');
+            };
             branchChars[center] = centerChar;
 
             rowStrings[1] = new String(branchChars);
