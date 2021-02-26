@@ -11,7 +11,7 @@
      ╱
     *
 3.  a. 3 \
-    b. 3 \
+    b. 3 (`3`, `2`, and `5`) \
     c. 3 (`1`, `4`, and `6`) \
     d. `3` \
     e. Siblings: `5`, Children: `4`, `6`
@@ -25,7 +25,7 @@
     Inorder: `2, 1, 3, 4, 5, 7, 1, 6, 8, 9` \
     Postorder: `3, 5, 4, 7, 8, 9, 6, 1, 2`
 7. There would be no base case and a `NullPointerException` would be thrown
-8. [You did this one for us](https://github.com/liambloom/Java/blob/master/src/io/github/liambloom/softwareEngineering/chapter17/intTree/IntTree.java#L64)
+8. [You did this one for us](https://github.com/liambloom/Java/blob/master/src/io/github/liambloom/softwareEngineering/chapter17/intTree/IntTree.java#L136)
 9.  ```java
     public void printMirror() {
         System.out.print("mirror:");
