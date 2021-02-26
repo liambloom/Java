@@ -171,11 +171,11 @@ public class IntTree implements Cloneable {
 
     @Exercise(1)
     public int countLeftNodes() {
-        return countLeftNodes(overallRoot);
+        return overallRoot == null ? 0 : countLeftNodes(overallRoot);
     }
 
     private static int countLeftNodes(IntTreeNode root) {
-        return root == null ? 0 : 1 + countLeftNodes(root.left);
+        return root == null ? 0 : (root.left == null ? 0 : 1) + countLeftNodes(root.left) + countLeftNodes(root.right);
     }
 
     @Exercise(2)
