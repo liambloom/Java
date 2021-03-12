@@ -13,4 +13,8 @@ public abstract class Employee {
     public String getVacationForm () {
         return "yellow";
     }
+    @Override
+    public boolean equals(Object o) {
+        return o instanceof Employee && this.getSalary() == ((Employee) o).getSalary();
+    }
 }
