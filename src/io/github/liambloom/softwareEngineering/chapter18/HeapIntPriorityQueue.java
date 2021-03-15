@@ -7,8 +7,7 @@ import io.github.liambloom.tests.book.bjp3.Exercise;
 
 // I wasn't sure of the difference between 1 & 2, so I just chose 2
 
-// Implements a priority queue of integers using a
-// min-heap represented as an array.
+// Exercises 13-15
 public class HeapIntPriorityQueue {
     private int[] elementData;
     private int size;
