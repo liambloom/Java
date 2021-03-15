@@ -7,6 +7,7 @@ import java.lang.reflect.Array;
 
 import io.github.liambloom.tests.book.bjp3.*;
 
+// Contains exercises 1-7
 public class HashSet<E> implements Iterable<E> {
     private static final double MAX_LOAD_FACTOR = 0.75;
     private HashEntry[] elementData;
@@ -229,6 +230,23 @@ public class HashSet<E> implements Iterable<E> {
 
     }  // HashEntry
 
+    @Exercise(6)
+    public Object[] toArray() {
+        return toArray(new Object[0]);
+    }
+
+    @SuppressWarnings("unchecked")
+    public <T> T[] toArray(T[] a) {
+        if (a.length < size)
+            a = (T[]) Array.newInstance(a.getClass().getComponentType(), size);
+        final Iterator<E> iter = iterator();
+        // Similar strategy to OpenJDK's LinkedList implementation
+        final Object[] arr = a;
+        for (int i = 0; iter.hasNext(); i++)
+            arr[i] = iter.next();
+        return a;
+    }
+
     @Override
     public Iterator<E> iterator() {
         return new HashSetIterator();
@@ -252,9 +270,10 @@ public class HashSet<E> implements Iterable<E> {
     }
 
     @Override
+    @Exercise(7)
     public String toString() {
         final StringBuilder builder = new StringBuilder();
-        builder.append('{');
+        builder.append('[');
         final Iterator<E> iter = iterator();
         if (iter.hasNext()) {
             builder.append(iter.next());
@@ -263,7 +282,7 @@ public class HashSet<E> implements Iterable<E> {
                 builder.append(iter.next());
             }
         }
-        builder.append('}');
+        builder.append(']');
         return builder.toString();
     }
 } // HashIntSet
