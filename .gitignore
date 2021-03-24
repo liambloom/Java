@@ -1,16 +1,10 @@
 out/
 docs/
-.idea/
-.vscode/
-*.iml
 RunAllInJava.js
-desktop.ini
 NOTE_for_Mr._Marques.md
-.todo
 notes.md
 *.cmd
 **/SelfChecks.java
 **/Test.java
-*.gdoc
 jars/
 lib/
