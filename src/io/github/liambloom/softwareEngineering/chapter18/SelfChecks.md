@@ -27,19 +27,21 @@
     Load Factor: 7/11 &asymp; 0.6363636363636364
 9. a. It's okay, but not great. It follows the rules, and has some distribution, but it's not an even distribution, as there are some numbers (like 0) that appear often, and others (like primes) that almost never appear.
 
-    b. No, it is not distributed at all
+    b. No, it is not distributed at all *(Correction: It is legal, but still not good)*
 
     c. No, it is not consistent between equal instances.
 
 10. ```java
     @Override
     public int hashCode() {
+        // Correction: It's better to multiply each field by a different large prime number
         return year + month + day;
     }
     ```
 11. ```java
     @Override
     public int hashCode() {
+        // Correction: It's better to multiply each field by a different large prime number
         return name.hashCode() + age + studentId + Double.valueOf(weight).hashCode();
     }
     ```
@@ -53,7 +55,7 @@
 13. b
 14. 5, 7, because the height of a tree is always &lceil;log<sub>2</sub>N&rceil;, where N is the number of nodes in the tree
 15. a. Invalid because `12 < 9`, so `12` cannot be above `9`\
-    b. Valid\
+    b. ~~Valid~~ Correction: Illegal because there's a hole (it's not complete)\
     c. Valid ~~Invalid because `94 < 78`, so `94` cannot be above `78`~~
 16. The left and right children of the element at 8 are at 16 and 17, respectively. For 23, they are at 46 and 47
 17. 1. Set the left child of `84` to `21`
