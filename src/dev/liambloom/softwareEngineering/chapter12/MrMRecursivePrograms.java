@@ -2,15 +2,20 @@ package dev.liambloom.softwareEngineering.chapter12;
 
 import dev.liambloom.tests.Tester;
 
-import java.util.Arrays;
-
 public class MrMRecursivePrograms {
     public static void main(String[] args) {
         final Tester tester = new Tester();
         tester
-                .testOutput(() -> countDownRecursively(5), "5, 4, 3, 2, 1\n")
-                .testOutput(() -> countUpRecursively(7), "1, 2, 3, 4, 5, 6, 7\n")
-                .testOutput(() -> fractionCountUpRecursively(5), "1/1, 1/2, 1/3, 1/4, 1/5\n");
+            .testOutput(() -> countDownRecursively(5), "5, 4, 3, 2, 1\n")
+            .testOutput(() -> countUpRecursively(7), "1, 2, 3, 4, 5, 6, 7\n")
+            .testOutput(() -> fractionCountUpRecursively(5), "1/1, 1/2, 1/3, 1/4, 1/5\n")
+            .testOutput(() -> printEvenNums(5), "2, 4, 6, 8, 10\n")
+            .testOutput(() -> printOddNums(5), "1, 3, 5, 7, 9\n")
+            .testOutput(() -> print10sRecursively(6), "1, 10, 100, 1000, 10000, 100000\n")
+            .testOutput(() -> printLettersRecursively(7), "a, b, c, d, e, f, g\n")
+            .testOutput(() -> printLettersRecursivelyStartEnd(5, 10), "e, f, g, h, i, j\n")
+            .testOutput(() -> printParenthesesRecursively(5), "((((( )))))\n")
+            .testOutput(() -> printRepetitiveNumber(3, 6), "333333\n");
         tester.close();
     }
 
@@ -44,5 +49,67 @@ public class MrMRecursivePrograms {
         }
     }
 
+    public static void printEvenNums(int n) {
+        if (n > 0) {
+            printEvenNums(n - 1);
+            System.out.print((n * 2) + (isRoot() ? System.lineSeparator() : ", "));
+        }
+    }
 
+    public static void printOddNums(int n) {
+        if (n > 0) {
+            printOddNums(n - 1);
+            System.out.print((n * 2) - 1 + (isRoot() ? System.lineSeparator() : ", "));
+        }
+    }
+
+    public static void print10sRecursively(int n) {
+        if (n > 0) {
+            print10sRecursively(n - 1);
+            System.out.print((int) Math.pow(10, n - 1) + (isRoot() ? System.lineSeparator() : ", "));
+        }
+    }
+
+    public static void printLettersRecursively(int n) {
+        if (n > 0) {
+            printLettersRecursively(n - 1);
+            System.out.print((char) (n + 96) + (isRoot() ? System.lineSeparator() : ", "));
+        }
+    }
+
+    public static void printLettersRecursivelyStartEnd(int start, int end) {
+        if (end >= start) {
+            printLettersRecursivelyStartEnd(start, end - 1);
+            System.out.print((char) (end + 96) + (isRoot() ? System.lineSeparator() : ", "));
+        }
+    }
+
+    public static void printParenthesesRecursively(int n) {
+        if (n > 0) {
+            System.out.print('(');
+            printParenthesesRecursively(n - 1);
+            System.out.print((n == 1 ? " " : "") + ')' + (isRoot() ? System.lineSeparator() : ""));
+        }
+    }
+
+    public static void printRepetitiveNumber(int t, int n) {
+        if (n > 0) {
+            System.out.print(t);
+            printRepetitiveNumber(t, n - 1);
+            if (isRoot())
+                System.out.println();
+        }
+    }
+
+    public static void printTriangleRecurisvely(int n) {
+        if (n > 0) {
+            printTriangleRecurisvely(n - 1);
+            printTriangleRow(n);
+        }
+    }
+
+    private static void printTriangleRow(int n) {
+        if (n == 0)
+            System.out.println();
+    }
 }
