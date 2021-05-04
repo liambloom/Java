@@ -8,3 +8,5 @@ notes.md
 **/Test.java
 jars/
 lib/
+Cargo.lock
+**/target/
