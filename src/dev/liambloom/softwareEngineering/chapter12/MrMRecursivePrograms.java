@@ -15,7 +15,14 @@ public class MrMRecursivePrograms {
             .testOutput(() -> printLettersRecursively(7), "a, b, c, d, e, f, g\n")
             .testOutput(() -> printLettersRecursivelyStartEnd(5, 10), "e, f, g, h, i, j\n")
             .testOutput(() -> printParenthesesRecursively(5), "((((( )))))\n")
-            .testOutput(() -> printRepetitiveNumber(3, 6), "333333\n");
+            .testOutput(() -> printRepetitiveNumber(3, 6), "333333\n")
+            .testOutput(() -> printTriangleRecurisvely(4), "*\n* *\n* * *\n* * * *\n")
+            .test(() -> numberOfDigitsRecursively(1234567L), 7)
+            .testAssert(() -> areDigitsAllEvenRecursively(24680) && !areDigitsAllEvenRecursively(245680))
+            .test(() -> countNumberOf_Ks_Recursively(323345321L, 3), 4)
+            .testOutput(() -> printNumberBackwards(12345), "54321\n")
+            .test(() -> reverseNumRecursively(12345), 54321)
+            .test(() -> powerRecursively(3, 5), 243);
         tester.close();
     }
 
@@ -111,5 +118,59 @@ public class MrMRecursivePrograms {
     private static void printTriangleRow(int n) {
         if (n == 0)
             System.out.println();
+        else {
+            System.out.print((isRoot() ? "" : " ") + "*");
+            printTriangleRow(n - 1);
+        }
     }
+
+    public static int numberOfDigitsRecursively(long n) {
+        if (n == 0)
+            return 0;
+        else
+            return 1 + numberOfDigitsRecursively(n / 10);
+    }
+
+    public static boolean areDigitsAllEvenRecursively(int n) {
+        if (n == 0)
+            return true;
+        else
+            return n % 10 % 2 == 0 && areDigitsAllEvenRecursively(n / 10);
+    }
+
+    public static int countNumberOf_Ks_Recursively(long n, int k) {
+        if (n == 0)
+            return 0;
+        else
+            return (n % 10 == k ? 1 : 0) + countNumberOf_Ks_Recursively(n / 10, k);
+    }
+
+    public static void printNumberBackwards(int n) {
+        System.out.println(reverseNumRecursively(n));
+    }
+
+    public static int reverseNumRecursively(int n) {
+        if (n < 10)
+            return n;
+        else
+            return n % 10 * powerRecursively(10, numberOfDigitsRecursively(n / 10)) + reverseNumRecursively(n / 10);
+    }
+
+    public static int powerRecursively(int a, int b) {
+        if (b == 0)
+            return 1;
+        else
+            return a * powerRecursively(a, b - 1);
+    }
+
+    /*public static boolean isPalindrome(long n) {
+        if (n < 10)
+            return true;
+        else
+            return isPalindromeHelper(n, 0L);
+    }
+
+    private static boolean isPalindromeHelper(long n1, long n2) {
+
+    }*/
 }

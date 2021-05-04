@@ -118,7 +118,7 @@ public class Chapter2Exercises {
             System.out.println();
         }
     }
-    /* exercise 17
+    /* exercise 18
       method windowHorizontalLine:
         twice:
           print '+'
@@ -132,7 +132,7 @@ public class Chapter2Exercises {
       
       call windowHorizontalLine
     */
-    public static void exercise18 () {
+    public static void exercise19 () {
       Window.draw(9);
     }
     public static void exercise20_21 (int height) {
