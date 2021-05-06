@@ -29,7 +29,15 @@ public record Employee(String lastname, String firstname, char middleInitial, St
     }
 
     public Employee(Scanner s) {
-        this(s.next())
+        this(
+                s.skip("[^,\\s]+").match().group(),
+                s.skip(",\\s*|\s+").skip("[^.\\s]+").match().group(),
+                s.skip("\\.?\\s+").skip("\\S+").match().group().charAt(0),
+                Employee.requireUniqueIdNum(s.skip("\\s+").skip("(?:\\d{3}-){2}\\d{3,4}").match().group()),
+                s.skip("\\s+").skip("\\S+").match().group().intern(),
+                s.skip("\\s+").skip(".*\\S").match().group()
+        );
+        s.skip(".*\\r?\\n?");
     }
 
     private static String template() {

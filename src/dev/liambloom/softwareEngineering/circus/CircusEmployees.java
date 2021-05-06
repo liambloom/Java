@@ -2,12 +2,9 @@ package dev.liambloom.softwareEngineering.circus;
 
 import dev.liambloom.softwareEngineering.chapter6.Ask;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.util.*;
-import java.util.function.Predicate;
 
 public class CircusEmployees {
     public static final String EMPLOYEES_FILE = "employees.txt";
@@ -33,6 +30,14 @@ public class CircusEmployees {
                     (8)	Delete a category (and ALL corresponding employees)
                     (9)	Quit""");
             switch (Ask.forInt("Selection", 1, 9, "That's not a valid menu option")) {
+                case 1:
+                    circus.printAlphabetically();
+                    break;
+                case 2:
+                    circus.printByIdNum();
+                    break;
+                case 3:
+                    circus.insertEmployee();
                 // TODO
                 case 9:
                     return;
@@ -43,14 +48,10 @@ public class CircusEmployees {
     public CircusEmployees(File employees) throws FileNotFoundException {
         Scanner s = new Scanner(employees);
         while (s.hasNext()) {
-
+            Employee newEmployee = new Employee(s);
+            insertEmployeeInternal(newEmployee);
+            s.skip("(?:\\s*\\r?\\n?)*");
         }
-        // Or
-        new BufferedReader(new FileReader(employees)).lines()
-                .sequential()
-                .filter(((Predicate<String>) String::isBlank).negate())
-                .map(Employee::new)
-                .forEach(e -> categoryMap.computeIfAbsent(e.category(), k -> new TreeSet<>(Employee.nameComparator)).add(e));
     }
 
     public void printAlphabetically() {
@@ -82,20 +83,20 @@ public class CircusEmployees {
     }
 
     public void insertEmployee() {
-        insertEmployee(new Employee(
+        insertEmployeeInternal(new Employee(
                 Ask.forString("Last Name"),
                 Ask.forString("First Name"),
                 Ask.forChar("Middle Initial"),
-                Ask.forString("Id Number"),
+                Employee.requireUniqueIdNum(Ask.forString("Id Number")),
                 Ask.forString("Category").intern(),
                 Ask.forString("Title")
         ));
+        System.out.println("Employee inserted");
     }
 
-    public void insertEmployee(Employee e) {
+    public void insertEmployeeInternal(Employee e) {
         categoryMap.computeIfAbsent(e.category(),
                 k -> new TreeSet<>(Employee.nameComparator))
                 .add(e);
-        System.out.println("Employee inserted");
     }
 }
