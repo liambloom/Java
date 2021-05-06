@@ -5,6 +5,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 public record Employee(String lastname, String firstname, char middleInitial, String idNum, String category, String title) {
+    public static final Pattern lastNamePattern = Pattern.compile("", Pattern.CASE_INSENSITIVE);
 
     private static final Set<String> idNums = new HashSet<>();
     private static final String[] headers = { "Name", "Id", "Category", "Title" };
@@ -27,8 +28,8 @@ public record Employee(String lastname, String firstname, char middleInitial, St
         }
     }
 
-    public Employee(String s) {
-        // TODO
+    public Employee(Scanner s) {
+        this(s.next())
     }
 
     private static String template() {
