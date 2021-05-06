@@ -2,7 +2,7 @@ package dev.liambloom.softwareEngineering.chapter18;
 
 import java.util.*;
 
-import dev.liambloom.tests.book.bjp3.Exercise;
+import dev.liambloom.tests.book.bjp.Exercise;
 
 // Contains exercises 8-12
 public class Exercises {

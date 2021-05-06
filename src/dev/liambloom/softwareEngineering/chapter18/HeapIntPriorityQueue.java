@@ -3,7 +3,7 @@ package dev.liambloom.softwareEngineering.chapter18;
 import java.util.Arrays;
 import java.util.NoSuchElementException;
 
-import dev.liambloom.tests.book.bjp3.Exercise;
+import dev.liambloom.tests.book.bjp.Exercise;
 
 // I wasn't sure of the difference between 1 & 2, so I just chose 2
 

@@ -9,7 +9,7 @@ package dev.liambloom.softwareEngineering.chapter17.intTree;
 // BJP 3rd Edition pg 1020-1023
 
 import dev.liambloom.tests.Tester;
-import dev.liambloom.tests.book.bjp3.Exercise;
+import dev.liambloom.tests.book.bjp.Exercise;
 
 import java.util.LinkedList;
 import java.util.List;

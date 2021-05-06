@@ -6,7 +6,7 @@ import java.util.Stack;
 import java.util.Queue;
 
 import dev.liambloom.tests.Tester;
-import dev.liambloom.tests.book.bjp3.*;
+import dev.liambloom.tests.book.bjp.*;
 
 // Do 7
 public class Exercises {
