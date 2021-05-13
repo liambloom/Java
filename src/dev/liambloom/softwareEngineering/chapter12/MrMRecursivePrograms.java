@@ -22,7 +22,8 @@ public class MrMRecursivePrograms {
             .test(() -> countNumberOf_Ks_Recursively(323345321L, 3), 4)
             .testOutput(() -> printNumberBackwards(12345), "54321\n")
             .test(() -> reverseNumRecursively(12345), 54321)
-            .test(() -> powerRecursively(3, 5), 243);
+            .test(() -> powerRecursively(3, 5), 243)
+            .testAssert(() -> isPalindrome(1234321) && !isPalindrome(1234521));
         tester.close();
     }
 
@@ -163,14 +164,18 @@ public class MrMRecursivePrograms {
             return a * powerRecursively(a, b - 1);
     }
 
-    /*public static boolean isPalindrome(long n) {
-        if (n < 10)
-            return true;
-        else
-            return isPalindromeHelper(n, 0L);
+    public static boolean isPalindrome(long n) {
+        int digits = (int) Math.ceil(Math.log10(n + 1));
+        return n / (long) Math.pow(10, (digits + 1) / 2) == reverseNumRecursively((int) (n % (long) Math.pow(10, digits / 2)));
     }
 
-    private static boolean isPalindromeHelper(long n1, long n2) {
+    public boolean hasDigit(int n, int k) {
+        if (k > 10)
+            throw new IllegalArgumentException("k must be one digit");
+        return n != 0 && (n % 10 == k || hasDigit(n / 10, k));
+    }
 
-    }*/
+    public boolean areDigitsDecreasing(int n) {
+        //return n < 10
+    }
 }
