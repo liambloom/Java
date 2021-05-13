@@ -23,7 +23,11 @@ public class MrMRecursivePrograms {
             .testOutput(() -> printNumberBackwards(12345), "54321\n")
             .test(() -> reverseNumRecursively(12345), 54321)
             .test(() -> powerRecursively(3, 5), 243)
-            .testAssert(() -> isPalindrome(1234321) && !isPalindrome(1234521));
+            .testAssert(() -> isPalindrome(1234321) && !isPalindrome(1234521))
+            .testAssert(() -> hasDigit(12345, 3) && !hasDigit(12345, 6))
+            .testAssert(() -> areDigitsDecreasing(54321) && !areDigitsDecreasing(54521))
+            .testAssert("Test 19-alt", () -> countCinS("abcadaef", 'a') == 3 && countCinS("abcadaef", 'z') == 0)
+            .testAssert("Test 20-alt", () -> isArraySortedDecreasingly(new int[]{5, 4, 3, 2, 1}, 0) && !isArraySortedDecreasingly(new int[]{5, 4, 1, 2, 1}, 0));
         tester.close();
     }
 
@@ -169,13 +173,22 @@ public class MrMRecursivePrograms {
         return n / (long) Math.pow(10, (digits + 1) / 2) == reverseNumRecursively((int) (n % (long) Math.pow(10, digits / 2)));
     }
 
-    public boolean hasDigit(int n, int k) {
+    public static boolean hasDigit(int n, int k) {
         if (k > 10)
             throw new IllegalArgumentException("k must be one digit");
         return n != 0 && (n % 10 == k || hasDigit(n / 10, k));
     }
 
-    public boolean areDigitsDecreasing(int n) {
-        //return n < 10
+    public static boolean areDigitsDecreasing(int n) {
+        return n < 10 || n / 10 % 10 > n % 10 && areDigitsDecreasing(n / 10);
+    }
+
+    public static int countCinS(String s, char c) {
+        int i = s.indexOf(c);
+        return i == -1 ? 0 : 1 + countCinS(s.substring(i + 1), c);
+    }
+
+    public static boolean isArraySortedDecreasingly(int[] a, int currentPosition) {
+        return currentPosition == a.length - 2 || a[currentPosition] > a[currentPosition + 1] && isArraySortedDecreasingly(a, currentPosition + 1);
     }
 }
