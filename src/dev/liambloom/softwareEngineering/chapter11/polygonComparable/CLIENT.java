@@ -163,7 +163,7 @@ public class CLIENT
     double b1,b2,h;
     
         choice = Integer.parseInt( JOptionPane.showInputDialog(null, "Please select a Quadrilateral from the following list: \n"
-                                    + " (1) Trapezium (2) Trapezoid (3) Parallelogram  (4) Rhombus (5) Rectangle (6) Square   ") );
+                                    + " (1) Trapezoid (2) Isosceles Trapezoid (3) Parallelogram  (4) Rhombus (5) Rectangle (6) Square   ") );
 
         b1 = Double.parseDouble( JOptionPane.showInputDialog(null," Enter the base: \n") );        
         h = Double.parseDouble( JOptionPane.showInputDialog(null," Enter the height: \n") );   
@@ -174,11 +174,11 @@ public class CLIENT
             switch (choice) {
                 case 1:
                     b2 = Double.parseDouble(JOptionPane.showInputDialog(null, " Enter 2nd base: \n"));
-                    quadrilateral = new Trapezium(b1, b2, h);
+                    quadrilateral = new Trapezoid(b1, b2, h);
                     break;
                 case 2:
                     b2 = Double.parseDouble(JOptionPane.showInputDialog(null, " Enter 2nd base: \n"));
-                    quadrilateral = new Trapezoid(b1, b2, h);
+                    quadrilateral = new IsoscelesTrapezoid(b1, b2, h);
                     break;
                 case 3:
                     quadrilateral = new Parallelogram(b1, h);
@@ -385,7 +385,7 @@ public class CLIENT
     double b1,b2,h;
     
         choice = Integer.parseInt( JOptionPane.showInputDialog(null, "Please select a Quadrilateral from the following list: \n"
-                                    + " (1) Trapezium (2) Trapezoid (3) Parallelogram  (4) Rhombus (5) Rectangle (6) Square   ") );
+                                    + " (1) Trapezoid (2) Isosceles Trapezoid (3) Parallelogram  (4) Rhombus (5) Rectangle (6) Square   ") );
 
         b1 = Double.parseDouble( JOptionPane.showInputDialog(null," Enter the base: \n") );        
         h = Double.parseDouble( JOptionPane.showInputDialog(null," Enter the height: \n") );        
@@ -395,11 +395,11 @@ public class CLIENT
             switch (choice) {
                 case 1:
                     b2 = Double.parseDouble(JOptionPane.showInputDialog(null, " Enter 2nd base: \n"));
-                    quadrilateral = new Trapezium(b1, b2, h);
+                    quadrilateral = new Trapezoid(b1, b2, h);
                     break;
                 case 2:
                     b2 = Double.parseDouble(JOptionPane.showInputDialog(null, " Enter 2nd base: \n"));
-                    quadrilateral = new Trapezoid(b1, b2, h);
+                    quadrilateral = new IsoscelesTrapezoid(b1, b2, h);
                     break;
                 case 3:
                     quadrilateral = new Parallelogram(b1, h);

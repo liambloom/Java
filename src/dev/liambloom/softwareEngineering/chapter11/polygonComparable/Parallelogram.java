@@ -1,6 +1,6 @@
 package dev.liambloom.softwareEngineering.chapter11.polygonComparable;
 
-public class Parallelogram extends Trapezium {
+public class Parallelogram extends Trapezoid {
     // Constructors
     public Parallelogram() {
         super();

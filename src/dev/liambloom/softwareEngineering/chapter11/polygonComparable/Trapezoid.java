@@ -1,11 +1,6 @@
 package dev.liambloom.softwareEngineering.chapter11.polygonComparable;
 
-/**
- * This is specifically an Isosceles trapezoid, as not all trapezoids can be
- * represented with just two bases and a height
- */
-
-public class Trapezoid extends Trapezium {
+public class Trapezoid extends Quadrilaterals {
     // Constructors
     public Trapezoid() {
         super();
@@ -16,6 +11,11 @@ public class Trapezoid extends Trapezium {
     }
 
     // Inherited
+    @Override
+    public void calculateArea() {
+        setMyArea((getMyBase1() + getMyBase2()) / 2 * getMyHeight());
+    }
+
     @Override
     public String toString() {
         return "Trapezoid and I am also a " + super.toString();
