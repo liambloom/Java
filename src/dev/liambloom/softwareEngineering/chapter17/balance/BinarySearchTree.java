@@ -116,8 +116,8 @@ public class BinarySearchTree<E extends Comparable<E>> {
             r[1] = center(left == null ? "\u2572" : "\u2571", width);
             for (int i = 0; i < single.length; i++)
                 r[i + 2] = center(single[i], width);
-            for (String row : r)
-                System.out.println(row);
+            /* for (String row : r)
+                System.out.println(row);*/
             return r;
         }
         else {
@@ -130,9 +130,9 @@ public class BinarySearchTree<E extends Comparable<E>> {
             assert r[0].length() == width: "Incorrectly centered";
             final String leftPad = " ".repeat((width - subWidth) / 2);
             final String rightPad = " ".repeat((width - subWidth + 1) / 2);
-            if ((width - 1) / 2 - leftPad.length() - 1 < 0) {
+            /* if ((width - 1) / 2 - leftPad.length() - 1 < 0) {
                 System.out.printf("leftPad: %d, width: %d, subWidth: %d%n", leftPad.length(), width, subWidth);
-            }
+            } */
             final StringBuilder r1 = new StringBuilder()
                     .append(leftPad)
                     .append(" ".repeat(Math.max((left[0].length() - 1) / 2, 0)))
@@ -150,8 +150,8 @@ public class BinarySearchTree<E extends Comparable<E>> {
             int i;
             for (i = 0; i < r.length - 2; i++)
                 r[i + 2] = leftPad + (i >= left.length ? spaces : left[i]) + " " + (i >= right.length ? spaces : right[i]) + rightPad;
-            for (String row : r)
-                System.out.println(row);
+            /* for (String row : r)
+                System.out.println(row); */
             return r;
         }
     }
