@@ -15,7 +15,7 @@ import java.util.*;
 
 public class ProgrammingExercise4
 {
-    public static void main()
+    public static void main(String[] args)
     {
         // Data
         String data[] = {

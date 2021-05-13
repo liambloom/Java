@@ -73,7 +73,6 @@ public class ProgrammingExercise8 {
                 verteces.remove(first);
                 current.add(first);
                 setA.add(first);
-                verteces.remove(first);
                 Set<Integer> currentSet = setB;
                 Set<Integer> otherSet = setA;
                 while (!current.isEmpty()) {
