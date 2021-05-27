@@ -1,6 +1,7 @@
 package dev.liambloom.softwareEngineering.chapter15;
 
 import dev.liambloom.softwareEngineering.chapter7.$;
+import dev.liambloom.tests.book.bjp.*;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Arrays;
@@ -211,11 +212,12 @@ public class ArrayList<E> implements Iterable<E> {
     }
 
     /**
-     * Exercise 11. Removes the last element of the list, returning it
+     * Removes the last element of the list, returning it
      * 
      * @return the removed element
      * @throws NoSuchElementException if the list's {@link #size()} is {@code 0}
      */
+    @Exercise(11)
     public E removeLast() {
         if (size == 0) throw new NoSuchElementException();
         else {
@@ -226,11 +228,12 @@ public class ArrayList<E> implements Iterable<E> {
     }
 
     /**
-     * Exercise 12. Removes the first n elements of the list
+     * Removes the first n elements of the list
      * 
      * @param n how many elements to remove
      * @throws IndexOutOfBoundsException if n is greater than the list's {@link #size()}
      */
+    @Exercise(12)
     public void removeFront(final int n) {
         if (n > size) throw new IndexOutOfBoundsException(n);
         System.arraycopy(elementData, n, elementData, 0, size - n);
@@ -239,9 +242,10 @@ public class ArrayList<E> implements Iterable<E> {
     }
 
     /**
-     * Exercise 13. Removes every occurrence of an element
+     * Removes every occurrence of an element
      * @param e the element to remove
      */
+    @Exercise(13)
     public void removeAll(final E e) {
         int i;
         while ((i = indexOf(e)) != -1) remove(i);
@@ -272,18 +276,19 @@ public class ArrayList<E> implements Iterable<E> {
     }
 
     /**
-     * Exercise 6. Fills the list with a particular value. <strong>Warning:</strong>
+     * Fills the list with a particular value. <strong>Warning:</strong>
      * this does not clone newValue. If there are multiple matches, they will all
      * be replaced by pointers to <em>the same object</em>, not copies of it.
      * 
      * @param value the value to fill the list with
      */
+    @Exercise(6)
     public void fill(final E value) {
         for (int i = 0; i < size; i++) elementData[i] = value;
     }
 
     /**
-     * Exercise 3. Replaces an element in the list with another element.
+     * Replaces an element in the list with another element.
      * <strong>Warning:</strong> this does not clone newValue. If there are
      * multiple matches, they will all be replaced by pointers to <em>the same
      * object</em>, not copies of it.
@@ -291,14 +296,16 @@ public class ArrayList<E> implements Iterable<E> {
      * @param oldValue The value to be replaced
      * @param newValue The value to replace it with
      */
+    @Exercise(3)
     public void replaceAll(final E oldValue, final E newValue) {
         int i;
         while ((i = indexOf(oldValue)) != -1) set(i, newValue);
     }
 
     /**
-     * Exercise 4. Reverses the order of the list
+     * Reverses the order of the list
      */
+    @Exercise(4)
     public void reverse() {
         for (int i = 0; i < size / 2; i++) {
             final E temp = elementData[i];
@@ -308,31 +315,34 @@ public class ArrayList<E> implements Iterable<E> {
     }
 
     /**
-     * Exercise 15. Mirrors the list by adding the elements, in reverse order,
+     * Mirrors the list by adding the elements, in reverse order,
      * to the end of the list.
      */
+    @Exercise(15)
     public void mirror() {
         ensureCapacity(size * 2);
-        for (int i = size - 1; i >= 0; i++) add(elementData[i]);
+        for (int i = size - 1; i >= 0; i--) add(elementData[i]);
         size *= 2;
     }
 
     /**
-     * Exercise 16. Replaces every value with two of itself.
+     * Replaces every value with two of itself.
      * <strong>Warning:</strong> this does not clone the value. The value will be
      * replaced by two pointers to <em>the same object</em>, not copies of it.
      */
+    @Exercise(16)
     public void stutter() {
         stretch(2);
     }
 
     /**
-     * Exercise 17. Replaces every value with n of itself. <strong>Warning:</strong>
+     * Replaces every value with n of itself. <strong>Warning:</strong>
      * this does not clone the value. The value will be replaced by n pointers
      * to <em>the same object</em>, not copies of it.
      * 
      * @param n how many times to repeat each value
      */
+    @Exercise(17)
     public void stretch(final int n) {
         if (n <= 0) clear();
         else {
@@ -345,8 +355,9 @@ public class ArrayList<E> implements Iterable<E> {
     }
 
     /**
-     * Exercise 20. Moves the 1st element in the list to the end of the list.
+     * Moves the 1st element in the list to the end of the list.
      */
+    @Exercise(20)
     public void rotate() {
         if (size == 0) return;
         final E temp = elementData[0];
@@ -355,8 +366,9 @@ public class ArrayList<E> implements Iterable<E> {
     }
 
     /**
-     * Exercise 21. Switches the positions of each pair of values in the list.
+     * Switches the positions of each pair of values in the list.
      */
+    @Exercise(21)
     public void switchPairs() {
         for (int i = 0; i < size / 2; i++) {
             final E temp = elementData[i * 2];
@@ -366,10 +378,11 @@ public class ArrayList<E> implements Iterable<E> {
     }
 
     /**
-     * Exercise 18. Appends a copy of the list to the end of the list.
+     * Appends a copy of the list to the end of the list.
      * <strong>Warning:</strong> this does not clone the values. The value will be
      * replaced by n pointers to <em>the same object</em>, not copies of it.
      */
+    @Exercise(18)
     public void doubleList() {
         ensureCapacity(size * 2);
         System.arraycopy(elementData, 0, elementData, size, size);
@@ -390,26 +403,28 @@ public class ArrayList<E> implements Iterable<E> {
     }
 
     /**
-     * Exercise 1. Returns the index of the last occurrence of given value
+     * Returns the index of the last occurrence of given value
      * 
      * @param value the value that will be searched for
      * @return the index of the last occurrence given value. {@code -1} if the value is not found
      */
+    @Exercise(1)
     public int lastIndexOf(final E value) {
-        for (int i = size - 1; i >= 0; i++) {
+        for (int i = size - 1; i >= 0; i--) {
             if (elementData[i].equals(value)) return i;
         }
         return -1;
     }
 
     /**
-     * Exercise 2. Returns the index of the first occurrence of an ordered list of values.
+     * Returns the index of the first occurrence of an ordered list of values.
      * I personally think that this should have been an overload of the {@link #indexOf(Object)}
      * method, but I decided to just go with what the book said.
      * 
      * @param l the list that will be searched for
      * @return the index of the last occurrence given value. {@code -1} if the value is not found
      */
+    @Exercise(2)
     public int indexOfSubList(final ArrayList<E> l) {
         outer: for (int i = 0; i < size; i++) {
             for (int j = 0; j < l.size; j++) {
@@ -421,12 +436,13 @@ public class ArrayList<E> implements Iterable<E> {
     }
     
     /**
-     * Exercise 8. Returns the number of times a particular element occurs in the list.
+     * Returns the number of times a particular element occurs in the list.
      * I think this method should be named occurencesOf
      * 
      * @param e the element to check for
      * @return the amount of times the element 'e' occurs in the list
      */
+    @Exercise(8)
     public int count(final E e) {
         int c = 0;
         for (int i = 0; i < size; i++) {
@@ -472,7 +488,7 @@ public class ArrayList<E> implements Iterable<E> {
     }
 
     /**
-     * Exercise 7. Checks if the list is pairwise sorted. &ldquo;A list is
+     * Checks if the list is pairwise sorted. &ldquo;A list is
      * considered pairwise sorted if each successive pair of numbers is in
      * nondecreasing order&rdquo; (Stuart Reges and Marty Stepp, Building Java
      * programs: a back to basics approach&mdash;Third Edition, Page 948).
@@ -480,6 +496,7 @@ public class ArrayList<E> implements Iterable<E> {
      * @return A boolean representing weather this list is pairwise sorted
      * @throws ClassCastException if {@code E} does not implement {@code Comparable<E>}
      */
+    @Exercise(7)
     public boolean isPairwiseSorted() {
         for (int i = 0; i < size / 2 * 2; i += 2) {
             if (((Comparable<E>) elementData[i]).compareTo(elementData[i + 1]) > 0) return false;
@@ -514,7 +531,7 @@ public class ArrayList<E> implements Iterable<E> {
     }
 
     /**
-     * Exercise 5. Returns a new {@code ArrayList<E>} where the nth value of the new
+     * Returns a new {@code ArrayList<E>} where the nth value of the new
      * list is the sum of elements 0 through n of this list
      * 
      * @return a list of the cumulative sums at every index of this list
@@ -522,8 +539,9 @@ public class ArrayList<E> implements Iterable<E> {
      *                            another or if they are not one of Byte, Short,
      *                            Integer, Long, Float, or Double
      */
+    @Exercise(5)
     public ArrayList<E> runningTotal() {
-        if (size == 0) return new ArrayList<E>(0);
+        if (size == 0) return new ArrayList<>(0);
         final double[] arr = asDoubleArr();
         for (int i = 1; i < size; i++) arr[i] += arr[i - 1];
         final ArrayList<E> r = new ArrayList<>(size);
@@ -533,13 +551,14 @@ public class ArrayList<E> implements Iterable<E> {
     }
 
     /**
-     * Exercise 19. Replaces each consecutive pair of values with their sum. If
+     * Replaces each consecutive pair of values with their sum. If
      * {@link #size()} is odd, the last element is ignored
      * 
      * @throws ClassCastException if any of the elements is a different type from
      *                            another or if they are not one of Byte, Short,
      *                            Integer, Long, Float, or Double
      */
+    @Exercise(19)
     public void compress() {
         if (size == 0) return;
         final double[] arr = asDoubleArr();
@@ -550,11 +569,12 @@ public class ArrayList<E> implements Iterable<E> {
     }
 
     /**
-     * Exercise 9. Returns the number of occurences of the mode of the list (the
+     * Returns the number of occurences of the mode of the list (the
      * mode being the element that appears most often)
      * 
      * @return the number of occurences of the mode of the list
      */
+    @Exercise(9)
     public int maxCount() {
         final HashMap<E, Integer> map = new HashMap<>();
         for (int i = 0; i < size; i++) {
@@ -569,12 +589,13 @@ public class ArrayList<E> implements Iterable<E> {
     }
 
     /**
-     * Exercise 10. Returns the length of the longest non-descending sequence of
+     * Returns the length of the longest non-descending sequence of
      * consecutive comparable elements in the list
      * 
      * @return The length of the longest non-descending sequence
      * @throws ClassCastException if {@code E} does not implement {@code Comparable<E>}
      */
+    @Exercise(10)
     public int longestSortedSequence() {
         int len = 0;
         int maxLen = 0;
@@ -632,7 +653,7 @@ public class ArrayList<E> implements Iterable<E> {
     }*/
 
     /**
-     * Exercise 14. Prints the inversions of the list. &ldquo;An inversion is a pair
+     * Prints the inversions of the list. &ldquo;An inversion is a pair
      * of numbers in which the first appears before the second in the list, but the
      * first is greater than the second.&rdquo; (Stuart Reges and Marty Stepp,
      * Building Java programs: a back to basics approach&mdash;Third Edition, Page
@@ -640,6 +661,7 @@ public class ArrayList<E> implements Iterable<E> {
      * 
      * @throws ClassCastException if {@code E} does not implement {@code Comparable<E>}
      */
+    @Exercise(14)
     public void printInversions() {
         printInversions(0);
     }
@@ -722,13 +744,13 @@ public class ArrayList<E> implements Iterable<E> {
      * @return a {@code String} representing the list.
      */
     public String toString() {
-        String r = "";
+        StringBuilder builder = new StringBuilder().append('[');
         if (size > 0) {
-            r += elementData[0];
+            builder.append(elementData[0]);
             for (int i = 1; i < size; i++) {
-                r += ", " + elementData[i];
+                builder.append(", ").append(elementData[i]);
             }
         }
-        return "[" + r + "]";
+        return builder.append(']').toString();
     }
 }
