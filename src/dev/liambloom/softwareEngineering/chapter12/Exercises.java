@@ -4,6 +4,11 @@ import java.lang.reflect.Array;
 import java.util.Arrays;
 
 public class Exercises {
+    public static void main(String[] args) {
+        exercise5(44);
+        System.out.println();
+        exercise19(3);
+    }
     public static void exercise1(int n) { // Print n^2
         if (n < 0) throw new IllegalArgumentException("Cannot print <1 stars");
         else if (n == 0) System.out.print('*');
@@ -35,22 +40,9 @@ public class Exercises {
         else return n % 10 * 11 + 100 * exercise4(n / 10);
     }
     public static void exercise5(int n) { // Writes n in binary
-        exercise5_helper(n, digitsBinary(n));
-    }
-    private static void exercise5_helper(int n, int digit) {
-        //System.out.printf("n = %d, digit = %d%n", n, digit);
-        if (digit == 0) return;
-        else if (n < digit) {
-            System.out.print('0');
-            exercise5_helper(n, digit / 2);
-        }
-        else {
-            System.out.print('1');
-            exercise5_helper(n - digit, digit / 2);
-        }
-    }
-    private static int digitsBinary(int n) {
-        return (int) Math.pow(2, Math.floor(Math.log(n) / Math.log(2)));
+        if (n >> 1 > 0)
+            exercise5(n >> 1);
+        System.out.print(n & 1);
     }
     public static void exercise6(int n) { // Writes squares for 1..n. Evens descending, then 1, then odds ascending
         if (n == 1) System.out.print("1");
@@ -138,13 +130,14 @@ public class Exercises {
         }
     }
     public static void exercise19(int n) { // Writes all numbers 0..n in binary
+        //exercise5(n);
         if (n == 0) System.out.println();
-        else exercise19_helper((int) Math.pow(2, n) - 1, (int) Math.pow(2, n - 1));
+        else exercise19_helper((1 << n) - 1); //(int) Math.pow(2, n) - 1, (int) Math.pow(2, n - 1));
     }
-    public static void exercise19_helper(int n, int digits) {
+    public static void exercise19_helper(int n) {
         if (n >= 0) {
-            exercise19_helper(n - 1, digits);
-            exercise5_helper(n, digits);
+            exercise19_helper(n - 1);
+            exercise5(n);
             System.out.println();
         }
     }

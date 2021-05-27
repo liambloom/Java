@@ -1,5 +1,5 @@
 ### 30.1
-It's not *needed*, but it can improve the performance of an application, especially one that deals with asynchronous events, by executing multiple things at once, or, on a single processor system, by rapidly switching between threads.``
+It's not *needed*, but it can improve the performance of an application, especially one that deals with asynchronous events, by executing multiple things at once, or, on a single processor system, by rapidly switching between threads. 
 
 ### 30.2
 A runnable object is an object that implements the functional interface `Runnable`, which allows it to be run, usually on a different thread. Threads are pieces of a program that run simultaneously

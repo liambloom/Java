@@ -48,12 +48,15 @@ public class MrMRecursivePrograms {
         }
     }
 
+    // Program 2
     public static void countUpRecursively(int n) {
         if (n > 0) {
             countUpRecursively(n - 1);
             System.out.print(n + (isRoot() ? System.lineSeparator() : ", "));
         }
     }
+
+    // Program 3
     public static void fractionCountUpRecursively(int n) {
         if (n > 0) {
             fractionCountUpRecursively(n - 1);
@@ -61,6 +64,7 @@ public class MrMRecursivePrograms {
         }
     }
 
+    // Program 4
     public static void printEvenNums(int n) {
         if (n > 0) {
             printEvenNums(n - 1);
@@ -68,6 +72,7 @@ public class MrMRecursivePrograms {
         }
     }
 
+    // Program 5
     public static void printOddNums(int n) {
         if (n > 0) {
             printOddNums(n - 1);
@@ -75,6 +80,7 @@ public class MrMRecursivePrograms {
         }
     }
 
+    // Program 6
     public static void print10sRecursively(int n) {
         if (n > 0) {
             print10sRecursively(n - 1);
@@ -82,6 +88,7 @@ public class MrMRecursivePrograms {
         }
     }
 
+    // Program 7
     public static void printLettersRecursively(int n) {
         if (n > 0) {
             printLettersRecursively(n - 1);
@@ -89,6 +96,7 @@ public class MrMRecursivePrograms {
         }
     }
 
+    // Program 8
     public static void printLettersRecursivelyStartEnd(int start, int end) {
         if (end >= start) {
             printLettersRecursivelyStartEnd(start, end - 1);
@@ -96,6 +104,7 @@ public class MrMRecursivePrograms {
         }
     }
 
+    // Program 9
     public static void printParenthesesRecursively(int n) {
         if (n > 0) {
             System.out.print('(');
@@ -104,6 +113,7 @@ public class MrMRecursivePrograms {
         }
     }
 
+    // Program 10
     public static void printRepetitiveNumber(int t, int n) {
         if (n > 0) {
             System.out.print(t);
@@ -113,6 +123,7 @@ public class MrMRecursivePrograms {
         }
     }
 
+    // Program 11
     public static void printTriangleRecurisvely(int n) {
         if (n > 0) {
             printTriangleRecurisvely(n - 1);
@@ -129,6 +140,7 @@ public class MrMRecursivePrograms {
         }
     }
 
+    // Program 12
     public static int numberOfDigitsRecursively(long n) {
         if (n == 0)
             return 0;
@@ -136,6 +148,7 @@ public class MrMRecursivePrograms {
             return 1 + numberOfDigitsRecursively(n / 10);
     }
 
+    // Program 13
     public static boolean areDigitsAllEvenRecursively(int n) {
         if (n == 0)
             return true;
@@ -143,6 +156,7 @@ public class MrMRecursivePrograms {
             return n % 10 % 2 == 0 && areDigitsAllEvenRecursively(n / 10);
     }
 
+    // Program 14
     public static int countNumberOf_Ks_Recursively(long n, int k) {
         if (n == 0)
             return 0;
@@ -150,10 +164,12 @@ public class MrMRecursivePrograms {
             return (n % 10 == k ? 1 : 0) + countNumberOf_Ks_Recursively(n / 10, k);
     }
 
+    // Program 15
     public static void printNumberBackwards(int n) {
         System.out.println(reverseNumRecursively(n));
     }
 
+    // Program 16
     public static int reverseNumRecursively(int n) {
         if (n < 10)
             return n;
@@ -161,6 +177,7 @@ public class MrMRecursivePrograms {
             return n % 10 * powerRecursively(10, numberOfDigitsRecursively(n / 10)) + reverseNumRecursively(n / 10);
     }
 
+    // Program 17
     public static int powerRecursively(int a, int b) {
         if (b == 0)
             return 1;
@@ -168,27 +185,32 @@ public class MrMRecursivePrograms {
             return a * powerRecursively(a, b - 1);
     }
 
+    // Program 18
     public static boolean isPalindrome(long n) {
         int digits = (int) Math.ceil(Math.log10(n + 1));
         return n / (long) Math.pow(10, (digits + 1) / 2) == reverseNumRecursively((int) (n % (long) Math.pow(10, digits / 2)));
     }
 
+    // Program 19
     public static boolean hasDigit(int n, int k) {
         if (k > 10)
             throw new IllegalArgumentException("k must be one digit");
         return n != 0 && (n % 10 == k || hasDigit(n / 10, k));
     }
 
+    // Program 20
     public static boolean areDigitsDecreasing(int n) {
         return n < 10 || n / 10 % 10 > n % 10 && areDigitsDecreasing(n / 10);
     }
 
+    // Other Program 19
     public static int countCinS(String s, char c) {
         int i = s.indexOf(c);
         return i == -1 ? 0 : 1 + countCinS(s.substring(i + 1), c);
     }
 
+    // Other Program 20
     public static boolean isArraySortedDecreasingly(int[] a, int currentPosition) {
-        return currentPosition == a.length - 2 || a[currentPosition] > a[currentPosition + 1] && isArraySortedDecreasingly(a, currentPosition + 1);
+        return currentPosition == a.length - 1 || a[currentPosition] > a[currentPosition + 1] && isArraySortedDecreasingly(a, currentPosition + 1);
     }
 }
