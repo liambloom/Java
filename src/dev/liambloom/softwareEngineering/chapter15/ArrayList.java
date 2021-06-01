@@ -2,11 +2,9 @@ package dev.liambloom.softwareEngineering.chapter15;
 
 import dev.liambloom.softwareEngineering.chapter7.$;
 import dev.liambloom.tests.book.bjp.*;
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Iterator;
+
+import java.lang.reflect.Array;
+import java.util.*;
 
 /**
  * This is a clone of {@code java.util.ArrayList<E>}.
@@ -14,32 +12,7 @@ import java.util.Iterator;
  * @author Liam Bloom 
  */
 @SuppressWarnings("unchecked")
-public class ArrayList<E> implements Iterable<E> {
-    /**
-     * The iterator type for {@code ArrayList<E>};
-     */
-    private final class ArrayListIterator implements Iterator<E> {
-        private int position = 0;
-        private boolean removeOk = false;
-
-        // The iterator docs already explain what each of these do
-        public E next() {
-            if (!hasNext()) throw new NoSuchElementException();
-            removeOk = true;
-            return elementData[position++];
-        }
-
-        public boolean hasNext() {
-            return position < size;
-        }
-
-        public void remove() {
-            if (!removeOk) throw new IllegalStateException();
-            ArrayList.this.remove(--position);
-            removeOk = false;
-        }
-    }
-
+public class ArrayList<E> implements List<E> {
     /**
      * The default capacity of an {@code ArrayList}
      */
@@ -77,15 +50,6 @@ public class ArrayList<E> implements Iterable<E> {
             client anyway*/
         elementData = (E[]) new Object[capacity];
     }
-    
-    /*/**
-     * Creates a new {@code ArrayList} from an already exiting one
-     * 
-     * @param list A pre-existing {@code ArrayList}
-     /
-    public ArrayList(ArrayList<E> list) {
-        this(list.toArray());
-    }*/
 
     /**
      * Creates a new {@code ArrayList} from a {@code List}
@@ -107,80 +71,286 @@ public class ArrayList<E> implements Iterable<E> {
         size = list.length;
     }
 
-    /**
-     * Returns the number of elements in the list
-     * 
-     * @return the size of the list
-     */
+    @Override
     public int size() {
         return size;
     }
 
-    /**
-     * Returns an iterator for the list
-     * 
-     * @return an Iterator over the list
-     */
+    @Override
     public Iterator<E> iterator() {
-        return new ArrayListIterator();
+        return listIterator();
     }
 
-    /**
-     * Adds a value to the end of the list
-     * 
-     * @param value the value to be added
-     */
-    public void add(final E value) {
+    @Override
+    @ProgrammingProject(2)
+    public ListIterator<E> listIterator() {
+        return listIterator(0);
+    }
+
+    @Override
+    public ListIterator<E> listIterator(final int start) {
+        return subList(0, size).listIterator(start);
+    }
+
+    @Override
+    @ProgrammingProject(3)
+    public List<E> subList(int start, int toIndex) {
+        indexBoundChecker(start, false);
+        indexBoundChecker(toIndex, true);
+        return new List<>() {
+            private int end = toIndex;
+
+            @Override
+            public int size() {
+                return end - start;
+            }
+
+            @Override
+            public boolean isEmpty() {
+                return size() == 0;
+            }
+
+            @Override
+            public boolean contains(Object o) {
+                for (int i = start; i < end; i++){
+                    if (Objects.equals(elementData[i], o))
+                        return true;
+                }
+                return false;
+            }
+
+            @Override
+            public Iterator<E> iterator() {
+                return listIterator();
+            }
+
+            @Override
+            public Object[] toArray() {
+                return toArray(new Object[0]);
+            }
+
+            @Override
+            public <T> T[] toArray(T[] a) {
+                if (a.length < size())
+                    a = (T[]) Array.newInstance(a.getClass().getComponentType(), size());
+                System.arraycopy(elementData, start, a, 0, size());
+                return a;
+            }
+
+            @Override
+            public boolean add(E e) {
+                ArrayList.this.add(end++, e);
+                return true;
+            }
+
+            @Override
+            public boolean remove(Object o) {
+                final int index = indexOf(o);
+                if (index == 0)
+                    return false;
+                remove(index);
+                return true;
+            }
+
+            @Override
+            public boolean containsAll(Collection<?> c) {
+                boolean r = false;
+                for (Object e : c) {
+                    if (remove(e))
+                        r = true;
+                }
+                return r;
+            }
+
+            @Override
+            public boolean addAll(Collection<? extends E> c) {
+                return addAll(end, c);
+            }
+
+            @Override
+            public boolean addAll(int index, Collection<? extends E> c) {
+                indexBoundChecker(index, false);
+                for (E e : c)
+                    add(index, e);
+                return !c.isEmpty();
+            }
+
+            @Override
+            public boolean removeAll(Collection<?> c) {
+                boolean r = false;
+                ListIterator<E> iter = listIterator();
+                while (iter.hasNext()) {
+                    if (c.contains(iter.next())){
+                        r = true;
+                        iter.remove();
+                    }
+                }
+                return r;
+            }
+
+            @Override
+            public boolean retainAll(Collection<?> c) {
+                boolean r = false;
+                ListIterator<E> iter = listIterator();
+                while (iter.hasNext()) {
+                    if (!c.contains(iter.next())){
+                        r = true;
+                        iter.remove();
+                    }
+                }
+                return r;
+            }
+
+            @Override
+            public void clear() {
+                System.arraycopy(elementData, end, elementData, start, size - end);
+                for (size--; size >= end; size--)
+                    elementData[size] = null;
+                end = start;
+            }
+
+            @Override
+            public E get(int index) {
+                indexBoundChecker(index, false);
+                return ArrayList.this.get(index + start);
+            }
+
+            @Override
+            public E set(int index, E element) {
+                indexBoundChecker(index, false);
+                return ArrayList.this.set(index + start, element);
+            }
+
+            @Override
+            public void add(int index, E element) {
+                indexBoundChecker(index, true);
+                ArrayList.this.add(index + start, element);
+            }
+
+            @Override
+            public E remove(int index) {
+                indexBoundChecker(index, false);
+                return ArrayList.this.remove(index + start);
+            }
+
+            @Override
+            public int indexOf(Object o) {
+                int i = indexOf(o);
+                return i == -1 ? i : i + start;
+            }
+
+            @Override
+            public int lastIndexOf(Object o) {
+                return 0;
+            }
+
+            @Override
+            public ListIterator<E> listIterator() {
+                return listIterator(0);
+            }
+
+            @Override
+            public ListIterator<E> listIterator(int index) {
+                indexBoundChecker(index, true);
+                // Not the best implementation, but it works
+                return new ListIterator<>() {
+                    private int position = index;
+                    private boolean removeOk = false;
+
+                    // The iterator docs already explain what each of these do
+                    @Override
+                    public E next() {
+                        if (!hasNext()) throw new NoSuchElementException();
+                        removeOk = true;
+                        return elementData[position++];
+                    }
+
+                    @Override
+                    public boolean hasNext() {
+                        return position < size();
+                    }
+
+                    @Override
+                    public int nextIndex() {
+                        return position;
+                    }
+
+                    @Override
+                    public E previous() {
+                        if (!hasPrevious())
+                            throw new NoSuchElementException();
+                        removeOk = true;
+                        return elementData[--position];
+                    }
+
+                    @Override
+                    public boolean hasPrevious() {
+                        return position > 0;
+                    }
+
+                    @Override
+                    public int previousIndex() {
+                        return position - 1;
+                    }
+
+                    @Override
+                    public void add(final E e) {
+                        removeOk = false;
+                        ArrayList.this.add(position++, e);
+                    }
+
+                    @Override
+                    public void set(final E e) {
+                        if (!removeOk)
+                            throw new IllegalStateException();
+                        ArrayList.this.set(position, e);
+                    }
+
+                    @Override
+                    public void remove() {
+                        if (!removeOk) throw new IllegalStateException();
+                        ArrayList.this.remove(--position);
+                        removeOk = false;
+                    }
+                };
+            }
+
+            @Override
+            public List<E> subList(int fromIndex, int toIndex) {
+                indexBoundChecker(fromIndex, false);
+                indexBoundChecker(toIndex, true);
+                return ArrayList.this.subList(fromIndex + start, toIndex + start);
+            }
+
+            private void indexBoundChecker(int index, boolean inclusive) {
+                if (index < 0 || index > size() - (inclusive ? 1 : 0))
+                    throw new IndexOutOfBoundsException();
+            }
+        };
+    }
+
+    @Override
+    public boolean add(final E value) {
         addAll(size, value);
+        return true;
     }
 
-    /**
-     * Add a value to the list
-     * 
-     * @param index the index at which the value should be added
-     * @param value the value to be added
-     * @throws IndexOutOfBoundsException if index is not between {@code 0} and {@link #size()} (inclusive)
-     */
+    @Override
     public void add(final int index, final E value) {
         addAll(index, value);
     }
 
-    /**
-     * Adds every element from another {@code ArrayList} to this end of the list
-     * 
-     * @param o The {@code ArrayList} of elements to add
-     */
-    public void addAll(final ArrayList<E> o) {
-        addAll(size, o.elementData);
-    }
-
-    /**
-     * Adds every element from another {@code ArrayList} to this list at a specific index
-     * 
-     * @param index The index at which to add the elements
-     * @param o     The {@code ArrayList} of elements to add
-     */
-    public void addAll(final int index, final ArrayList<E> o) {
-        addAll(index, o.elementData);
-    }
-
-    /**
-     * Adds every element from a {@code List} to the end of this list
-     * 
-     * @param o The {@code List} of elements to add
-     */
-    public void addAll(final List<E> o) {
+    @Override
+    public boolean addAll(final Collection<? extends E> o) {
         addAll(size, (E[]) o.toArray());
+        return !o.isEmpty();
     }
 
-    /**
-     * Adds every element from a {@code List} to this list at a specific index
-     * 
-     * @param index The index at which to add the elements
-     * @param o The {@code List} of elements to add
-     */
-    public void addAll(final int index, final List<E> o) {
+    @Override
+    @ProgrammingProject(1)
+    public boolean addAll(final int index, final Collection<? extends E> o) {
         addAll(index, (E[]) o.toArray());
+        return !o.isEmpty();
     }
 
     /**
@@ -199,16 +369,23 @@ public class ArrayList<E> implements Iterable<E> {
         System.arraycopy(values, 0, elementData, index, values.length);
     }
 
-    /**
-     * Removes the value at the given index
-     * 
-     * @param index the index of the value to be removed
-     * @throws IndexOutOfBoundsException if index is not between {@code 0} and {@link #size()} (exclusive)
-     */
-    public void remove(final int index) {
+    @Override
+    public E remove(final int index) {
         indexBoundChecker(index, false);
+        E r = elementData[index];
         System.arraycopy(elementData, index + 1, elementData, index, size - index);
         elementData[--size] = null;
+        return r;
+    }
+
+    @Override
+    @ProgrammingProject(1)
+    public boolean remove(Object o) {
+        final int index = indexOf(o);
+        if (index == -1)
+            return false;
+        remove(index);
+        return true;
     }
 
     /**
@@ -251,28 +428,43 @@ public class ArrayList<E> implements Iterable<E> {
         while ((i = indexOf(e)) != -1) remove(i);
     }
 
-    /**
-     * Gets a value from the ArrayList
-     * 
-     * @param index the index to get the value
-     * @return the value at the index
-     * @throws IndexOutOfBoundsException if index is not between {@code 0} and {@link #size()} (exclusive)
-     */
+    @Override
+    @ProgrammingProject(1)
+    public boolean removeAll(final Collection<?> c) {
+        boolean r = false;
+        for (Object e : c) {
+            if (remove(e))
+                r = true;
+        }
+        return r;
+    }
+
+    @Override
+    @ProgrammingProject(1)
+    public boolean retainAll(final Collection<?> c) {
+        boolean r = false;
+        Iterator<E> iter = iterator();
+        while (iter.hasNext()) {
+            if (c.contains(iter.next())){
+                iter.remove();
+                r = true;
+            }
+        }
+        return r;
+    }
+
+    @Override
     public E get(final int index) {
         indexBoundChecker(index, false);
         return elementData[index];
     }
 
-    /**
-     * Sets the value at a particular index
-     * 
-     * @param index The index at which the value should be set
-     * @param value The value
-     * @throws IndexOutOfBoundsException if index is not between {@code 0} and {@link #size()} (exclusive)
-     */
-    public void set(final int index, final E value) {
+    @Override
+    public E set(final int index, final E value) {
         indexBoundChecker(index, false);
+        E r = elementData[index];
         elementData[index] = value;
+        return r;
     }
 
     /**
@@ -389,37 +581,26 @@ public class ArrayList<E> implements Iterable<E> {
         size *= 2;
     }
 
-    /**
-     * Returns the index of the first occurrence of given value
-     * 
-     * @param value the value that will be searched for
-     * @return the index of the given value. {@code -1} if the value is not found
-     */
-    public int indexOf(final E value) {
+    @Override
+    public int indexOf(final Object value) {
         for (int i = 0; i < size; i++) {
-            if (elementData[i].equals(value)) return i;
+            if (Objects.equals(elementData[i], value)) return i;
         }
         return -1;
     }
 
-    /**
-     * Returns the index of the last occurrence of given value
-     * 
-     * @param value the value that will be searched for
-     * @return the index of the last occurrence given value. {@code -1} if the value is not found
-     */
+    @Override
     @Exercise(1)
-    public int lastIndexOf(final E value) {
+    @ProgrammingProject(1)
+    public int lastIndexOf(final Object value) {
         for (int i = size - 1; i >= 0; i--) {
-            if (elementData[i].equals(value)) return i;
+            if (Objects.equals(elementData[i], value)) return i;
         }
         return -1;
     }
 
     /**
      * Returns the index of the first occurrence of an ordered list of values.
-     * I personally think that this should have been an overload of the {@link #indexOf(Object)}
-     * method, but I decided to just go with what the book said.
      * 
      * @param l the list that will be searched for
      * @return the index of the last occurrence given value. {@code -1} if the value is not found
@@ -428,7 +609,7 @@ public class ArrayList<E> implements Iterable<E> {
     public int indexOfSubList(final ArrayList<E> l) {
         outer: for (int i = 0; i < size; i++) {
             for (int j = 0; j < l.size; j++) {
-                if (!l.get(j).equals(get(i + j))) continue outer;
+                if (!Objects.equals(l.get(j), get(i + j))) continue outer;
             }
             return i;
         }
@@ -446,7 +627,7 @@ public class ArrayList<E> implements Iterable<E> {
     public int count(final E e) {
         int c = 0;
         for (int i = 0; i < size; i++) {
-            if (elementData[i].equals(e)) c++;
+            if (Objects.equals(elementData[i], e)) c++;
         }
         return c;
     }
@@ -612,28 +793,32 @@ public class ArrayList<E> implements Iterable<E> {
         return maxLen;
     }
 
-    /**
-     * Checks if the list contains a value
-     * 
-     * @param value The value to check for.
-     * @return {@code true} if the value is in the list, {@code false} if it's not.
-     */
-    public boolean contains(final E value) {
+    @Override
+    public boolean contains(final Object value) {
         return indexOf(value) >= 0;
     }
 
     /**
-     * Checks if the list is empty.
-     * 
-     * @return {@code true} if the list is empty, {@code false} if it's not.
+     * Checks if this list contains all values in the given list
+     *
+     * @param list The list of elements to check for
+     * @return {@code true} if all values from {@code list} are in this list, {@code false} otherwise.
      */
+    @ProgrammingProject(1)
+    public boolean containsAll(final Collection<?> list) {
+        for (Object e : list) {
+            if (!contains(e))
+                return true;
+        }
+        return false;
+    }
+
+    @Override
     public boolean isEmpty() {
         return size == 0;
     }
 
-    /**
-     * Sets the list size to {@code 0}
-     */
+    @Override
     public void clear() {
         // Setting everything to null isn't required, but it allows the garbage collector to free up more space
         for (int i = 0; i < size; i++) elementData[i] = null;
@@ -738,11 +923,39 @@ public class ArrayList<E> implements Iterable<E> {
         if (capacity > elementData.length) elementData = Arrays.copyOf(elementData, (int) Math.max(capacity, 1.5 * elementData.length));
     }
 
-    /**
-     * Returns a {@code String} representing the list.
-     * 
-     * @return a {@code String} representing the list.
-     */
+    @Override
+    @ProgrammingProject(1)
+    public Object[] toArray() {
+        return toArray(new Object[0]);
+    }
+
+    @Override
+    public <T> T[] toArray(T[] a) {
+        if (a.length < size)
+            a = (T[]) Array.newInstance(a.getClass().getComponentType(), size);
+        System.arraycopy(elementData, 0, a, 0, size);
+        return a;
+    }
+
+    @Override
+    @ProgrammingProject(1)
+    public boolean equals(Object other) {
+        if (other instanceof List<?> o) {
+            if (size() != o.size())
+                return false;
+            Iterator<?> iter1 = o.iterator();
+            Iterator<?> iter2 = this.iterator();
+            while (iter1.hasNext()) {
+                if (!Objects.equals(iter1.next(), iter2.next()))
+                    return false;
+            }
+            return true;
+        }
+        else
+            return false;
+    }
+
+    @Override
     public String toString() {
         StringBuilder builder = new StringBuilder().append('[');
         if (size > 0) {
