@@ -2,9 +2,12 @@ package dev.liambloom.softwareEngineering.chapter15;
 
 import dev.liambloom.softwareEngineering.chapter7.$;
 import dev.liambloom.tests.book.bjp.*;
+import dev.liambloom.tests.ListTests;
 
 import java.lang.reflect.Array;
 import java.util.*;
+import java.util.function.IntConsumer;
+import java.util.function.IntSupplier;
 
 /**
  * This is a clone of {@code java.util.ArrayList<E>}.
@@ -13,6 +16,12 @@ import java.util.*;
  */
 @SuppressWarnings("unchecked")
 public class ArrayList<E> implements List<E> {
+    public static void main(String[] args) {
+        ListTests tests = new ListTests(new ArrayList<>());
+        for (int i = 0; i < 100; i++)
+            tests.runTests();
+    }
+
     /**
      * The default capacity of an {@code ArrayList}
      */
@@ -94,8 +103,12 @@ public class ArrayList<E> implements List<E> {
 
     @Override
     @ProgrammingProject(3)
-    public List<E> subList(int start, int toIndex) {
-        indexBoundChecker(start, false);
+    public List<E> subList(int fromIndex, int toIndex) {
+        return subList(fromIndex, toIndex, new ParentSize(this::size, s -> size = s, s -> {}));
+    }
+
+    private List<E> subList(int start, int toIndex, ParentSize parentSize) {
+        indexBoundChecker(start, true);
         indexBoundChecker(toIndex, true);
         return new List<>() {
             private int end = toIndex;
@@ -140,13 +153,14 @@ public class ArrayList<E> implements List<E> {
             @Override
             public boolean add(E e) {
                 ArrayList.this.add(end++, e);
+                parentSize.incrementNoRoot();
                 return true;
             }
 
             @Override
             public boolean remove(Object o) {
                 final int index = indexOf(o);
-                if (index == 0)
+                if (index == -1)
                     return false;
                 remove(index);
                 return true;
@@ -164,14 +178,14 @@ public class ArrayList<E> implements List<E> {
 
             @Override
             public boolean addAll(Collection<? extends E> c) {
-                return addAll(end, c);
+                return addAll(end - start, c);
             }
 
             @Override
             public boolean addAll(int index, Collection<? extends E> c) {
-                indexBoundChecker(index, false);
+                indexBoundChecker(index, true);
                 for (E e : c)
-                    add(index, e);
+                    add(index++, e);
                 return !c.isEmpty();
             }
 
@@ -206,6 +220,7 @@ public class ArrayList<E> implements List<E> {
                 System.arraycopy(elementData, end, elementData, start, size - end);
                 for (size--; size >= end; size--)
                     elementData[size] = null;
+                parentSize.subtract(size());
                 end = start;
             }
 
@@ -225,23 +240,28 @@ public class ArrayList<E> implements List<E> {
             public void add(int index, E element) {
                 indexBoundChecker(index, true);
                 ArrayList.this.add(index + start, element);
+                end++;
+                parentSize.incrementNoRoot();
             }
 
             @Override
             public E remove(int index) {
                 indexBoundChecker(index, false);
+                end--;
+                parentSize.decrementNoRoot();
                 return ArrayList.this.remove(index + start);
             }
 
             @Override
             public int indexOf(Object o) {
-                int i = indexOf(o);
+                int i = ArrayList.this.indexOf(o);
                 return i == -1 ? i : i + start;
             }
 
             @Override
             public int lastIndexOf(Object o) {
-                return 0;
+                int i = ArrayList.this.lastIndexOf(o);
+                return i == -1 ? i : i + start;
             }
 
             @Override
@@ -256,13 +276,16 @@ public class ArrayList<E> implements List<E> {
                 return new ListIterator<>() {
                     private int position = index;
                     private boolean removeOk = false;
+                    private boolean lastWasBack = false;
 
                     // The iterator docs already explain what each of these do
                     @Override
                     public E next() {
                         if (!hasNext()) throw new NoSuchElementException();
                         removeOk = true;
-                        return elementData[position++];
+                        E r = elementData[start + position++];
+                        //System.out.println(r);
+                        return r;
                     }
 
                     @Override
@@ -280,7 +303,8 @@ public class ArrayList<E> implements List<E> {
                         if (!hasPrevious())
                             throw new NoSuchElementException();
                         removeOk = true;
-                        return elementData[--position];
+                        lastWasBack = true;
+                        return elementData[start + --position];
                     }
 
                     @Override
@@ -296,21 +320,25 @@ public class ArrayList<E> implements List<E> {
                     @Override
                     public void add(final E e) {
                         removeOk = false;
-                        ArrayList.this.add(position++, e);
+                        ArrayList.this.add(position++ + start, e);
+                        end++;
+                        parentSize.incrementNoRoot();
                     }
 
                     @Override
                     public void set(final E e) {
                         if (!removeOk)
                             throw new IllegalStateException();
-                        ArrayList.this.set(position, e);
+                        ArrayList.this.set((lastWasBack ? position : position - 1) + start, e);
                     }
 
                     @Override
                     public void remove() {
                         if (!removeOk) throw new IllegalStateException();
-                        ArrayList.this.remove(--position);
+                        ArrayList.this.remove((lastWasBack ? position : --position) + start);
                         removeOk = false;
+                        end--;
+                        parentSize.decrementNoRoot();
                     }
                 };
             }
@@ -319,12 +347,47 @@ public class ArrayList<E> implements List<E> {
             public List<E> subList(int fromIndex, int toIndex) {
                 indexBoundChecker(fromIndex, false);
                 indexBoundChecker(toIndex, true);
-                return ArrayList.this.subList(fromIndex + start, toIndex + start);
+                return ArrayList.this.subList(fromIndex + start, toIndex + start, new ParentSize(this::size, s -> {
+                    parentSize.add(s - size());
+                    end = s + start;
+                }, s -> {
+                    parentSize.addNoRoot(s - size());
+                    end = s + start;
+                }));
+            }
+
+            @Override
+            public boolean equals(Object other) {
+                if (other instanceof List<?> o) {
+                    if (size() != o.size())
+                        return false;
+                    Iterator<?> iter1 = o.iterator();
+                    Iterator<?> iter2 = this.iterator();
+                    while (iter1.hasNext()) {
+                        if (!Objects.equals(iter1.next(), iter2.next()))
+                            return false;
+                    }
+                    return true;
+                }
+                else
+                    return false;
+            }
+
+            @Override
+            public String toString() {
+                StringBuilder builder = new StringBuilder().append('[');
+                if (size() > 0) {
+                    builder.append(elementData[start]);
+                    for (int i = start + 1; i < end; i++) {
+                        builder.append(", ").append(elementData[i]);
+                    }
+                }
+                return builder.append(']').toString();
             }
 
             private void indexBoundChecker(int index, boolean inclusive) {
-                if (index < 0 || index > size() - (inclusive ? 1 : 0))
-                    throw new IndexOutOfBoundsException();
+                if (index < 0 || index > size() + (inclusive ? 1 : 0))
+                    throw new IndexOutOfBoundsException("Index " + index + " out of bounds for ArrayList of length " + size());
             }
         };
     }
@@ -445,7 +508,7 @@ public class ArrayList<E> implements List<E> {
         boolean r = false;
         Iterator<E> iter = iterator();
         while (iter.hasNext()) {
-            if (c.contains(iter.next())){
+            if (!c.contains(iter.next())){
                 iter.remove();
                 r = true;
             }
@@ -808,9 +871,9 @@ public class ArrayList<E> implements List<E> {
     public boolean containsAll(final Collection<?> list) {
         for (Object e : list) {
             if (!contains(e))
-                return true;
+                return false;
         }
-        return false;
+        return true;
     }
 
     @Override
@@ -875,7 +938,7 @@ public class ArrayList<E> implements List<E> {
      */
     private void indexBoundChecker(final int index, final boolean inclusive) {
         if (index >= size + (inclusive ? 1 : 0) || index < 0) {
-            throw new IndexOutOfBoundsException(index);
+            throw new IndexOutOfBoundsException("Index " + index + " out of bounds for ArrayList of size " + size);
         }
     }
 
@@ -965,5 +1028,59 @@ public class ArrayList<E> implements List<E> {
             }
         }
         return builder.append(']').toString();
+    }
+}
+
+class ParentSize {
+    private final IntSupplier get;
+    private final IntConsumer set;
+    private final IntConsumer setNoRoot;
+
+    public ParentSize(IntSupplier get, IntConsumer set, IntConsumer setNoRoot) {
+        this.get = get;
+        this.set = set;
+        this.setNoRoot = setNoRoot;
+    }
+
+    public int get() {
+        return get.getAsInt();
+    }
+
+    public void set(int value) {
+        set.accept(value);
+    }
+
+    public void setNoRoot(int value) {
+        setNoRoot.accept(value);
+    }
+
+    public void add(int value) {
+        set(get() + value);
+    }
+
+    public void addNoRoot(int value) {
+        setNoRoot(get() + value);
+    }
+
+    public void subtract(int value) {
+        add(-value);
+    }
+
+    public void subtractNoRoot(int value) {
+        addNoRoot(-value);
+    }
+
+    public void increment() {
+        add(1);
+    }
+
+    public void incrementNoRoot() { addNoRoot(1); }
+
+    public void decrement() {
+        subtract(1);
+    }
+
+    public void decrementNoRoot() {
+        subtractNoRoot(1);
     }
 }
