@@ -1,7 +1,7 @@
 package dev.liambloom.softwareEngineering.chapter15;
 
 import dev.liambloom.softwareEngineering.chapter7.$;
-import dev.liambloom.tests.book.bjp.*;
+import dev.liambloom.tests.bjp.*;
 import dev.liambloom.tests.ListTests;
 
 import java.lang.reflect.Array;
@@ -25,7 +25,7 @@ public class ArrayList<E> implements List<E> {
     /**
      * The default capacity of an {@code ArrayList}
      */
-    public static final int DEFAULT_CAPACITY = 100;
+    public static final int DEFAULT_CAPACITY = 10;
 
     /**
      * Stores the elements
@@ -170,8 +170,10 @@ public class ArrayList<E> implements List<E> {
             public boolean containsAll(Collection<?> c) {
                 boolean r = false;
                 for (Object e : c) {
-                    if (remove(e))
+                    if (contains(e)) {
                         r = true;
+                        break;
+                    }
                 }
                 return r;
             }

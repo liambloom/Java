@@ -202,7 +202,7 @@ public class Exercises {
     }
     public static void challenge4 () {
         System.out.println("Challenge 4:");
-        TwelveDaysOfChristmas.main();
+        TwelveDaysOfChristmas.main(null);
     }
     private static void asciiLine (int length, int totalSpace) {
         for (int i = 0; i < (totalSpace - length) / 2; i++) {

@@ -5,7 +5,7 @@ import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.lang.reflect.Array;
 
-import dev.liambloom.tests.book.bjp.*;
+import dev.liambloom.tests.bjp.*;
 
 // Contains exercises 1-7
 public class HashSet<E> implements Iterable<E> {

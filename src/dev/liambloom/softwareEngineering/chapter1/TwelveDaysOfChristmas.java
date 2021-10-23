@@ -2,7 +2,7 @@ package dev.liambloom.softwareEngineering.chapter1;
 
 public class TwelveDaysOfChristmas {
     // 1st way of doing it
-    public static void main () {
+    public static void main(String[] args) {
         startOfVerse("first");
         day1();
         startOfVerse("second");
